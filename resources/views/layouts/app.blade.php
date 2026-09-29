@@ -13,24 +13,53 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        
+        <script>
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        </script>
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            @include('layouts.navigation')
+    <body class="font-sans antialiased text-gray-900 dark:text-gray-100">
+        <div x-data="{ 
+            isSidebarOpen: false,
+            dark: localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+            toggleTheme() {
+                this.dark = !this.dark;
+                if (this.dark) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            }
+        }" class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+            <!-- Sidebar -->
+            @include('layouts.sidebar')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white dark:bg-gray-800 shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
+            <div class="flex flex-col flex-1 w-full">
+                <!-- Top Navbar -->
+                @include('layouts.navbar')
+
+                <!-- Main Content -->
+                <main class="h-full overflow-y-auto">
+                    <!-- Page Heading -->
+                    @isset($header)
+                        <header class="bg-white dark:bg-gray-800 shadow">
+                            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
+
+                    <div class="p-6">
+                        {{ $slot }}
                     </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                </main>
+            </div>
         </div>
     </body>
 </html>
