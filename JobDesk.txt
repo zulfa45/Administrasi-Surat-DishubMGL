@@ -1,0 +1,1064 @@
+SIMAS DISHUB KOTA - PRD & PEMBAGIAN TUGAS 2 DEVELOPER
+===============================================================
+
+Project: SIMAS DISHUB KOTA
+Kepanjangan: Sistem Informasi Manajemen Surat
+Instansi: Dinas Perhubungan Kota
+Developer:
+- Zulfa
+- Usamah
+
+Teknologi:
+- Laravel 11
+- PHP
+- Blade
+- Tailwind CSS
+- Alpine.js
+- Laravel Breeze
+- Spatie Laravel Permission
+- MySQL / SQLite
+- barryvdh/laravel-dompdf
+- Git + GitHub
+
+CATATAN SCOPE:
+- Fokus aplikasi adalah pengelolaan surat masuk, disposisi, tindak lanjut,
+  notifikasi, master data, dan laporan.
+- FITUR BERITA/PENGUMUMAN TIDAK DIGUNAKAN.
+- Jangan membuat modul News/Berita/Pengumuman.
+- Jangan membuat tabel News.
+- Jangan membuat menu Berita.
+- Jangan membuat route, controller, model, migration, atau view untuk Berita.
+
+
+===============================================================
+1. DESKRIPSI PRODUK
+===============================================================
+
+SIMAS Dishub Kota adalah aplikasi berbasis web untuk mengelola surat masuk
+secara digital di lingkungan Dinas Perhubungan Kota.
+
+Tujuan sistem:
+1. Mencatat surat masuk secara digital.
+2. Menyimpan dokumen surat.
+3. Mendistribusikan/disposisi surat.
+4. Menentukan pegawai atau bagian penerima tugas.
+5. Memberikan notifikasi kepada penerima disposisi.
+6. Memantau proses tindak lanjut surat.
+7. Menyimpan riwayat disposisi.
+8. Mencetak lembar disposisi.
+9. Membuat laporan surat masuk dalam bentuk PDF.
+10. Mengelola user dan bagian.
+11. Menyediakan dashboard sesuai role.
+12. Mengurangi penggunaan dokumen fisik/paperless.
+
+
+===============================================================
+2. ROLE PENGGUNA
+===============================================================
+
+A. ADMIN
+---------------------------------------------------------------
+Admin memiliki akses paling luas.
+
+Admin dapat:
+- Login/logout.
+- Melihat dashboard admin.
+- Mengelola user.
+- Mengelola department/bagian.
+- Mengelola jabatan.
+- Melihat seluruh surat masuk.
+- Menambahkan surat masuk.
+- Mengedit surat masuk.
+- Menghapus surat masuk.
+- Melihat detail surat.
+- Membuat disposisi.
+- Melihat seluruh assignment/disposisi.
+- Memantau status tindak lanjut.
+- Mencetak lembar disposisi.
+- Membuat laporan PDF.
+- Melihat statistik sistem.
+
+
+B. STAF-LOKET
+---------------------------------------------------------------
+Staf-Loket bertanggung jawab atas penerimaan dan pencatatan surat.
+
+Staf-Loket dapat:
+- Login/logout.
+- Melihat dashboard staf.
+- Menambahkan surat masuk.
+- Mengedit surat masuk.
+- Menghapus surat masuk.
+- Upload file surat.
+- Melihat detail surat.
+- Membuat disposisi.
+- Memilih pegawai penerima disposisi.
+- Memilih department penerima disposisi.
+- Melihat status tindak lanjut.
+- Mencetak lembar disposisi.
+- Membuat laporan PDF.
+
+Staf-Loket tidak dapat:
+- Mengelola akun Admin.
+- Mengelola akun Karyawan.
+- Mengelola Department.
+
+
+C. KARYAWAN
+---------------------------------------------------------------
+Karyawan adalah penerima disposisi surat.
+
+Karyawan dapat:
+- Login/logout.
+- Melihat dashboard pribadi.
+- Melihat surat yang ditugaskan.
+- Melihat detail surat.
+- Membuka file surat.
+- Melihat catatan disposisi.
+- Mengubah status pekerjaan.
+- Memberikan tanggapan/catatan tindak lanjut.
+- Melihat riwayat tugas.
+
+Karyawan tidak dapat:
+- Membuat surat masuk.
+- Menghapus surat.
+- Membuat user.
+- Mengelola department.
+- Membuat disposisi.
+
+
+===============================================================
+3. PEMBAGIAN TUGAS UTAMA
+===============================================================
+
+ZULFA:
+- Authentication
+- Role & Permission
+- Master User
+- Master Department
+- Dashboard Admin
+- UI/UX Global
+- Layout
+- Navbar
+- Sidebar
+- Reusable Components
+- Dark Mode
+
+USAMAH:
+- Surat Masuk
+- Upload File Surat
+- Detail Surat
+- Disposisi
+- Assignment
+- Tindak Lanjut
+- Dashboard Karyawan
+- Tanggapan
+- Notifikasi
+- PDF Disposisi
+- Laporan PDF
+
+BERSAMA:
+- Database Design awal
+- Git/GitHub
+- Integrasi
+- Code Review
+- Testing
+- Bug Fixing
+- Deployment
+
+
+===============================================================
+4. PEMBAGIAN MODUL
+===============================================================
+
+MODUL                         ZULFA       USAMAH
+---------------------------------------------------------------
+Authentication                YES         -
+Role & Permission             YES         -
+Master User                  YES         -
+Master Department            YES         -
+Dashboard Admin              YES         -
+Dashboard Staf               -           YES
+Surat Masuk                  -           YES
+Upload Surat                 -           YES
+Detail Surat                 -           YES
+Disposisi                    -           YES
+Assignment                   -           YES
+Dashboard Karyawan           -           YES
+Tindak Lanjut                -           YES
+Tanggapan                    -           YES
+Notifikasi                   -           YES
+PDF Disposisi                -           YES
+Laporan PDF                  -           YES
+UI/UX Global                 YES         -
+Testing Modul                YES         YES
+Integrasi                    YES         YES
+
+
+===============================================================
+5. TUGAS ZULFA
+===============================================================
+
+TAHAP Z-01: INISIALISASI PROJECT
+---------------------------------------------------------------
+Buat dan konfigurasi:
+- Laravel 11
+- MySQL/SQLite
+- Laravel Breeze
+- Blade
+- Alpine.js
+- Tailwind CSS
+- Spatie Laravel Permission
+- Git
+
+Project harus dapat dijalankan:
+php artisan serve
+npm run dev
+
+
+TAHAP Z-02: AUTHENTICATION
+---------------------------------------------------------------
+Implementasikan:
+- Login
+- Logout
+- Session
+- Password hashing
+- Authentication middleware
+- Redirect berdasarkan role
+
+Dashboard:
+Admin:
+    /admin/dashboard
+
+Staf:
+    /staf/dashboard
+
+Karyawan:
+    /karyawan/dashboard
+
+
+TAHAP Z-03: ROLE & PERMISSION
+---------------------------------------------------------------
+Buat role:
+- admin
+- staf-loket
+- karyawan
+
+Permission yang dapat digunakan:
+- manage-users
+- manage-departments
+- manage-letters
+- create-letter
+- edit-letter
+- delete-letter
+- create-assignment
+- view-assignment
+- update-assignment
+- view-reports
+- print-disposition
+
+Buat seeder:
+- RoleSeeder
+- UserSeeder
+- DepartmentSeeder
+
+Minimal akun:
+- 1 Admin
+- 1 Staf-Loket
+- 1 Karyawan
+
+
+TAHAP Z-04: MASTER USER
+---------------------------------------------------------------
+Buat CRUD User.
+
+Field:
+- nama
+- email
+- password
+- NIP
+- jabatan
+- department_id
+- role
+- avatar
+- status
+
+Fitur:
+- Tambah user
+- Edit user
+- Detail user
+- Hapus user
+- Reset password
+- Upload avatar
+- Assign role
+- Assign department
+
+
+TAHAP Z-05: MASTER DEPARTMENT
+---------------------------------------------------------------
+Buat CRUD Department.
+
+Field:
+- id
+- name
+- description
+- status
+
+Department digunakan oleh sistem disposisi.
+
+
+TAHAP Z-06: DASHBOARD ADMIN
+---------------------------------------------------------------
+Dashboard menampilkan:
+- Total Surat
+- Surat Baru
+- Surat Didistribusikan
+- Surat Dalam Tindak Lanjut
+- Surat Selesai
+- Total User
+- Total Department
+
+Tambahkan:
+- Grafik surat masuk
+- Statistik status surat
+- Aktivitas terbaru
+
+
+TAHAP Z-07: UI/UX GLOBAL
+---------------------------------------------------------------
+Buat reusable component:
+- Navbar
+- Sidebar
+- Footer
+- Button
+- Input
+- Select
+- Modal
+- Alert
+- Badge
+- Table
+- Pagination
+- Card
+- Dropdown
+- Empty State
+- Loading
+
+Desain:
+- Modern
+- Profesional
+- Clean
+- Responsive
+- Cocok untuk aplikasi pemerintahan
+- Tidak menggunakan desain HTML mentah
+- Tidak menggunakan border hitam tebal/neubrutalism
+- Gunakan Tailwind CSS
+
+
+TAHAP Z-08: DARK MODE
+---------------------------------------------------------------
+Implementasikan:
+- Light Mode
+- Dark Mode
+- Toggle Sun/Moon
+- localStorage
+- class-based dark mode pada html
+
+Pastikan seluruh:
+- Card
+- Table
+- Form
+- Input
+- Text
+- Sidebar
+- Navbar
+- Modal
+mendukung dark mode.
+
+
+OUTPUT ZULFA:
+---------------------------------------------------------------
+[ ] Authentication
+[ ] Login/logout
+[ ] Role
+[ ] Permission
+[ ] User CRUD
+[ ] Department CRUD
+[ ] Dashboard Admin
+[ ] Navbar
+[ ] Sidebar
+[ ] UI components
+[ ] Dark mode
+[ ] Responsive layout
+
+
+===============================================================
+6. TUGAS USAMAH
+===============================================================
+
+TAHAP U-01: DATABASE SURAT MASUK
+---------------------------------------------------------------
+Buat migration:
+incoming_letters
+
+Field:
+- id
+- nomor_surat
+- asal_surat
+- perihal
+- tanggal_surat
+- tanggal_diterima
+- sifat
+- keterangan
+- file_lampiran
+- status
+- created_by
+- timestamps
+
+Status:
+- baru
+- didistribusikan
+- dalam_tindak_lanjut
+- selesai
+
+
+TAHAP U-02: MODEL INCOMING LETTER
+---------------------------------------------------------------
+Buat:
+IncomingLetter.php
+
+Relasi:
+- belongsTo User sebagai pembuat
+- hasMany Assignment
+
+
+TAHAP U-03: CRUD SURAT MASUK
+---------------------------------------------------------------
+Admin dan Staf-Loket dapat:
+
+CREATE:
+- Nomor Surat
+- Asal Surat
+- Tanggal Surat
+- Tanggal Diterima
+- Perihal
+- Sifat Surat
+- Keterangan
+- File Surat
+
+READ:
+- Nomor Surat
+- Asal
+- Perihal
+- Tanggal
+- Status
+- Pembuat
+
+UPDATE:
+- Edit seluruh informasi yang diperlukan.
+
+DELETE:
+- Hapus dengan konfirmasi.
+
+
+TAHAP U-04: UPLOAD FILE
+---------------------------------------------------------------
+File yang diperbolehkan:
+- PDF
+- JPG
+- JPEG
+- PNG
+
+Pastikan:
+- Validasi MIME
+- Validasi ukuran
+- Storage aman
+- Nama file aman
+- File dapat dibuka dari detail surat
+
+
+TAHAP U-05: DETAIL SURAT
+---------------------------------------------------------------
+Detail surat menampilkan:
+- Nomor Surat
+- Asal Surat
+- Tanggal Surat
+- Tanggal Diterima
+- Perihal
+- Sifat
+- Keterangan
+- File Surat
+
+Bagian bawah:
+RIWAYAT DISPOSISI
+
+Kolom:
+- Penerima
+- Department
+- Tanggal Disposisi
+- Status
+- Catatan
+
+
+TAHAP U-06: DATABASE ASSIGNMENT
+---------------------------------------------------------------
+Buat migration:
+assignments
+
+Field:
+- id
+- incoming_letter_id
+- user_id
+- department_id
+- status
+- catatan
+- tanggal_disposisi
+- tanggal_selesai
+- timestamps
+
+Status:
+- belum_dibaca
+- dibaca
+- dikerjakan
+- selesai
+
+
+TAHAP U-07: SISTEM DISPOSISI
+---------------------------------------------------------------
+Surat dapat didisposisikan ke:
+
+1. Individu:
+Surat -> Karyawan tertentu
+
+2. Department:
+Surat -> Department tertentu
+
+Saat membuat disposisi:
+- Pilih surat
+- Pilih penerima
+- Pilih department jika diperlukan
+- Isi catatan
+- Simpan assignment
+
+Jika disposisi berhasil:
+- Buat assignment
+- Update status surat
+- Kirim notification kepada penerima
+
+
+TAHAP U-08: STATUS TINDAK LANJUT
+---------------------------------------------------------------
+Alur:
+belum_dibaca
+    ->
+dibaca
+    ->
+dikerjakan
+    ->
+selesai
+
+Saat selesai:
+- Simpan tanggal_selesai
+- Update status assignment
+- Jika seluruh assignment selesai, surat dapat menjadi status selesai
+
+
+TAHAP U-09: DASHBOARD KARYAWAN
+---------------------------------------------------------------
+Dashboard menampilkan:
+- Tugas Baru
+- Sedang Dikerjakan
+- Tugas Selesai
+- Total Tugas
+
+Daftar tugas:
+- Nomor Surat
+- Perihal
+- Asal
+- Tanggal
+- Status
+- Action
+
+Karyawan hanya boleh melihat assignment:
+- yang ditujukan langsung kepadanya
+- atau yang berasal dari department-nya sesuai aturan sistem
+
+
+TAHAP U-10: DETAIL TUGAS
+---------------------------------------------------------------
+Karyawan dapat melihat:
+- Informasi Surat
+- File Surat
+- Catatan Disposisi
+- Tanggal Disposisi
+- Pemberi Disposisi
+- Status
+
+Action:
+- Tandai Dibaca
+- Mulai Kerjakan
+- Tandai Selesai
+
+
+TAHAP U-11: TANGGAPAN/TINDAK LANJUT
+---------------------------------------------------------------
+Karyawan dapat menambahkan:
+- Catatan tindak lanjut
+
+Contoh:
+"Surat telah ditindaklanjuti dan koordinasi dengan pihak terkait telah dilakukan."
+
+Catatan tersimpan pada assignment.
+
+
+TAHAP U-12: NOTIFIKASI
+---------------------------------------------------------------
+Gunakan Laravel Database Notification.
+
+Ketika:
+Admin/Staf-Loket
+    ->
+Membuat disposisi
+    ->
+Penerima
+    ->
+Mendapat notifikasi
+
+Notifikasi hanya dikirim kepada user yang berkaitan.
+
+Notifikasi minimal:
+- Judul
+- Pesan
+- Link detail surat
+- Waktu
+
+
+TAHAP U-13: PDF DISPOSISI
+---------------------------------------------------------------
+Install:
+composer require barryvdh/laravel-dompdf
+
+Buat:
+Lembar Disposisi PDF
+
+Isi:
+- Logo instansi
+- Nama instansi
+- Nomor surat
+- Asal surat
+- Tanggal surat
+- Perihal
+- Tujuan disposisi
+- Nama penerima
+- Department
+- Catatan
+- Status
+- Tanggal disposisi
+
+Gunakan:
+stream()
+
+PDF harus:
+- Dibuka pada tab baru
+- Inline preview
+- Tidak otomatis download
+
+Jika logo tidak dapat dibaca DomPDF:
+- gunakan Base64
+
+
+TAHAP U-14: LAPORAN PDF
+---------------------------------------------------------------
+Buat menu:
+Laporan
+
+Filter:
+- Tanggal Mulai
+- Tanggal Sampai
+- Status
+- Department
+
+Tombol:
+Preview PDF
+
+Isi:
+- Kop instansi
+- Judul laporan
+- Periode
+- Tabel surat masuk
+
+Kolom:
+- No
+- Nomor Surat
+- Asal
+- Perihal
+- Tanggal
+- Status
+
+Gunakan inline PDF preview.
+
+
+OUTPUT USAMAH:
+---------------------------------------------------------------
+[ ] Incoming Letter
+[ ] CRUD Surat
+[ ] Upload Surat
+[ ] Detail Surat
+[ ] Assignment
+[ ] Disposisi
+[ ] Status Tindak Lanjut
+[ ] Dashboard Karyawan
+[ ] Tanggapan
+[ ] Notification
+[ ] PDF Disposisi
+[ ] Laporan PDF
+
+
+===============================================================
+7. STRUKTUR DATABASE
+===============================================================
+
+RELASI:
+
+Department
+    |
+    +---- hasMany Users
+
+User
+    |
+    +---- belongsTo Department
+    |
+    +---- hasMany IncomingLetters sebagai created_by
+    |
+    +---- hasMany Assignments
+
+IncomingLetter
+    |
+    +---- belongsTo User sebagai creator
+    |
+    +---- hasMany Assignments
+
+Assignment
+    |
+    +---- belongsTo IncomingLetter
+    +---- belongsTo User
+    +---- belongsTo Department
+
+
+TABEL UTAMA:
+
+users
+departments
+incoming_letters
+assignments
+notifications
+roles
+permissions
+model_has_roles
+model_has_permissions
+role_has_permissions
+
+
+===============================================================
+8. KONTRAK INTEGRASI ZULFA & USAMAH
+===============================================================
+
+ZULFA bertanggung jawab terhadap:
+- users
+- departments
+- authentication
+- role
+- permission
+- global layout
+
+USAMAH bertanggung jawab terhadap:
+- incoming_letters
+- assignments
+- notifications
+- surat workflow
+- PDF
+
+Usamah menggunakan struktur User dari Zulfa:
+- user->id
+- user->name
+- user->department_id
+- user->role
+
+Usamah menggunakan:
+Department::all()
+untuk kebutuhan disposisi.
+
+Jangan mengubah migration atau struktur utama milik developer lain
+tanpa koordinasi.
+
+
+===============================================================
+9. GIT & GITHUB WORKFLOW
+===============================================================
+
+BRANCH UTAMA:
+main
+
+BRANCH ZULFA:
+feature/zulfa-auth
+feature/zulfa-master-data
+feature/zulfa-ui
+
+BRANCH USAMAH:
+feature/usamah-surat
+feature/usamah-disposisi
+feature/usamah-report
+
+Workflow:
+1. Pull branch terbaru.
+2. Buat/checkout branch tugas.
+3. Kerjakan fitur.
+4. Test lokal.
+5. Commit.
+6. Push.
+7. Pull Request.
+8. Review.
+9. Merge ke main.
+
+Jangan bekerja langsung di main.
+
+
+===============================================================
+10. ATURAN COMMIT
+===============================================================
+
+Gunakan commit yang jelas.
+
+Contoh Zulfa:
+feat(auth): add login authentication
+feat(user): add user management
+feat(department): add department management
+feat(ui): add dashboard layout
+feat(ui): add dark mode
+
+Contoh Usamah:
+feat(letter): add incoming letter CRUD
+feat(assignment): add letter disposition
+feat(notification): add assignment notification
+feat(report): add letter PDF report
+feat(pdf): add disposition PDF
+
+
+===============================================================
+11. TESTING ZULFA
+===============================================================
+
+[ ] Login Admin
+[ ] Login Staf-Loket
+[ ] Login Karyawan
+[ ] Logout
+[ ] Role protection
+[ ] Permission
+[ ] User CRUD
+[ ] Department CRUD
+[ ] Avatar
+[ ] Dashboard Admin
+[ ] Dark mode
+[ ] Responsive UI
+
+
+===============================================================
+12. TESTING USAMAH
+===============================================================
+
+[ ] Tambah surat
+[ ] Edit surat
+[ ] Hapus surat
+[ ] Upload file
+[ ] Validasi file
+[ ] Detail surat
+[ ] Disposisi individu
+[ ] Disposisi department
+[ ] Notification
+[ ] Status dibaca
+[ ] Status dikerjakan
+[ ] Status selesai
+[ ] Tanggapan
+[ ] PDF disposisi
+[ ] Laporan PDF
+
+
+===============================================================
+13. TESTING INTEGRASI
+===============================================================
+
+SKENARIO 1 - USER:
+Admin login
+    ->
+Membuat Karyawan
+    ->
+Menentukan Department
+    ->
+Karyawan login
+    ->
+Dashboard berhasil terbuka
+
+
+SKENARIO 2 - DISPOSISI:
+Staf-Loket login
+    ->
+Tambah surat
+    ->
+Pilih karyawan
+    ->
+Disposisi
+    ->
+Karyawan menerima notification
+
+
+SKENARIO 3 - TINDAK LANJUT:
+Karyawan login
+    ->
+Melihat tugas
+    ->
+Membuka surat
+    ->
+Status Dibaca
+    ->
+Status Dikerjakan
+    ->
+Menambahkan tanggapan
+    ->
+Status Selesai
+
+
+SKENARIO 4 - PDF:
+Admin/Staf-Loket
+    ->
+Buka surat
+    ->
+Cetak disposisi
+    ->
+PDF tampil di tab baru
+
+
+SKENARIO 5 - LAPORAN:
+Admin/Staf-Loket
+    ->
+Laporan
+    ->
+Pilih tanggal
+    ->
+Preview PDF
+    ->
+Laporan tampil
+
+
+===============================================================
+14. DEFINITION OF DONE
+===============================================================
+
+Sebuah fitur dianggap selesai apabila:
+- Fitur berjalan tanpa error.
+- Authorization sudah diterapkan.
+- Validasi input tersedia.
+- UI responsive.
+- Mendukung dark mode jika menggunakan komponen global.
+- Tidak merusak modul developer lain.
+- Sudah dites.
+- Sudah commit.
+- Sudah push ke branch.
+- Siap dibuat Pull Request.
+
+
+===============================================================
+15. CHECKLIST PROJECT FINAL
+===============================================================
+
+SYSTEM:
+[ ] Laravel 11 berjalan
+[ ] Database terhubung
+[ ] Authentication berjalan
+[ ] Role berjalan
+[ ] Permission berjalan
+
+MASTER DATA:
+[ ] User CRUD
+[ ] Department CRUD
+
+SURAT:
+[ ] Surat masuk CRUD
+[ ] Upload file
+[ ] Detail surat
+[ ] Status surat
+
+DISPOSISI:
+[ ] Disposisi individu
+[ ] Disposisi department
+[ ] Riwayat disposisi
+[ ] Status assignment
+
+KARYAWAN:
+[ ] Dashboard
+[ ] Daftar tugas
+[ ] Detail tugas
+[ ] Tanggapan
+[ ] Update status
+
+NOTIFIKASI:
+[ ] Database notification
+[ ] Notifikasi penerima
+[ ] Link ke detail surat
+
+PDF:
+[ ] PDF disposisi
+[ ] PDF laporan
+[ ] Inline preview
+[ ] Logo instansi
+
+UI/UX:
+[ ] Responsive
+[ ] Dark mode
+[ ] Sidebar
+[ ] Navbar
+[ ] Reusable components
+[ ] Empty state
+[ ] Loading
+[ ] Alert
+
+SECURITY:
+[ ] Authentication
+[ ] Authorization
+[ ] Validation
+[ ] File validation
+[ ] CSRF protection
+[ ] Secure file access
+
+DEPLOYMENT:
+[ ] Production environment
+[ ] Database production
+[ ] Storage link
+[ ] Build assets
+[ ] Environment configuration
+
+
+===============================================================
+16. CATATAN PENTING
+===============================================================
+
+1. Jangan membuat fitur Berita/Pengumuman.
+2. Jangan membuat News model.
+3. Jangan membuat News migration.
+4. Jangan membuat News controller.
+5. Jangan membuat News route.
+6. Jangan membuat menu Berita.
+7. Jangan membuat halaman Berita.
+8. Fokus pada workflow surat.
+9. Setiap developer wajib menjaga kode developer lainnya.
+10. Database dan relasi harus disepakati sebelum implementasi besar.
+11. Gunakan Git branch untuk menghindari konflik.
+12. Jangan melakukan perubahan besar pada migration milik developer lain
+    tanpa koordinasi.
+13. Gunakan reusable UI component agar desain konsisten.
+14. Semua fitur wajib memiliki authorization berdasarkan role.
+15. Semua input penting wajib divalidasi.
+16. Semua fitur utama wajib dites sebelum merge.
+
+
+===============================================================
+END OF DOCUMENT
+===============================================================
