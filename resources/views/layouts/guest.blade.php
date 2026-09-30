@@ -30,17 +30,12 @@
                 <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-700/50 to-indigo-900/80 pointer-events-none"></div>
                 
                 <div class="relative z-10 flex flex-col items-center text-center px-12">
-                    <div class="flex items-center justify-center gap-4 mb-8">
-                        <div class="w-16 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg flex items-center justify-center transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <div class="w-20 h-20 bg-white dark:bg-gray-800 rounded-full shadow-xl flex items-center justify-center border-4 border-blue-400 dark:border-gray-700 transform hover:scale-105 transition-transform duration-300">
-                            <svg class="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                            </svg>
-                        </div>
+                    <div class="flex items-center justify-center gap-6 mb-8">
+                        <!-- Logo Kota/Kabupaten (Kiri) -->
+                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-16 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-lg" />
+                        
+                        <!-- Logo Dishub (Kanan) -->
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-20 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-xl" />
                     </div>
                     <h1 class="text-4xl font-extrabold text-white tracking-tight mb-4">SIMAS DISHUB</h1>
                     <p class="text-blue-100 text-lg font-medium max-w-md">
@@ -65,10 +60,9 @@
 
                 <!-- Mobile Logo -->
                 <div class="lg:hidden flex flex-col items-center justify-center gap-3 mb-8 mt-6">
-                    <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-lg flex items-center justify-center border-2 border-blue-500">
-                        <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
-                        </svg>
+                    <div class="flex items-center justify-center gap-4">
+                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-12 h-auto" />
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-14 h-auto" />
                     </div>
                     <h2 class="text-2xl font-extrabold text-gray-900 dark:text-white tracking-tight">SIMAS <span class="text-blue-600 dark:text-blue-400">DISHUB</span></h2>
                 </div>
