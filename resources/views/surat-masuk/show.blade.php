@@ -32,6 +32,15 @@
                     </svg>
                     Kembali
                 </a>
+                @hasanyrole('admin|staf-loket')
+                <a href="{{ route('disposisi.create', $letter) }}"
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                    Buat Disposisi
+                </a>
+                @endhasanyrole
                 <a href="{{ route('surat-masuk.edit', $letter) }}"
                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,30 +223,50 @@
                         Daftar penerima penugasan dan status tindak lanjut surat
                     </p>
                 </div>
+                @hasanyrole('admin|staf-loket')
+                <a href="{{ route('disposisi.create', $letter) }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Tambah Disposisi
+                </a>
+                @endhasanyrole
             </div>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-700 dark:text-gray-300">
                     <thead class="bg-gray-50 dark:bg-gray-700/50 text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-3">Penerima</th>
-                            <th class="px-4 py-3">Department</th>
-                            <th class="px-4 py-3">Tanggal Disposisi</th>
+                            <th class="px-4 py-3">Penerima Disposisi</th>
+                            <th class="px-4 py-3">Tgl Disposisi</th>
+                            <th class="px-4 py-3">Instruksi / Catatan</th>
                             <th class="px-4 py-3 text-center">Status</th>
-                            <th class="px-4 py-3">Catatan</th>
+                            <th class="px-4 py-3">Tindak Lanjut / Respon</th>
+                            <th class="px-4 py-3 text-center">Aksi & Update</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                         @forelse($letter->assignments as $assignment)
-                        <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors">
-                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">
-                                {{ $assignment->user?->name ?? 'Belum Ditentukan' }}
-                            </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                {{ $assignment->department?->name ?? ($assignment->user?->department?->name ?? '-') }}
+                        <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors" x-data="{ openUpdate: false }">
+                            <td class="px-4 py-3">
+                                <div class="font-semibold text-gray-900 dark:text-gray-100">
+                                    {{ $assignment->user?->name ?? 'Seluruh Anggota Bagian' }}
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    Bagian: {{ $assignment->department?->name ?? ($assignment->user?->department?->name ?? '-') }}
+                                </div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap text-xs text-gray-600 dark:text-gray-400">
-                                {{ $assignment->tanggal_disposisi ? \Carbon\Carbon::parse($assignment->tanggal_disposisi)->translatedFormat('d M Y') : $assignment->created_at->translatedFormat('d M Y') }}
+                                <div>{{ $assignment->tanggal_disposisi ? \Carbon\Carbon::parse($assignment->tanggal_disposisi)->translatedFormat('d M Y') : $assignment->created_at->translatedFormat('d M Y') }}</div>
+                                @if($assignment->tanggal_selesai)
+                                    <span class="inline-block mt-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                                        Selesai: {{ \Carbon\Carbon::parse($assignment->tanggal_selesai)->translatedFormat('d M Y') }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300 text-xs max-w-xs">
+                                {{ $assignment->catatan ?: '-' }}
                             </td>
                             <td class="px-4 py-3 text-center whitespace-nowrap">
                                 @php
@@ -252,18 +281,74 @@
                                     {{ ucfirst(str_replace('_', ' ', $assignment->status)) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 text-gray-600 dark:text-gray-400 text-xs">
-                                {{ $assignment->catatan ?: '-' }}
+                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300 text-xs max-w-xs">
+                                @if($assignment->catatan_tindak_lanjut)
+                                    <p class="italic text-gray-800 dark:text-gray-200">"{{ $assignment->catatan_tindak_lanjut }}"</p>
+                                @else
+                                    <span class="text-gray-400 dark:text-gray-500 italic">Belum ada catatan tindak lanjut</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    {{-- Tombol Update Status (Tahap U-08 & U-11) --}}
+                                    <button type="button" @click="openUpdate = !openUpdate"
+                                            class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 rounded-lg transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                        Update Status
+                                    </button>
+
+                                    @hasanyrole('admin|staf-loket')
+                                    <form action="{{ route('disposisi.destroy', $assignment) }}" method="POST"
+                                          onsubmit="return confirm('Batalkan penugasan disposisi ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Batalkan Disposisi">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    @endhasanyrole
+                                </div>
+
+                                {{-- Dropdown Form Update Status --}}
+                                <div x-show="openUpdate" @click.away="openUpdate = false" x-transition
+                                     class="mt-3 p-4 bg-gray-50 dark:bg-gray-700/80 rounded-lg border border-gray-200 dark:border-gray-600 text-left space-y-3" style="display: none;">
+                                    <form action="{{ route('disposisi.status', $assignment) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status Disposisi:</label>
+                                            <select name="status" class="w-full text-xs px-2.5 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+                                                <option value="belum_dibaca" {{ $assignment->status === 'belum_dibaca' ? 'selected' : '' }}>Belum Dibaca</option>
+                                                <option value="dibaca" {{ $assignment->status === 'dibaca' ? 'selected' : '' }}>Dibaca</option>
+                                                <option value="dikerjakan" {{ $assignment->status === 'dikerjakan' ? 'selected' : '' }}>Dikerjakan</option>
+                                                <option value="selesai" {{ $assignment->status === 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Tindak Lanjut:</label>
+                                            <textarea name="catatan_tindak_lanjut" rows="2" placeholder="Tuliskan respon / laporan pengerjaan..."
+                                                      class="w-full text-xs px-2.5 py-1.5 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">{{ $assignment->catatan_tindak_lanjut }}</textarea>
+                                        </div>
+                                        <div class="flex items-center justify-end gap-2 pt-1">
+                                            <button type="button" @click="openUpdate = false" class="text-xs px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded text-gray-700 dark:text-gray-300">Tutup</button>
+                                            <button type="submit" class="text-xs px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded font-medium">Simpan</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-400 dark:text-gray-500">
                                 <svg class="w-10 h-10 mx-auto mb-2 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
                                 <p class="text-sm font-medium">Belum ada riwayat disposisi</p>
-                                <p class="text-xs mt-0.5">Surat ini belum didistribusikan ke bagian atau staf terkait.</p>
+                                <p class="text-xs mt-0.5">Klik "Buat Disposisi" di atas untuk menugaskan surat ini ke pegawai atau bagian.</p>
                             </td>
                         </tr>
                         @endforelse
