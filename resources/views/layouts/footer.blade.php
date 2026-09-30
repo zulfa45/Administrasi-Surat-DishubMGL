@@ -1,0 +1,1 @@
+<footer class="p-4 mt-auto bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"> <div class="container px-6 mx-auto text-sm text-center text-gray-600 dark:text-gray-400"> &copy; {{ date('Y') }} SIMAS Dishub Kota. Hak Cipta Dilindungi. </div> </footer>
