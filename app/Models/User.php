@@ -55,4 +55,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class);
     }
+
+    public function incomingLetters()
+    {
+        return $this->hasMany(IncomingLetter::class, 'created_by');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }
