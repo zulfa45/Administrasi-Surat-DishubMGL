@@ -24,10 +24,12 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\IncomingLetterController;
 use App\Http\Controllers\DispositionController;
+use App\Http\Controllers\ReportController;
 
 // Surat Masuk & Disposisi Routes
 Route::middleware(['auth'])->group(function () {
     Route::get('surat-masuk/{surat_masuk}/file', [IncomingLetterController::class, 'previewFile'])->name('surat-masuk.file');
+    Route::get('surat-masuk/{surat_masuk}/disposisi-pdf', [ReportController::class, 'printDispositionPdf'])->name('surat-masuk.disposisi-pdf');
     Route::get('surat-masuk/{surat_masuk}', [IncomingLetterController::class, 'show'])->name('surat-masuk.show');
     Route::resource('surat-masuk', IncomingLetterController::class)->except(['show'])->middleware('role:admin|staf-loket');
 
@@ -36,6 +38,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('surat-masuk/{surat_masuk}/disposisi', [DispositionController::class, 'store'])->name('disposisi.store')->middleware('role:admin|staf-loket');
     Route::delete('disposisi/{assignment}', [DispositionController::class, 'destroy'])->name('disposisi.destroy')->middleware('role:admin|staf-loket');
     Route::patch('disposisi/{assignment}/status', [DispositionController::class, 'updateStatus'])->name('disposisi.status');
+});
+
+// Laporan PDF Routes (Tahap U-14)
+Route::middleware(['auth', 'role:admin|staf-loket'])->prefix('laporan')->name('laporan.')->group(function () {
+    Route::get('/', [ReportController::class, 'index'])->name('index');
+    Route::get('/pdf', [ReportController::class, 'printPdf'])->name('pdf');
 });
 
 // Admin Routes
