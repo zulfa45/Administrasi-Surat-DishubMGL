@@ -40,7 +40,7 @@
             <!-- Profile menu -->
             <li class="relative" x-data="{ isProfileMenuOpen: false }">
                 <button class="align-middle rounded-full focus:shadow-outline-blue focus:outline-none flex items-center gap-2" @click="isProfileMenuOpen = !isProfileMenuOpen" @keydown.escape="isProfileMenuOpen = false" aria-label="Account" aria-haspopup="true">
-                    <img class="object-cover w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600" src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="Profile" aria-hidden="true" />
+                    <img class="object-cover w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600" src="{{ auth()->user()->avatar ? \Illuminate\Support\Facades\Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="Profile" aria-hidden="true" />
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:block">{{ auth()->user()->name }}</span>
                 </button>
                 <template x-if="isProfileMenuOpen">
