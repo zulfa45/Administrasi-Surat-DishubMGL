@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
@@ -50,9 +51,9 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name'          => 'required|string|max:255',
-            'email'         => 'required|string|email|max:255|unique:users',
+            'email'         => 'required|string|email|max:255|unique:users,email',
             'password'      => 'required|string|min:8|confirmed',
-            'nip'           => 'nullable|string|max:20|unique:users',
+            'nip'           => 'nullable|string|max:20|unique:users,nip',
             'jabatan'       => 'nullable|string|max:100',
             'department_id' => 'nullable|exists:departments,id',
             'role'          => 'required|exists:roles,name',
@@ -64,12 +65,21 @@ class UserController extends Controller
             $validated['avatar'] = $request->file('avatar')->store('avatars');
         }
 
-        $validated['password'] = Hash::make($validated['password']);
+        $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
+        $validated['nip']           = !empty($validated['nip']) ? $validated['nip'] : null;
+        $validated['jabatan']       = !empty($validated['jabatan']) ? $validated['jabatan'] : null;
+        $validated['password']      = Hash::make($validated['password']);
 
-        $user = User::create(collect($validated)->except('role')->toArray());
-        $user->assignRole($validated['role']);
+        try {
+            DB::transaction(function () use ($validated) {
+                $user = User::create(collect($validated)->except('role')->toArray());
+                $user->assignRole($validated['role']);
+            });
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+            return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Gagal menambahkan user: ' . $e->getMessage());
+        }
     }
 
     public function show(User $user)
@@ -106,16 +116,26 @@ class UserController extends Controller
             $validated['avatar'] = $request->file('avatar')->store('avatars');
         }
 
+        $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
+        $validated['nip']           = !empty($validated['nip']) ? $validated['nip'] : null;
+        $validated['jabatan']       = !empty($validated['jabatan']) ? $validated['jabatan'] : null;
+
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
 
-        $user->update(collect($validated)->except('role')->toArray());
-        $user->syncRoles([$validated['role']]);
+        try {
+            DB::transaction(function () use ($user, $validated) {
+                $user->update(collect($validated)->except('role')->toArray());
+                $user->syncRoles([$validated['role']]);
+            });
 
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');
+            return redirect()->route('admin.users.index')->with('success', 'User berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            return back()->withInput()->with('error', 'Gagal memperbarui user: ' . $e->getMessage());
+        }
     }
 
     public function destroy(User $user)
