@@ -60,9 +60,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Staf Loket Routes
 Route::middleware(['auth', 'role:staf-loket'])->prefix('staf')->name('staf.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Nanti diganti dengan view staf
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Staf\DashboardController::class, 'index'])->name('dashboard');
 });
 
 use App\Http\Controllers\Karyawan\TaskController;
