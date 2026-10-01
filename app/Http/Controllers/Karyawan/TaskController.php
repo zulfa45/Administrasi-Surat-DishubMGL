@@ -37,10 +37,23 @@ class TaskController extends Controller
         $sedangDikerjakan = (clone $baseQuery)->where('status', 'dikerjakan')->count();
         $tugasSelesai     = (clone $baseQuery)->where('status', 'selesai')->count();
 
+        // Tugas dengan batas waktu mendesak (<= 2 hari) atau surat bersifat Segera/Penting
+        $tugasMendesak = (clone $baseQuery)
+            ->where('status', '!=', 'selesai')
+            ->where(function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('deadline')
+                        ->where('deadline', '<=', now()->addDays(2)->toDateString());
+                })->orWhereHas('incomingLetter', function ($lq) {
+                    $lq->whereIn('sifat', ['Sangat Segera', 'Segera', 'Penting']);
+                });
+            })
+            ->count();
+
         $recentTasks = (clone $baseQuery)
             ->latest('tanggal_disposisi')
             ->latest('id')
-            ->take(8)
+            ->take(6)
             ->get();
 
         return view('karyawan.dashboard', compact(
@@ -48,6 +61,7 @@ class TaskController extends Controller
             'tugasBaru',
             'sedangDikerjakan',
             'tugasSelesai',
+            'tugasMendesak',
             'recentTasks'
         ));
     }
@@ -57,13 +71,23 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $query = $this->getBaseTaskQuery();
+        $baseQuery = $this->getBaseTaskQuery();
+
+        $counts = [
+            'all'        => (clone $baseQuery)->count(),
+            'baru'       => (clone $baseQuery)->whereIn('status', ['belum_dibaca', 'dibaca'])->count(),
+            'dikerjakan' => (clone $baseQuery)->where('status', 'dikerjakan')->count(),
+            'selesai'    => (clone $baseQuery)->where('status', 'selesai')->count(),
+        ];
+
+        $query = clone $baseQuery;
 
         // Filter kata kunci pencarian
         if ($request->filled('search')) {
             $search = $request->search;
             $query->whereHas('incomingLetter', function ($q) use ($search) {
                 $q->where('nomor_surat', 'like', "%{$search}%")
+                  ->orWhere('nomor_agenda', 'like', "%{$search}%")
                   ->orWhere('asal_surat', 'like', "%{$search}%")
                   ->orWhere('perihal', 'like', "%{$search}%");
             });
@@ -71,7 +95,18 @@ class TaskController extends Controller
 
         // Filter status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            if ($request->status === 'baru') {
+                $query->whereIn('status', ['belum_dibaca', 'dibaca']);
+            } else {
+                $query->where('status', $request->status);
+            }
+        }
+
+        // Filter sifat surat
+        if ($request->filled('sifat')) {
+            $query->whereHas('incomingLetter', function ($q) use ($request) {
+                $q->where('sifat', $request->sifat);
+            });
         }
 
         $tasks = $query->latest('tanggal_disposisi')
@@ -79,7 +114,7 @@ class TaskController extends Controller
                        ->paginate(10)
                        ->withQueryString();
 
-        return view('karyawan.tasks.index', compact('tasks'));
+        return view('karyawan.tasks.index', compact('tasks', 'counts'));
     }
 
     /**
