@@ -61,7 +61,7 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = $request->file('avatar')->store('avatars');
         }
 
         $validated['password'] = Hash::make($validated['password']);
@@ -100,10 +100,10 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+            if ($user->avatar && Storage::exists($user->avatar)) {
+                Storage::delete($user->avatar);
             }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $validated['avatar'] = $request->file('avatar')->store('avatars');
         }
 
         if (!empty($validated['password'])) {
@@ -120,8 +120,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+        if ($user->avatar && Storage::exists($user->avatar)) {
+            Storage::delete($user->avatar);
         }
         $user->delete();
 
