@@ -227,9 +227,13 @@ class IncomingLetterController extends Controller
      */
     public function destroy(IncomingLetter $surat_masuk)
     {
-        // Hapus file lampiran jika ada di storage
-        if ($surat_masuk->file_lampiran && Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
-            Storage::disk('google')->delete($surat_masuk->file_lampiran);
+        // Hapus file lampiran jika ada di storage (G-Drive atau S3)
+        if ($surat_masuk->file_lampiran) {
+            if (Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
+                Storage::disk('google')->delete($surat_masuk->file_lampiran);
+            } elseif (Storage::disk('s3')->exists($surat_masuk->file_lampiran)) {
+                Storage::disk('s3')->delete($surat_masuk->file_lampiran);
+            }
         }
 
         $surat_masuk->delete();
@@ -243,11 +247,20 @@ class IncomingLetterController extends Controller
      */
     public function previewFile(IncomingLetter $surat_masuk)
     {
-        if (!$surat_masuk->file_lampiran || !Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
+        if (!$surat_masuk->file_lampiran) {
             abort(404, 'File lampiran tidak ditemukan.');
         }
 
-        // Return a response stream from google drive natively
-        return Storage::disk('google')->response($surat_masuk->file_lampiran);
+        // Cek di Google Drive dulu (untuk file baru)
+        if (Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
+            return Storage::disk('google')->response($surat_masuk->file_lampiran);
+        }
+        
+        // Jika tidak ada di G-Drive, cari di S3 (file lama sebelum fix)
+        if (Storage::disk('s3')->exists($surat_masuk->file_lampiran)) {
+            return redirect(Storage::disk('s3')->url($surat_masuk->file_lampiran));
+        }
+
+        abort(404, 'File lampiran tidak ditemukan di penyimpanan mana pun.');
     }
 }
