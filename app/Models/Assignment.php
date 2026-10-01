@@ -30,6 +30,7 @@ class Assignment extends Model
     {
         return [
             'tanggal_disposisi' => 'date',
+            'deadline'          => 'date',
             'tanggal_selesai'   => 'date',
         ];
     }

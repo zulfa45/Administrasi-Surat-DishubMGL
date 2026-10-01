@@ -38,6 +38,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('surat-masuk/{surat_masuk}/disposisi', [DispositionController::class, 'store'])->name('disposisi.store')->middleware('role:admin|staf-loket');
     Route::delete('disposisi/{assignment}', [DispositionController::class, 'destroy'])->name('disposisi.destroy')->middleware('role:admin|staf-loket');
     Route::patch('disposisi/{assignment}/status', [DispositionController::class, 'updateStatus'])->name('disposisi.status');
+
+    // Notifikasi Routes (Tahap U-12)
+    Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
+    Route::post('notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 });
 
 // Laporan PDF Routes (Tahap U-14)
@@ -55,9 +60,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Staf Loket Routes
 Route::middleware(['auth', 'role:staf-loket'])->prefix('staf')->name('staf.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Nanti diganti dengan view staf
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\Staf\DashboardController::class, 'index'])->name('dashboard');
 });
 
 use App\Http\Controllers\Karyawan\TaskController;
