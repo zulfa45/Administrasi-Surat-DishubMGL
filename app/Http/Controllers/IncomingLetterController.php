@@ -100,7 +100,8 @@ class IncomingLetterController extends Controller
         if ($request->hasFile('file_lampiran')) {
             $file = $request->file('file_lampiran');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('surat-masuk', $filename, 'google');
+            $path = 'surat-masuk/' . $filename;
+            Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
             $validated['file_lampiran'] = $path;
         }
 
@@ -212,7 +213,8 @@ class IncomingLetterController extends Controller
 
             $file = $request->file('file_lampiran');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('surat-masuk', $filename, 'google');
+            $path = 'surat-masuk/' . $filename;
+            Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
             $validated['file_lampiran'] = $path;
         }
 
