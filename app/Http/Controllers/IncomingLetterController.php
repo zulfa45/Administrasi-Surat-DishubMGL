@@ -156,8 +156,8 @@ class IncomingLetterController extends Controller
 
         if ($request->hasFile('file_lampiran')) {
             // Hapus file lama jika ada
-            if ($surat_masuk->file_lampiran && Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
-                Storage::disk('public')->delete($surat_masuk->file_lampiran);
+            if ($surat_masuk->file_lampiran && Storage::exists($surat_masuk->file_lampiran)) {
+                Storage::delete($surat_masuk->file_lampiran);
             }
 
             $file = $request->file('file_lampiran');
@@ -178,8 +178,8 @@ class IncomingLetterController extends Controller
     public function destroy(IncomingLetter $surat_masuk)
     {
         // Hapus file lampiran jika ada di storage
-        if ($surat_masuk->file_lampiran && Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
-            Storage::disk('public')->delete($surat_masuk->file_lampiran);
+        if ($surat_masuk->file_lampiran && Storage::exists($surat_masuk->file_lampiran)) {
+            Storage::delete($surat_masuk->file_lampiran);
         }
 
         $surat_masuk->delete();
@@ -193,16 +193,14 @@ class IncomingLetterController extends Controller
      */
     public function previewFile(IncomingLetter $surat_masuk)
     {
-        if (!$surat_masuk->file_lampiran || !Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
+        if (!$surat_masuk->file_lampiran || !Storage::exists($surat_masuk->file_lampiran)) {
             abort(404, 'File lampiran tidak ditemukan.');
         }
 
-        $path = Storage::disk('public')->path($surat_masuk->file_lampiran);
-        $mime = Storage::disk('public')->mimeType($surat_masuk->file_lampiran);
+        if (config('filesystems.default') === 's3') {
+            return redirect(Storage::url($surat_masuk->file_lampiran));
+        }
 
-        return response()->file($path, [
-            'Content-Type' => $mime,
-            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
-        ]);
+        return Storage::response($surat_masuk->file_lampiran);
     }
 }
