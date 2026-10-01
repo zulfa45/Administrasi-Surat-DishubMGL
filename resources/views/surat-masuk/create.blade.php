@@ -138,19 +138,73 @@
                     @enderror
                 </div>
 
+                {{-- Opsi Disposisi Langsung --}}
+                <div class="border-t border-gray-100 dark:border-gray-700 pt-6 mt-6" x-data="{ tujuanTipe: '{{ old('tujuan_tipe', 'none') }}' }">
+                    <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4">Opsi Disposisi Langsung (Opsional)</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4">
+                        <div>
+                            <label for="tujuan_tipe" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teruskan Ke</label>
+                            <select name="tujuan_tipe" id="tujuan_tipe" x-model="tujuanTipe" class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="none">Hanya Simpan Surat (Tanpa Disposisi)</option>
+                                <option value="department">Bidang / Departemen</option>
+                                <option value="user">Perseorangan / Pegawai</option>
+                            </select>
+                        </div>
+                        
+                        <div x-show="tujuanTipe === 'department'" x-cloak>
+                            <label for="department_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Bidang</label>
+                            <select name="department_id" id="department_id" class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">-- Pilih Bidang --</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>{{ $dept->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('department_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div x-show="tujuanTipe === 'user'" x-cloak>
+                            <label for="user_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Pegawai</label>
+                            <select name="user_id" id="user_id" class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">-- Pilih Pegawai --</option>
+                                @foreach($users as $usr)
+                                    <option value="{{ $usr->id }}" {{ old('user_id') == $usr->id ? 'selected' : '' }}>{{ $usr->name }} - {{ $usr->department?->name ?? 'Tanpa Bidang' }}</option>
+                                @endforeach
+                            </select>
+                            @error('user_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-4" x-show="tujuanTipe !== 'none'" x-cloak>
+                        <div>
+                            <label for="deadline" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Batas Waktu (Deadline)</label>
+                            <input type="date" name="deadline" id="deadline" value="{{ old('deadline') }}" min="{{ date('Y-m-d') }}" class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            @error('deadline') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label for="catatan_disposisi" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Catatan Instruksi</label>
+                            <textarea name="catatan_disposisi" id="catatan_disposisi" rows="2" placeholder="Instruksi tambahan untuk penerima..." class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('catatan_disposisi') }}</textarea>
+                            @error('catatan_disposisi') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+
                 {{-- Tombol Aksi --}}
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <a href="{{ route('surat-masuk.index') }}"
-                       class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
-                        Batal
-                    </a>
-                    <button type="submit"
-                            class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Simpan Surat Masuk
-                    </button>
+                <div class="flex items-center justify-between gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <span class="text-xs text-gray-500 italic">* Nomor Agenda (Internal) akan di-generate otomatis oleh sistem.</span>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('surat-masuk.index') }}"
+                           class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                            Batal
+                        </a>
+                        <button type="submit"
+                                class="inline-flex items-center gap-2 px-5 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Simpan Data
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>

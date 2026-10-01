@@ -11,9 +11,6 @@ use Illuminate\Http\Request;
 
 class DispositionController extends Controller
 {
-    /**
-     * Tampilkan form untuk membuat disposisi baru pada surat tertentu.
-     */
     public function create(IncomingLetter $surat_masuk)
     {
         $departments = Department::where('status', 'active')->orderBy('name')->get();
@@ -37,9 +34,6 @@ class DispositionController extends Controller
         ]);
     }
 
-    /**
-     * Simpan disposisi baru, update status surat, dan kirim notifikasi.
-     */
     public function store(Request $request, IncomingLetter $surat_masuk)
     {
         $validated = $request->validate([
@@ -48,8 +42,9 @@ class DispositionController extends Controller
             'department_id'     => 'required_if:target_type,department|nullable|exists:departments,id',
             'catatan'           => 'required|string|max:1000',
             'tanggal_disposisi' => 'required|date',
+            'deadline'          => 'nullable|date|after_or_equal:today',
         ], [
-            'target_type.required'       => 'Pilih tujuan disposisi (Individu Pegawai atau Bagian/Department).',
+            'target_type.required'       => 'Pilih tujuan disposisi.',
             'user_id.required_if'        => 'Pilih pegawai penerima disposisi.',
             'department_id.required_if'  => 'Pilih department penerima disposisi.',
             'catatan.required'           => 'Instruksi / Catatan disposisi wajib diisi.',
@@ -59,7 +54,6 @@ class DispositionController extends Controller
         $userId = $request->target_type === 'user' ? $request->user_id : null;
         $deptId = $request->target_type === 'department' ? $request->department_id : null;
 
-        // Jika dipilih user, otomatis hubungkan ke department user jika ada
         if ($userId && !$deptId) {
             $selectedUser = User::find($userId);
             if ($selectedUser && $selectedUser->department_id) {
@@ -67,7 +61,6 @@ class DispositionController extends Controller
             }
         }
 
-        // Buat data assignment (Tahap U-07)
         $assignment = Assignment::create([
             'incoming_letter_id' => $surat_masuk->id,
             'user_id'            => $userId,
@@ -75,21 +68,19 @@ class DispositionController extends Controller
             'status'             => 'belum_dibaca',
             'catatan'            => $validated['catatan'],
             'tanggal_disposisi'  => $validated['tanggal_disposisi'],
+            'deadline'           => $validated['deadline'] ?? null,
         ]);
 
-        // Perbarui status surat masuk jika masih 'baru'
         if ($surat_masuk->status === 'baru') {
             $surat_masuk->update(['status' => 'didistribusikan']);
         }
 
-        // Kirim Notifikasi Database (Tahap U-12)
         if ($userId) {
             $recipient = User::find($userId);
             if ($recipient) {
                 $recipient->notify(new DispositionNotification($assignment));
             }
         } elseif ($deptId) {
-            // Notifikasi ke seluruh anggota department tersebut
             $deptMembers = User::where('department_id', $deptId)->get();
             foreach ($deptMembers as $member) {
                 $member->notify(new DispositionNotification($assignment));
@@ -97,18 +88,14 @@ class DispositionController extends Controller
         }
 
         return redirect()->route('surat-masuk.show', $surat_masuk)
-            ->with('success', 'Disposisi berhasil dibuat dan notifikasi telah dikirimkan kepada penerima.');
+            ->with('success', 'Disposisi berhasil dibuat dan notifikasi telah dikirimkan.');
     }
 
-    /**
-     * Hapus / batalkan disposisi surat (Admin/Staf-Loket).
-     */
     public function destroy(Assignment $assignment)
     {
         $letter = $assignment->incomingLetter;
         $assignment->delete();
 
-        // Jika tidak ada lagi assignment dan status masih didistribusikan, kembalikan ke baru
         if ($letter && $letter->assignments()->count() === 0 && $letter->status === 'didistribusikan') {
             $letter->update(['status' => 'baru']);
         }
@@ -116,10 +103,6 @@ class DispositionController extends Controller
         return back()->with('success', 'Disposisi berhasil dibatalkan/dihapus.');
     }
 
-    /**
-     * Perbarui status tindak lanjut assignment (Tahap U-08 & U-11).
-     * Alur: belum_dibaca -> dibaca -> dikerjakan -> selesai
-     */
     public function updateStatus(Request $request, Assignment $assignment)
     {
         $validated = $request->validate([
@@ -135,7 +118,6 @@ class DispositionController extends Controller
             $updateData['catatan_tindak_lanjut'] = $validated['catatan_tindak_lanjut'];
         }
 
-        // Jika selesai, catat tanggal_selesai
         if ($validated['status'] === 'selesai') {
             $updateData['tanggal_selesai'] = now()->toDateString();
         } else {
@@ -144,14 +126,12 @@ class DispositionController extends Controller
 
         $assignment->update($updateData);
 
-        // Update status surat masuk induk
         $letter = $assignment->incomingLetter;
         if ($letter) {
             if ($validated['status'] === 'dikerjakan' && $letter->status !== 'selesai') {
                 $letter->update(['status' => 'dalam_tindak_lanjut']);
             }
 
-            // Jika semua assignment selesai, ubah status surat menjadi selesai
             $totalAssignments = $letter->assignments()->count();
             $completedAssignments = $letter->assignments()->where('status', 'selesai')->count();
 
