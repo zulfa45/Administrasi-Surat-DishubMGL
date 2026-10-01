@@ -30,7 +30,7 @@ class GoogleDriveServiceProvider extends ServiceProvider
             $client->setClientSecret($config['clientSecret']);
             $client->refreshToken($config['refreshToken']);
             $service = new GoogleDriveService($client);
-            $adapter = new GoogleDriveAdapter($service, $config['folder'] ?? '', ['useDisplayPaths' => false]);
+            $adapter = new GoogleDriveAdapter($service, $config['folder'] ?? '');
             
             return new \Illuminate\Filesystem\FilesystemAdapter(
                 new Filesystem($adapter, $config),
