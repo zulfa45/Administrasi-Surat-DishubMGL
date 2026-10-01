@@ -28,10 +28,10 @@ use App\Http\Controllers\ReportController;
 
 // Surat Masuk & Disposisi Routes
 Route::middleware(['auth'])->group(function () {
+    Route::resource('surat-masuk', IncomingLetterController::class)->except(['show'])->middleware('role:admin|staf-loket');
     Route::get('surat-masuk/{surat_masuk}/file', [IncomingLetterController::class, 'previewFile'])->name('surat-masuk.file');
     Route::get('surat-masuk/{surat_masuk}/disposisi-pdf', [ReportController::class, 'printDispositionPdf'])->name('surat-masuk.disposisi-pdf');
     Route::get('surat-masuk/{surat_masuk}', [IncomingLetterController::class, 'show'])->name('surat-masuk.show');
-    Route::resource('surat-masuk', IncomingLetterController::class)->except(['show'])->middleware('role:admin|staf-loket');
 
     // Disposisi Routes (Tahap U-07 & U-08)
     Route::get('surat-masuk/{surat_masuk}/disposisi', [DispositionController::class, 'create'])->name('disposisi.create')->middleware('role:admin|staf-loket');

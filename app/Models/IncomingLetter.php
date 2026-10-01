@@ -10,6 +10,7 @@ class IncomingLetter extends Model
     use HasFactory;
 
     protected $fillable = [
+        'nomor_agenda',
         'nomor_surat',
         'asal_surat',
         'perihal',
