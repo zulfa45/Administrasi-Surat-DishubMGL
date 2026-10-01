@@ -22,13 +22,16 @@
         <ul class="flex items-center flex-shrink-0 space-x-6">
             <!-- Theme toggler -->
             <li class="flex">
-                <button class="rounded-md focus:outline-none focus:shadow-outline-blue" @click="toggleTheme" aria-label="Toggle color mode">
-                    <!-- Sun icon -->
-                    <svg x-show="!dark" class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                <button class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none transition-colors" 
+                        @click="toggleTheme" 
+                        :title="dark ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap'"
+                        aria-label="Toggle color mode">
+                    <!-- Sun icon (shown when dark) -->
+                    <svg x-show="dark" x-cloak class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.289a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zm-1.289 4.22a1 1 0 010 1.415l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.22-1.289a1 1 0 010-1.415l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 01-1.414 1.414zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm1.289-4.22a1 1 0 011.415 0l.707.707a1 1 0 01-1.414 1.414L3.29 4.364a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                     </svg>
-                    <!-- Moon icon -->
-                    <svg x-show="dark" class="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" style="display: none;">
+                    <!-- Moon icon (shown when light) -->
+                    <svg x-show="!dark" x-cloak class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                     </svg>
                 </button>
