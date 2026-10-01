@@ -57,7 +57,12 @@ class IncomingLetterController extends Controller
      */
     public function create()
     {
-        return view('surat-masuk.create');
+        $departments = \App\Models\Department::where('status', 'active')->get();
+        $users = \App\Models\User::whereHas('roles', function($q) {
+            $q->whereIn('name', ['karyawan', 'staf-loket', 'admin']);
+        })->get();
+
+        return view('surat-masuk.create', compact('departments', 'users'));
     }
 
     /**
@@ -74,6 +79,12 @@ class IncomingLetterController extends Controller
             'sifat'            => 'required|in:biasa,penting,segera,rahasia',
             'keterangan'       => 'nullable|string',
             'file_lampiran'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            // Direct disposition fields
+            'tujuan_tipe'      => 'nullable|in:none,department,user',
+            'department_id'    => 'nullable|required_if:tujuan_tipe,department|exists:departments,id',
+            'user_id'          => 'nullable|required_if:tujuan_tipe,user|exists:users,id',
+            'catatan_disposisi'=> 'nullable|string',
+            'deadline'         => 'nullable|date|after_or_equal:today',
         ], [
             'nomor_surat.required'      => 'Nomor surat wajib diisi.',
             'nomor_surat.unique'        => 'Nomor surat sudah terdaftar di sistem.',
@@ -89,14 +100,53 @@ class IncomingLetterController extends Controller
         if ($request->hasFile('file_lampiran')) {
             $file = $request->file('file_lampiran');
             $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('surat-masuk', $filename, 'public');
+            $path = $file->storeAs('surat-masuk', $filename);
             $validated['file_lampiran'] = $path;
         }
+
+        // Generate Nomor Agenda (Format: AG-YYYYMMDD-ID)
+        $today = now()->format('Ymd');
+        $lastLetter = \App\Models\IncomingLetter::whereDate('created_at', now()->toDateString())->orderBy('id', 'desc')->first();
+        $sequence = $lastLetter ? intval(substr($lastLetter->nomor_agenda, -4)) + 1 : 1;
+        $validated['nomor_agenda'] = 'AG-' . $today . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
 
         $validated['status'] = 'baru';
         $validated['created_by'] = auth()->id();
 
-        $letter = IncomingLetter::create($validated);
+        $letter = \App\Models\IncomingLetter::create(collect($validated)->except(['tujuan_tipe', 'department_id', 'user_id', 'catatan_disposisi', 'deadline'])->toArray());
+
+        // Process Direct Disposition if selected
+        if ($request->tujuan_tipe && $request->tujuan_tipe !== 'none') {
+            $assignmentData = [
+                'incoming_letter_id' => $letter->id,
+                'tanggal_disposisi'  => now()->toDateString(),
+                'status'             => 'belum_dibaca',
+                'catatan'            => $request->catatan_disposisi,
+                'deadline'           => $request->deadline,
+            ];
+
+            if ($request->tujuan_tipe === 'user') {
+                $assignmentData['user_id'] = $request->user_id;
+            } else if ($request->tujuan_tipe === 'department') {
+                $assignmentData['department_id'] = $request->department_id;
+            }
+
+            $assignment = \App\Models\Assignment::create($assignmentData);
+            $letter->update(['status' => 'didistribusikan']);
+
+            // Send Notifications
+            if (isset($assignmentData['user_id'])) {
+                $recipient = \App\Models\User::find($assignmentData['user_id']);
+                if ($recipient) {
+                    $recipient->notify(new \App\Notifications\DispositionNotification($assignment));
+                }
+            } elseif (isset($assignmentData['department_id'])) {
+                $deptMembers = \App\Models\User::where('department_id', $assignmentData['department_id'])->get();
+                foreach ($deptMembers as $member) {
+                    $member->notify(new \App\Notifications\DispositionNotification($assignment));
+                }
+            }
+        }
 
         return redirect()->route('surat-masuk.show', $letter)
             ->with('success', 'Surat masuk berhasil ditambahkan.');
@@ -156,8 +206,8 @@ class IncomingLetterController extends Controller
 
         if ($request->hasFile('file_lampiran')) {
             // Hapus file lama jika ada
-            if ($surat_masuk->file_lampiran && Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
-                Storage::disk('public')->delete($surat_masuk->file_lampiran);
+            if ($surat_masuk->file_lampiran && Storage::exists($surat_masuk->file_lampiran)) {
+                Storage::delete($surat_masuk->file_lampiran);
             }
 
             $file = $request->file('file_lampiran');
@@ -178,8 +228,8 @@ class IncomingLetterController extends Controller
     public function destroy(IncomingLetter $surat_masuk)
     {
         // Hapus file lampiran jika ada di storage
-        if ($surat_masuk->file_lampiran && Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
-            Storage::disk('public')->delete($surat_masuk->file_lampiran);
+        if ($surat_masuk->file_lampiran && Storage::exists($surat_masuk->file_lampiran)) {
+            Storage::delete($surat_masuk->file_lampiran);
         }
 
         $surat_masuk->delete();
@@ -193,16 +243,14 @@ class IncomingLetterController extends Controller
      */
     public function previewFile(IncomingLetter $surat_masuk)
     {
-        if (!$surat_masuk->file_lampiran || !Storage::disk('public')->exists($surat_masuk->file_lampiran)) {
+        if (!$surat_masuk->file_lampiran || !Storage::exists($surat_masuk->file_lampiran)) {
             abort(404, 'File lampiran tidak ditemukan.');
         }
 
-        $path = Storage::disk('public')->path($surat_masuk->file_lampiran);
-        $mime = Storage::disk('public')->mimeType($surat_masuk->file_lampiran);
+        if (config('filesystems.default') === 's3') {
+            return redirect(Storage::url($surat_masuk->file_lampiran));
+        }
 
-        return response()->file($path, [
-            'Content-Type' => $mime,
-            'Content-Disposition' => 'inline; filename="' . basename($path) . '"',
-        ]);
+        return Storage::response($surat_masuk->file_lampiran);
     }
 }
