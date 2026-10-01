@@ -17,6 +17,7 @@ class Assignment extends Model
         'catatan',
         'catatan_tindak_lanjut',
         'tanggal_disposisi',
+        'deadline',
         'tanggal_selesai',
     ];
 
