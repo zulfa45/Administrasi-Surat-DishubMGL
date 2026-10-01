@@ -9,6 +9,23 @@
 
     <div class="max-w-2xl">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6">
+            @if(session('error'))
+                <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg dark:bg-red-900/50 dark:border-red-700 dark:text-red-200 text-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg dark:bg-red-900/50 dark:border-red-700 dark:text-red-200 text-sm">
+                    <p class="font-semibold mb-1">Periksa kembali formulir:</p>
+                    <ul class="list-disc list-inside space-y-1 text-xs">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('admin.users.store') }}" enctype="multipart/form-data" class="space-y-5">
                 @csrf
 
