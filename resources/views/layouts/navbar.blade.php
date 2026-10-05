@@ -51,8 +51,8 @@
                     </svg>
 
                     @php
-                        $unreadCount = auth()->user()->unreadNotifications->count();
-                        $latestNotification = auth()->user()->unreadNotifications->latest()->first();
+                        $unreadCount = auth()->user()->unreadNotifications()->count();
+                        $latestNotification = auth()->user()->unreadNotifications()->latest()->first();
                         $latestId = $latestNotification ? $latestNotification->id : null;
                     @endphp
 

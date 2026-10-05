@@ -30,9 +30,9 @@
                         </svg>
                         <span class="ml-4">Notifikasi</span>
                     </span>
-                    @if(auth()->user()->unreadNotifications->count() > 0)
+                    @if(auth()->user()->unreadNotifications()->count() > 0)
                         <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                            {{ auth()->user()->unreadNotifications->count() }}
+                            {{ auth()->user()->unreadNotifications()->count() }}
                         </span>
                     @endif
                 </a>
@@ -190,9 +190,9 @@
                         </svg>
                         <span class="ml-4">Notifikasi</span>
                     </span>
-                    @if(auth()->user()->unreadNotifications->count() > 0)
+                    @if(auth()->user()->unreadNotifications()->count() > 0)
                         <span class="inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
-                            {{ auth()->user()->unreadNotifications->count() }}
+                            {{ auth()->user()->unreadNotifications()->count() }}
                         </span>
                     @endif
                 </a>

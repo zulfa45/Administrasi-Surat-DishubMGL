@@ -8,7 +8,7 @@
                 Pemberitahuan & Notifikasi
             </h2>
 
-            @if(auth()->user()->unreadNotifications->count() > 0)
+            @if(auth()->user()->unreadNotifications()->count() > 0)
                 <form action="{{ route('notifications.mark-all-read') }}" method="POST">
                     @csrf
                     <button type="submit" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50 rounded-lg transition-colors border border-blue-200 dark:border-blue-800">
