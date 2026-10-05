@@ -32,9 +32,14 @@ class NotificationController extends Controller
         if (auth()->user()->hasRole('karyawan') && !empty($data['assignment_id'])) {
             return redirect()->route('karyawan.tasks.show', $data['assignment_id']);
         }
+        
+        // Arahkan ke detail surat bidang jika user adalah kepala_bidang
+        if (auth()->user()->hasRole('kepala_bidang') && !empty($data['assignment_id'])) {
+            return redirect()->route('kabid.surat-masuk.show', $data['assignment_id']);
+        }
 
         // Arahkan ke detail surat masuk
-        if (!empty($data['incoming_letter_id'])) {
+        if (!empty($data['incoming_letter_id']) && auth()->user()->hasAnyRole(['admin', 'staf-loket'])) {
             return redirect()->route('surat-masuk.show', $data['incoming_letter_id']);
         }
 
