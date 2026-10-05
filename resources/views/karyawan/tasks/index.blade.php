@@ -118,6 +118,13 @@
                     @endif
                 </div>
             </form>
+
+            @if(request('search'))
+                <div class="mt-2.5 pt-2.5 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-500 flex items-center justify-between">
+                    <span>Menampilkan tugas dengan kata kunci: <strong class="text-gray-800 dark:text-gray-200">"{{ request('search') }}"</strong></span>
+                    <a href="{{ route('karyawan.tasks.index', request()->except('search')) }}" class="text-blue-600 hover:underline">Hapus pencarian</a>
+                </div>
+            @endif
         </div>
 
         {{-- Tabel Daftar Tugas --}}
