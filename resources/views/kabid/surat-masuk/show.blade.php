@@ -158,7 +158,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6 text-sm">
                         <div>
-                            <span class="text-xs text-gray-400 uppercase tracking-wider block font-medium">Nomor Surat</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-wider block font-medium">Nomor Surat (Fisik)</span>
                             <div class="flex items-center gap-2 mt-0.5">
                                 <span class="font-mono font-bold text-gray-900 dark:text-gray-100 text-sm">{{ $assignment->incomingLetter->nomor_surat }}</span>
                                 <button @click="copyText('{{ $assignment->incomingLetter->nomor_surat }}')" type="button" class="text-gray-400 hover:text-indigo-600 transition-colors" title="Salin Nomor Surat">

@@ -202,7 +202,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
                     <div>
-                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block font-medium">Nomor Surat</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block font-medium">Nomor Surat (Fisik)</span>
                         <div class="flex items-center gap-2 mt-0.5">
                             <span class="font-mono font-bold text-gray-900 dark:text-gray-100 text-sm">{{ $letter->nomor_surat }}</span>
                             <button @click="copyText('{{ $letter->nomor_surat }}')" type="button" class="text-gray-400 hover:text-blue-600 transition-colors" title="Salin Nomor Surat">

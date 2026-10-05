@@ -51,16 +51,68 @@
                     </svg>
 
                     @php
-                        $unreadCount = auth()->user()->unreadNotifications->count();
+                        $unreadCount = auth()->user()->unreadNotifications()->count();
+                        $latestNotification = auth()->user()->unreadNotifications()->latest()->first();
+                        $latestId = $latestNotification ? $latestNotification->id : null;
                     @endphp
 
-                    @if($unreadCount > 0)
-                        <!-- Notification Badge -->
-                        <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">
-                            {{ $unreadCount > 9 ? '9+' : $unreadCount }}
-                        </span>
-                    @endif
+                    <!-- Notification Badge Container -->
+                    <span id="nav-badge-container">
+                        @if($unreadCount > 0)
+                            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">
+                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </span>
                 </button>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        let lastNotificationId = '{{ $latestId }}';
+                        
+                        function playNotificationSound() {
+                            try {
+                                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                                if(!ctx) return;
+                                const osc = ctx.createOscillator();
+                                const gain = ctx.createGain();
+                                osc.connect(gain);
+                                gain.connect(ctx.destination);
+                                osc.type = 'sine';
+                                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                                osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
+                                gain.gain.setValueAtTime(0, ctx.currentTime);
+                                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                                osc.start(ctx.currentTime);
+                                osc.stop(ctx.currentTime + 0.5);
+                            } catch(e) {}
+                        }
+
+                        setInterval(() => {
+                            fetch('{{ route("notifications.check") }}')
+                                .then(res => res.json())
+                                .then(data => {
+                                    const badgeContainer = document.getElementById('nav-badge-container');
+                                    
+                                    if (data.count > 0) {
+                                        badgeContainer.innerHTML = `<span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">${data.count > 9 ? '9+' : data.count}</span>`;
+                                    } else {
+                                        badgeContainer.innerHTML = '';
+                                    }
+
+                                    if (data.latest_id && data.latest_id !== lastNotificationId) {
+                                        playNotificationSound();
+                                        lastNotificationId = data.latest_id;
+                                        
+                                        // Optional: Jika menu notifikasi sedang terbuka, disarankan user reload halaman untuk melihat item baru
+                                        // Tapi badge merah dan suara sudah cukup sebagai real-time feedback
+                                    }
+                                })
+                                .catch(err => console.error(err));
+                        }, 10000); // Polling setiap 10 detik
+                    });
+                </script>
 
                 <template x-if="isNotificationsMenuOpen">
                     <div x-transition:leave="transition ease-in duration-150" 

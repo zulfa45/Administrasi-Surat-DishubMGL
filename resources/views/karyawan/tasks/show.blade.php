@@ -273,7 +273,7 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                         <div>
-                            <span class="text-gray-400 block mb-0.5">Nomor Surat</span>
+                            <span class="text-gray-400 block mb-0.5">Nomor Surat (Fisik)</span>
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-gray-900 dark:text-gray-100 font-mono text-xs">{{ $letter->nomor_surat }}</span>
                                 <button @click="copyText('{{ $letter->nomor_surat }}')" type="button" class="text-gray-400 hover:text-blue-600" title="Salin">

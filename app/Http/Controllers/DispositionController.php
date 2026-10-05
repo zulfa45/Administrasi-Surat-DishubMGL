@@ -78,7 +78,11 @@ class DispositionController extends Controller
         if ($userId) {
             $recipient = User::find($userId);
             if ($recipient) {
-                $recipient->notify(new DispositionNotification($assignment));
+                $recipient->notify(new DispositionNotification(
+                    $assignment,
+                    'Tugas Disposisi Langsung',
+                    'Anda mendapat penugasan langsung dari Admin/Loket untuk surat: ' . $surat_masuk->nomor_surat
+                ));
             }
             
             // Notify the Kabid as well
@@ -89,7 +93,11 @@ class DispositionController extends Controller
                     })->first();
                     
                 if ($kabid && $kabid->id !== $userId) {
-                    $kabid->notify(new DispositionNotification($assignment));
+                    $kabid->notify(new DispositionNotification(
+                        $assignment,
+                        'Pemberitahuan Tugas Anggota',
+                        'Anggota bidang Anda (' . $recipient->name . ') mendapat tugas langsung dari Admin/Loket untuk surat: ' . $surat_masuk->nomor_surat
+                    ));
                 }
             }
         } elseif ($deptId) {
@@ -99,7 +107,11 @@ class DispositionController extends Controller
                 })->first();
                 
             if ($kabid) {
-                $kabid->notify(new DispositionNotification($assignment));
+                $kabid->notify(new DispositionNotification(
+                    $assignment,
+                    'Surat Masuk Bidang',
+                    'Ada surat masuk baru untuk bidang Anda. Mohon segera dicek dan didisposisikan: ' . $surat_masuk->nomor_surat
+                ));
             }
         }
 

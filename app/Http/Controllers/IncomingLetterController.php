@@ -62,7 +62,13 @@ class IncomingLetterController extends Controller
             $q->whereIn('name', ['karyawan', 'staf-loket', 'admin']);
         })->get();
 
-        return view('surat-masuk.create', compact('departments', 'users'));
+        // Calculate next nomor_agenda for preview
+        $today = now()->format('Ymd');
+        $lastLetter = \App\Models\IncomingLetter::whereDate('created_at', now()->toDateString())->orderBy('id', 'desc')->first();
+        $sequence = $lastLetter ? intval(substr($lastLetter->nomor_agenda, -4)) + 1 : 1;
+        $nextNomorAgenda = 'AG-' . $today . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+
+        return view('surat-masuk.create', compact('departments', 'users', 'nextNomorAgenda'));
     }
 
     /**
@@ -148,7 +154,11 @@ class IncomingLetterController extends Controller
             if (isset($assignmentData['user_id'])) {
                 $recipient = \App\Models\User::find($assignmentData['user_id']);
                 if ($recipient) {
-                    $recipient->notify(new \App\Notifications\DispositionNotification($assignment));
+                    $recipient->notify(new \App\Notifications\DispositionNotification(
+                        $assignment,
+                        'Tugas Disposisi Langsung',
+                        'Anda mendapat penugasan langsung dari Admin/Loket untuk surat: ' . $letter->nomor_surat
+                    ));
                 }
                 
                 // Notify the Kabid as well so they know their employee was assigned a task
@@ -159,7 +169,11 @@ class IncomingLetterController extends Controller
                         })->first();
                         
                     if ($kabid && $kabid->id !== $assignmentData['user_id']) {
-                        $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
+                        $kabid->notify(new \App\Notifications\DispositionNotification(
+                            $assignment,
+                            'Pemberitahuan Tugas Anggota',
+                            'Anggota bidang Anda (' . $recipient->name . ') mendapat tugas langsung dari Admin/Loket untuk surat: ' . $letter->nomor_surat
+                        ));
                     }
                 }
             } elseif (isset($assignmentData['department_id'])) {
@@ -171,7 +185,11 @@ class IncomingLetterController extends Controller
                     })->first();
                 
                 if ($kabid) {
-                    $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
+                    $kabid->notify(new \App\Notifications\DispositionNotification(
+                        $assignment,
+                        'Surat Masuk Bidang',
+                        'Ada surat masuk baru untuk bidang Anda. Mohon segera dicek dan didisposisikan: ' . $letter->nomor_surat
+                    ));
                 }
             }
         }

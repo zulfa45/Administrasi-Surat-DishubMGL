@@ -165,7 +165,11 @@ class IncomingLetterController extends Controller
 
             $firstUser = User::find($firstUserId);
             if ($firstUser) {
-                $firstUser->notify(new \App\Notifications\DispositionNotification($assignment));
+                $firstUser->notify(new \App\Notifications\DispositionNotification(
+                    $assignment,
+                    'Tugas Disposisi Baru',
+                    'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
+                ));
             }
         }
 
@@ -190,7 +194,11 @@ class IncomingLetterController extends Controller
 
                 $staf = User::find($uid);
                 if ($staf) {
-                    $staf->notify(new \App\Notifications\DispositionNotification($newAssignment));
+                    $staf->notify(new \App\Notifications\DispositionNotification(
+                        $newAssignment,
+                        'Tugas Disposisi Baru',
+                        'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
+                    ));
                 }
             }
         }
@@ -245,7 +253,12 @@ class IncomingLetterController extends Controller
         if ($assignment->user_id) {
             $karyawan = User::find($assignment->user_id);
             if ($karyawan) {
-                $karyawan->notify(new \App\Notifications\DispositionNotification($assignment));
+                $statusVerif = $validated['keputusan'] === 'terima' ? 'Disetujui' : 'Ditolak (Perlu Revisi)';
+                $karyawan->notify(new \App\Notifications\DispositionNotification(
+                    $assignment,
+                    'Hasil Tindak Lanjut ' . $statusVerif,
+                    'Laporan Anda untuk surat ' . $assignment->incomingLetter->nomor_surat . ' berstatus: ' . $statusVerif
+                ));
             }
         }
 
