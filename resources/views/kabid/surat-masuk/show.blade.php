@@ -12,6 +12,18 @@
         </div>
     </x-slot>
 
+    @if(session('success'))
+        <div class="mb-6">
+            <x-ui.alert type="success" :message="session('success')" />
+        </div>
+    @endif
+    
+    @if(session('error'))
+        <div class="mb-6">
+            <x-ui.alert type="error" :message="session('error')" />
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-6">
             {{-- Informasi Surat --}}
