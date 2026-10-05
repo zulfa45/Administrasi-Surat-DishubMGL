@@ -189,7 +189,11 @@ class TaskController extends Controller
                         })->first();
                         
                     if ($kabid) {
-                        $kabid->notify(new \App\Notifications\DispositionNotification($task));
+                        $kabid->notify(new \App\Notifications\DispositionNotification(
+                            $task,
+                            'Menunggu Verifikasi Hasil',
+                            'Karyawan (' . $user->name . ') telah mengirimkan hasil tugas untuk surat: ' . $letter->nomor_surat
+                        ));
                     }
                 }
             }

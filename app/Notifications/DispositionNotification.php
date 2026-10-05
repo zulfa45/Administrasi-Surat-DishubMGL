@@ -11,13 +11,17 @@ class DispositionNotification extends Notification
     use Queueable;
 
     public Assignment $assignment;
+    public ?string $customTitle;
+    public ?string $customMessage;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Assignment $assignment)
+    public function __construct(Assignment $assignment, ?string $customTitle = null, ?string $customMessage = null)
     {
         $this->assignment = $assignment;
+        $this->customTitle = $customTitle;
+        $this->customMessage = $customMessage;
     }
 
     /**
@@ -47,11 +51,14 @@ class DispositionNotification extends Notification
             $link = route('karyawan.tasks.show', $this->assignment->id);
         }
 
+        $judul = $this->customTitle ?? 'Disposisi Surat Baru';
+        $pesan = $this->customMessage ?? 'Anda menerima penugasan/pemberitahuan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-');
+
         return [
             'assignment_id'      => $this->assignment->id,
             'incoming_letter_id' => $letter ? $letter->id : null,
-            'judul'              => 'Disposisi Surat Baru',
-            'pesan'              => 'Anda menerima penugasan/pemberitahuan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-'),
+            'judul'              => $judul,
+            'pesan'              => $pesan,
             'perihal'            => $letter ? $letter->perihal : '-',
             'link'               => $link,
             'waktu'              => now()->translatedFormat('d M Y H:i'),

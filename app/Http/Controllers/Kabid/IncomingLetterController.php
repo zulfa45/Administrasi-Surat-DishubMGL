@@ -104,7 +104,11 @@ class IncomingLetterController extends Controller
         // Send notification to Karyawan
         $karyawan = User::find($validated['user_id']);
         if ($karyawan) {
-            $karyawan->notify(new \App\Notifications\DispositionNotification($assignment));
+            $karyawan->notify(new \App\Notifications\DispositionNotification(
+                $assignment,
+                'Tugas Disposisi Baru',
+                'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
+            ));
         }
 
         return back()->with('success', 'Surat berhasil didisposisikan ke karyawan.');
@@ -146,7 +150,12 @@ class IncomingLetterController extends Controller
         if ($assignment->user_id) {
             $karyawan = User::find($assignment->user_id);
             if ($karyawan) {
-                $karyawan->notify(new \App\Notifications\DispositionNotification($assignment));
+                $statusVerif = $validated['keputusan'] === 'terima' ? 'Disetujui' : 'Ditolak (Perlu Revisi)';
+                $karyawan->notify(new \App\Notifications\DispositionNotification(
+                    $assignment,
+                    'Hasil Tindak Lanjut ' . $statusVerif,
+                    'Laporan Anda untuk surat ' . $assignment->incomingLetter->nomor_surat . ' berstatus: ' . $statusVerif
+                ));
             }
         }
 

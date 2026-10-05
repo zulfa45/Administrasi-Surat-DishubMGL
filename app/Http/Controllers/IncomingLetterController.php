@@ -148,7 +148,11 @@ class IncomingLetterController extends Controller
             if (isset($assignmentData['user_id'])) {
                 $recipient = \App\Models\User::find($assignmentData['user_id']);
                 if ($recipient) {
-                    $recipient->notify(new \App\Notifications\DispositionNotification($assignment));
+                    $recipient->notify(new \App\Notifications\DispositionNotification(
+                        $assignment,
+                        'Tugas Disposisi Langsung',
+                        'Anda mendapat penugasan langsung dari Admin/Loket untuk surat: ' . $letter->nomor_surat
+                    ));
                 }
                 
                 // Notify the Kabid as well so they know their employee was assigned a task
@@ -159,7 +163,11 @@ class IncomingLetterController extends Controller
                         })->first();
                         
                     if ($kabid && $kabid->id !== $assignmentData['user_id']) {
-                        $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
+                        $kabid->notify(new \App\Notifications\DispositionNotification(
+                            $assignment,
+                            'Pemberitahuan Tugas Anggota',
+                            'Anggota bidang Anda (' . $recipient->name . ') mendapat tugas langsung dari Admin/Loket untuk surat: ' . $letter->nomor_surat
+                        ));
                     }
                 }
             } elseif (isset($assignmentData['department_id'])) {
@@ -171,7 +179,11 @@ class IncomingLetterController extends Controller
                     })->first();
                 
                 if ($kabid) {
-                    $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
+                    $kabid->notify(new \App\Notifications\DispositionNotification(
+                        $assignment,
+                        'Surat Masuk Bidang',
+                        'Ada surat masuk baru untuk bidang Anda. Mohon segera dicek dan didisposisikan: ' . $letter->nomor_surat
+                    ));
                 }
             }
         }
