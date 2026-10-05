@@ -16,12 +16,7 @@ class TaskController extends Controller
         $user = auth()->user();
 
         return Assignment::with(['incomingLetter.creator', 'department'])
-            ->where(function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-                if ($user->department_id) {
-                    $query->orWhere('department_id', $user->department_id);
-                }
-            });
+            ->where('user_id', $user->id);
     }
 
     /**
@@ -125,7 +120,7 @@ class TaskController extends Controller
         $user = auth()->user();
 
         // Otorisasi: Karyawan hanya boleh melihat tugasnya sendiri atau tugas bagiannya
-        if ($task->user_id !== $user->id && $task->department_id !== $user->department_id) {
+        if ($task->user_id !== $user->id) {
             abort(403, 'Anda tidak memiliki akses ke tugas disposisi ini.');
         }
 
@@ -150,7 +145,7 @@ class TaskController extends Controller
     {
         $user = auth()->user();
 
-        if ($task->user_id !== $user->id && $task->department_id !== $user->department_id) {
+        if ($task->user_id !== $user->id) {
             abort(403, 'Anda tidak memiliki akses ke tugas disposisi ini.');
         }
 

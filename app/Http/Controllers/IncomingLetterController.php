@@ -163,9 +163,15 @@ class IncomingLetterController extends Controller
                     }
                 }
             } elseif (isset($assignmentData['department_id'])) {
-                $deptMembers = \App\Models\User::where('department_id', $assignmentData['department_id'])->get();
-                foreach ($deptMembers as $member) {
-                    $member->notify(new \App\Notifications\DispositionNotification($assignment));
+                // If it's sent to the department, ONLY notify the Kabid.
+                // The employees will be notified later when Kabid assigns it to them.
+                $kabid = \App\Models\User::where('department_id', $assignmentData['department_id'])
+                    ->whereHas('roles', function($q) {
+                        $q->where('name', 'kepala_bidang');
+                    })->first();
+                
+                if ($kabid) {
+                    $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
                 }
             }
         }

@@ -93,9 +93,13 @@ class DispositionController extends Controller
                 }
             }
         } elseif ($deptId) {
-            $deptMembers = User::where('department_id', $deptId)->get();
-            foreach ($deptMembers as $member) {
-                $member->notify(new DispositionNotification($assignment));
+            $kabid = User::where('department_id', $deptId)
+                ->whereHas('roles', function($q) {
+                    $q->where('name', 'kepala_bidang');
+                })->first();
+                
+            if ($kabid) {
+                $kabid->notify(new DispositionNotification($assignment));
             }
         }
 
