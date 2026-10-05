@@ -135,14 +135,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teruskan Ke (Karyawan)</label>
                         <select name="user_id" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" {{ in_array($assignment->status, ['selesai', 'menunggu_verifikasi_kabid']) ? 'disabled' : '' }}>
-                            <option value="">-- Pilih Karyawan --</option>
+                            <option value="">-- Simpan Saja (Tidak Ditugaskan) --</option>
                             @foreach($karyawan as $k)
                                 <option value="{{ $k->id }}" {{ $assignment->user_id == $k->id ? 'selected' : '' }}>{{ $k->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instruksi Anda</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instruksi Anda (Opsional jika hanya disimpan)</label>
                         <textarea name="catatan_kabid" rows="3" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm" placeholder="Instruksi untuk karyawan..." {{ in_array($assignment->status, ['selesai', 'menunggu_verifikasi_kabid']) ? 'disabled' : '' }}>{{ $assignment->catatan_kabid }}</textarea>
                     </div>
                     <div>
@@ -152,7 +152,7 @@
                     
                     @if(!in_array($assignment->status, ['selesai', 'menunggu_verifikasi_kabid']))
                         <button type="submit" class="w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors">
-                            Tugaskan / Simpan
+                            Tugaskan Karyawan / Simpan Arsip
                         </button>
                     @endif
                 </form>

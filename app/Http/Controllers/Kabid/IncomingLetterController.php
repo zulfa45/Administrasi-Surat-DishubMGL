@@ -62,22 +62,36 @@ class IncomingLetterController extends Controller
 
         $validated = $request->validate([
             'user_id' => [
-                'required',
-                'exists:users,id',
+                'nullable',
                 function ($attribute, $value, $fail) use ($user) {
-                    $karyawan = User::find($value);
-                    if (!$karyawan || $karyawan->department_id !== $user->department_id) {
-                        $fail('Karyawan yang dipilih tidak valid atau bukan dari bidang Anda.');
+                    if ($value) {
+                        $karyawan = User::find($value);
+                        if (!$karyawan || $karyawan->department_id !== $user->department_id) {
+                            $fail('Karyawan yang dipilih tidak valid atau bukan dari bidang Anda.');
+                        }
                     }
                 },
             ],
-            'catatan_kabid' => 'required|string',
+            'catatan_kabid' => 'required_with:user_id|nullable|string',
             'deadline' => 'nullable|date|after_or_equal:today',
         ], [
-            'user_id.required' => 'Pilih karyawan penerima disposisi.',
-            'catatan_kabid.required' => 'Instruksi wajib diisi.',
+            'catatan_kabid.required_with' => 'Instruksi wajib diisi jika Anda menugaskan ke karyawan.',
         ]);
 
+        if (empty($validated['user_id'])) {
+            // Cuma disimpan saja (Arsip / Selesai oleh Kabid)
+            $assignment->update([
+                'user_id' => null,
+                'catatan_kabid' => $validated['catatan_kabid'] ?? 'Disimpan tanpa penugasan.',
+                'status' => 'selesai',
+                'tanggal_selesai' => now()->toDateString(),
+            ]);
+            $assignment->incomingLetter->update(['status' => 'selesai']);
+            
+            return back()->with('success', 'Surat berhasil disimpan (diarsipkan) tanpa ditugaskan.');
+        }
+
+        // Ditugaskan ke Karyawan
         $assignment->update([
             'user_id' => $validated['user_id'],
             'catatan_kabid' => $validated['catatan_kabid'],
