@@ -121,8 +121,8 @@
             <td class="header-text">
                 <h3>PEMERINTAH KOTA</h3>
                 <h2>DINAS PERHUBUNGAN</h2>
-                <p>Jalan Jenderal Sudirman No. 45, Kota Telp. (0293) 123456 Fax. (0293) 654321</p>
-                <p>Website: dishub.kotakota.go.id | Email: info@dishub.kotakota.go.id</p>
+                <p>Jl. Jend. Sudirman No. 84, Kota Magelang, Jawa Tengah 56125 Telp. (0293) 362205</p>
+                <p>Website: dishub.magelangkota.go.id | Email: dishubmagelangkota@gmail.com</p>
             </td>
             <td class="header-logo">
                 @if(!empty($dishubLogo))
