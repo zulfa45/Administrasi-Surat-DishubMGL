@@ -59,4 +59,24 @@ class NotificationController extends Controller
 
         return back()->with('success', 'Semua notifikasi berhasil ditandai sudah dibaca.');
     }
+
+    /**
+     * Cek notifikasi terbaru secara realtime (AJAX polling).
+     */
+    public function check()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['count' => 0]);
+        }
+
+        $unreadCount = $user->unreadNotifications()->count();
+        $latest = $user->unreadNotifications()->latest()->first();
+
+        return response()->json([
+            'count' => $unreadCount,
+            'latest_id' => $latest ? $latest->id : null,
+            'latest_title' => $latest ? ($latest->data['judul'] ?? 'Notifikasi Baru') : null,
+        ]);
+    }
 }

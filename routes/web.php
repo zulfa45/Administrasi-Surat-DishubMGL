@@ -43,6 +43,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Notifikasi Routes (Tahap U-12)
     Route::get('notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('notifications/check', [\App\Http\Controllers\NotificationController::class, 'check'])->name('notifications.check');
     Route::get('notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'read'])->name('notifications.read');
     Route::post('notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 });
