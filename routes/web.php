@@ -72,6 +72,7 @@ Route::middleware(['auth', 'role:kepala_bidang'])->prefix('kabid')->name('kabid.
     Route::get('/surat-masuk/{assignment}', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'show'])->name('surat-masuk.show');
     Route::post('/surat-masuk/{assignment}/disposisi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'disposisi'])->name('surat-masuk.disposisi');
     Route::post('/surat-masuk/{assignment}/verifikasi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'verifikasi'])->name('surat-masuk.verifikasi');
+    Route::get('/anggota', [\App\Http\Controllers\Kabid\MemberController::class, 'index'])->name('anggota.index');
 });
 
 use App\Http\Controllers\Karyawan\TaskController;
