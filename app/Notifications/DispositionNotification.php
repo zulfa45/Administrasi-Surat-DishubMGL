@@ -39,13 +39,21 @@ class DispositionNotification extends Notification
     {
         $letter = $this->assignment->incomingLetter;
 
+        $link = route('surat-masuk.show', $letter->id);
+        
+        if ($notifiable->hasRole('kepala_bidang')) {
+            $link = route('kabid.surat-masuk.show', $this->assignment->id);
+        } elseif ($notifiable->hasRole('karyawan')) {
+            $link = route('karyawan.tasks.show', $this->assignment->id);
+        }
+
         return [
             'assignment_id'      => $this->assignment->id,
             'incoming_letter_id' => $letter ? $letter->id : null,
             'judul'              => 'Disposisi Surat Baru',
-            'pesan'              => 'Anda menerima penugasan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-'),
+            'pesan'              => 'Anda menerima penugasan/pemberitahuan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-'),
             'perihal'            => $letter ? $letter->perihal : '-',
-            'link'               => route('surat-masuk.show', $letter->id),
+            'link'               => $link,
             'waktu'              => now()->translatedFormat('d M Y H:i'),
         ];
     }

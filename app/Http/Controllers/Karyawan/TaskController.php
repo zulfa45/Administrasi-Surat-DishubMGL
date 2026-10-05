@@ -185,6 +185,18 @@ class TaskController extends Controller
                 $letter->update(['status' => 'dalam_tindak_lanjut']);
             } elseif ($validated['status'] === 'menunggu_verifikasi_kabid') {
                 $letter->update(['status' => 'menunggu_verifikasi_kabid']);
+                
+                // Notify the Kabid that a task is waiting for verification
+                if ($task->department_id) {
+                    $kabid = \App\Models\User::where('department_id', $task->department_id)
+                        ->whereHas('roles', function($q) {
+                            $q->where('name', 'kepala_bidang');
+                        })->first();
+                        
+                    if ($kabid) {
+                        $kabid->notify(new \App\Notifications\DispositionNotification($task));
+                    }
+                }
             }
         }
 

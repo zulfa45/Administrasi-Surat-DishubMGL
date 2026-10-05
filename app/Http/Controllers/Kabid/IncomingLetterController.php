@@ -128,6 +128,14 @@ class IncomingLetterController extends Controller
             $msg = 'Hasil tindak lanjut dikembalikan ke karyawan untuk direvisi.';
         }
 
+        // Notify Karyawan
+        if ($assignment->user_id) {
+            $karyawan = User::find($assignment->user_id);
+            if ($karyawan) {
+                $karyawan->notify(new \App\Notifications\DispositionNotification($assignment));
+            }
+        }
+
         return back()->with('success', $msg);
     }
 }

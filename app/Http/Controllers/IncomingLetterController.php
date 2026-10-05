@@ -128,6 +128,10 @@ class IncomingLetterController extends Controller
 
             if ($request->tujuan_tipe === 'user') {
                 $assignmentData['user_id'] = $request->user_id;
+                $selectedUser = \App\Models\User::find($request->user_id);
+                if ($selectedUser && $selectedUser->department_id) {
+                    $assignmentData['department_id'] = $selectedUser->department_id;
+                }
             } else if ($request->tujuan_tipe === 'department') {
                 $assignmentData['department_id'] = $request->department_id;
             }
@@ -145,6 +149,18 @@ class IncomingLetterController extends Controller
                 $recipient = \App\Models\User::find($assignmentData['user_id']);
                 if ($recipient) {
                     $recipient->notify(new \App\Notifications\DispositionNotification($assignment));
+                }
+                
+                // Notify the Kabid as well so they know their employee was assigned a task
+                if (isset($assignmentData['department_id'])) {
+                    $kabid = \App\Models\User::where('department_id', $assignmentData['department_id'])
+                        ->whereHas('roles', function($q) {
+                            $q->where('name', 'kepala_bidang');
+                        })->first();
+                        
+                    if ($kabid && $kabid->id !== $assignmentData['user_id']) {
+                        $kabid->notify(new \App\Notifications\DispositionNotification($assignment));
+                    }
                 }
             } elseif (isset($assignmentData['department_id'])) {
                 $deptMembers = \App\Models\User::where('department_id', $assignmentData['department_id'])->get();
