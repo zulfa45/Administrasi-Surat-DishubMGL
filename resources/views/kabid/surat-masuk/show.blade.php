@@ -34,7 +34,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-6">
                     <div>
-                        <p class="text-xs text-gray-500 mb-1">Nomor Surat</p>
+                        <p class="text-xs text-gray-500 mb-1">Nomor Surat (Fisik)</p>
                         <p class="font-medium">{{ $assignment->incomingLetter->nomor_surat }}</p>
                     </div>
                     <div>

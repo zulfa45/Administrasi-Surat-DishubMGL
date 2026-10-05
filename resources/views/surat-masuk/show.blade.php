@@ -108,7 +108,12 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
-                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Nomor Surat</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Nomor Agenda</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-100 font-mono">{{ $letter->nomor_agenda }}</span>
+                    </div>
+
+                    <div>
+                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block">Nomor Surat (Fisik)</span>
                         <span class="font-medium text-gray-900 dark:text-gray-100 font-mono">{{ $letter->nomor_surat }}</span>
                     </div>
 

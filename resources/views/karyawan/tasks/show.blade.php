@@ -223,7 +223,12 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div class="p-3 bg-gray-50/80 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700">
-                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block font-semibold">Nomor Surat</span>
+                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block font-semibold">Nomor Agenda</span>
+                        <span class="font-mono font-medium text-gray-900 dark:text-gray-100 mt-0.5 block">{{ $letter->nomor_agenda }}</span>
+                    </div>
+
+                    <div class="p-3 bg-gray-50/80 dark:bg-gray-700/40 rounded-xl border border-gray-100 dark:border-gray-700">
+                        <span class="text-xs text-gray-400 dark:text-gray-500 uppercase tracking-wider block font-semibold">Nomor Surat (Fisik)</span>
                         <span class="font-mono font-medium text-gray-900 dark:text-gray-100 mt-0.5 block">{{ $letter->nomor_surat }}</span>
                     </div>
 
