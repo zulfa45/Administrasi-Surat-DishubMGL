@@ -155,8 +155,11 @@ class TaskController extends Controller
         }
 
         $validated = $request->validate([
-            'status'                => 'required|in:dibaca,dikerjakan,selesai',
-            'catatan_tindak_lanjut' => 'nullable|string|max:1000',
+            'status'                => 'required|in:dibaca,dikerjakan,menunggu_verifikasi_kabid',
+            'catatan_tindak_lanjut' => 'required_if:status,menunggu_verifikasi_kabid|nullable|string',
+            'file_tindak_lanjut'    => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
+        ], [
+            'catatan_tindak_lanjut.required_if' => 'Laporan atau keterangan wajib diisi saat menyelesaikan tugas.'
         ]);
 
         $updateData = ['status' => $validated['status']];
@@ -164,9 +167,13 @@ class TaskController extends Controller
         if ($request->filled('catatan_tindak_lanjut')) {
             $updateData['catatan_tindak_lanjut'] = $validated['catatan_tindak_lanjut'];
         }
-
-        if ($validated['status'] === 'selesai') {
-            $updateData['tanggal_selesai'] = now()->toDateString();
+        
+        if ($request->hasFile('file_tindak_lanjut')) {
+            $file = $request->file('file_tindak_lanjut');
+            $filename = time() . '_hasil_' . \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            $path = 'tindak-lanjut/' . $filename;
+            \Illuminate\Support\Facades\Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
+            $updateData['file_tindak_lanjut'] = $path;
         }
 
         $task->update($updateData);
@@ -174,15 +181,10 @@ class TaskController extends Controller
         // Update status surat induk
         $letter = $task->incomingLetter;
         if ($letter) {
-            if ($validated['status'] === 'dikerjakan' && $letter->status !== 'selesai') {
+            if ($validated['status'] === 'dikerjakan' && $letter->status !== 'selesai' && $letter->status !== 'menunggu_verifikasi_kabid') {
                 $letter->update(['status' => 'dalam_tindak_lanjut']);
-            }
-
-            $totalAssignments = $letter->assignments()->count();
-            $completedAssignments = $letter->assignments()->where('status', 'selesai')->count();
-
-            if ($totalAssignments > 0 && $totalAssignments === $completedAssignments) {
-                $letter->update(['status' => 'selesai']);
+            } elseif ($validated['status'] === 'menunggu_verifikasi_kabid') {
+                $letter->update(['status' => 'menunggu_verifikasi_kabid']);
             }
         }
 

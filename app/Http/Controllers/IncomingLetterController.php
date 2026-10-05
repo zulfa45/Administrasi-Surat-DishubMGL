@@ -133,7 +133,12 @@ class IncomingLetterController extends Controller
             }
 
             $assignment = \App\Models\Assignment::create($assignmentData);
-            $letter->update(['status' => 'didistribusikan']);
+            
+            if ($request->tujuan_tipe === 'department') {
+                $letter->update(['status' => 'menunggu_disposisi_kabid']);
+            } else {
+                $letter->update(['status' => 'didistribusikan']);
+            }
 
             // Send Notifications
             if (isset($assignmentData['user_id'])) {

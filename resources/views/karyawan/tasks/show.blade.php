@@ -131,7 +131,17 @@
                     </div>
                 </div>
 
-                <form action="{{ route('karyawan.tasks.status', $task) }}" method="POST" class="space-y-5">
+                @if($task->status === 'perlu_revisi')
+                    <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200">
+                        <h4 class="text-sm font-bold text-rose-800 flex items-center gap-2 mb-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            Tugas Dikembalikan untuk Direvisi
+                        </h4>
+                        <p class="text-sm text-rose-700 mt-2">{{ $task->catatan_revisi }}</p>
+                    </div>
+                @endif
+
+                <form action="{{ route('karyawan.tasks.status', $task) }}" method="POST" enctype="multipart/form-data" class="space-y-5">
                     @csrf
                     @method('PATCH')
 
@@ -156,12 +166,12 @@
                                 <span class="text-[11px] text-gray-500 dark:text-gray-400">Proses tindak lanjut / koordinasi</span>
                             </label>
 
-                            <label class="relative flex flex-col p-3.5 border rounded-xl cursor-pointer transition-all {{ $task->status === 'selesai' ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300' }}">
+                            <label class="relative flex flex-col p-3.5 border rounded-xl cursor-pointer transition-all {{ in_array($task->status, ['menunggu_verifikasi_kabid', 'selesai']) ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-gray-300' }}">
                                 <div class="flex items-center justify-between mb-1">
-                                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300">3. Selesai</span>
-                                    <input type="radio" name="status" value="selesai" {{ $task->status === 'selesai' ? 'checked' : '' }} class="text-emerald-600 focus:ring-emerald-500">
+                                    <span class="text-xs font-bold text-emerald-700 dark:text-emerald-300">3. Kirim Hasil</span>
+                                    <input type="radio" name="status" value="menunggu_verifikasi_kabid" {{ in_array($task->status, ['menunggu_verifikasi_kabid', 'selesai']) ? 'checked' : '' }} class="text-emerald-600 focus:ring-emerald-500">
                                 </div>
-                                <span class="text-[11px] text-gray-500 dark:text-gray-400">Tugas telah tuntas dikerjakan</span>
+                                <span class="text-[11px] text-gray-500 dark:text-gray-400">Kirim laporan ke Kabid</span>
                             </label>
                         </div>
                     </div>
@@ -174,6 +184,16 @@
                                   placeholder="Contoh: Surat telah dikonfirmasi dan berkas fisik telah diserahkan ke Seksi Angkutan untuk verifikasi lapangan."
                                   class="w-full text-sm px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50/50 dark:bg-gray-900/40 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-gray-900 transition-all">{{ old('catatan_tindak_lanjut', $task->catatan_tindak_lanjut) }}</textarea>
                         <p class="text-[11px] text-gray-400 dark:text-gray-500 mt-1">Catatan ini akan tersimpan dalam riwayat disposisi surat pimpinan.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1.5">
+                            File Bukti / Hasil Tindak Lanjut (Opsional)
+                        </label>
+                        <input type="file" name="file_tindak_lanjut" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-blue-300">
+                        @if($task->file_tindak_lanjut)
+                            <a href="{{ \Illuminate\Support\Facades\Storage::disk('google')->url($task->file_tindak_lanjut) }}" target="_blank" class="text-xs text-blue-600 mt-2 inline-block font-medium">Lihat file tersimpan saat ini</a>
+                        @endif
                     </div>
 
                     <div class="flex items-center justify-end pt-2">

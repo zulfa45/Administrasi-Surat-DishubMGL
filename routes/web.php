@@ -13,6 +13,8 @@ Route::get('/dashboard', function () {
         return redirect('/admin/dashboard');
     } elseif ($user->hasRole('staf-loket')) {
         return redirect('/staf/dashboard');
+    } elseif ($user->hasRole('kepala_bidang')) {
+        return redirect('/kabid/dashboard');
     } elseif ($user->hasRole('karyawan')) {
         return redirect('/karyawan/dashboard');
     }
@@ -61,6 +63,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 // Staf Loket Routes
 Route::middleware(['auth', 'role:staf-loket'])->prefix('staf')->name('staf.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Staf\DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Kepala Bidang Routes
+Route::middleware(['auth', 'role:kepala_bidang'])->prefix('kabid')->name('kabid.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Kabid\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/surat-masuk', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'index'])->name('surat-masuk.index');
+    Route::get('/surat-masuk/{assignment}', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'show'])->name('surat-masuk.show');
+    Route::post('/surat-masuk/{assignment}/disposisi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'disposisi'])->name('surat-masuk.disposisi');
+    Route::post('/surat-masuk/{assignment}/verifikasi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'verifikasi'])->name('surat-masuk.verifikasi');
 });
 
 use App\Http\Controllers\Karyawan\TaskController;
