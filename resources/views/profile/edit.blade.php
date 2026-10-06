@@ -1,8 +1,18 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h2 class="font-bold text-xl text-gray-900 dark:text-gray-100 leading-tight">
+                    Pengaturan Profil Pengguna
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    Kelola foto profil, informasi akun, dan kata sandi Anda.
+                </p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 uppercase tracking-wider self-start sm:self-auto">
+                {{ auth()->user()->roles->first()->name ?? 'Pengguna' }}
+            </span>
+        </div>
     </x-slot>
 
     <div class="py-12">
