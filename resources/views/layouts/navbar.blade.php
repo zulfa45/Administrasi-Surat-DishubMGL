@@ -39,7 +39,8 @@
 
             <!-- Notifications menu (Tahap U-12) -->
             <li class="relative" x-data="{ isNotificationsMenuOpen: false }">
-                <button class="relative p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none transition-colors" 
+                <button type="button" 
+                        class="relative p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none transition-colors" 
                         @click="isNotificationsMenuOpen = !isNotificationsMenuOpen" 
                         @keydown.escape="isNotificationsMenuOpen = false" 
                         aria-label="Notifikasi" 
@@ -66,89 +67,93 @@
                     </span>
                 </button>
 
-                <template x-if="isNotificationsMenuOpen">
-                    <div x-transition:leave="transition ease-in duration-150" 
-                         x-transition:leave-start="opacity-100" 
-                         x-transition:leave-end="opacity-0" 
-                         @click.away="isNotificationsMenuOpen = false" 
-                         @keydown.escape="isNotificationsMenuOpen = false" 
-                         class="absolute right-0 w-80 sm:w-96 mt-2 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/60 z-50">
-                        
-                        <!-- Header -->
-                        <div class="p-3.5 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="font-semibold text-sm text-gray-900 dark:text-gray-100">Notifikasi</span>
-                                @if($unreadCount > 0)
-                                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
-                                        {{ $unreadCount }} Baru
-                                    </span>
-                                @endif
-                            </div>
-
+                <!-- Notification Dropdown -->
+                <div x-show="isNotificationsMenuOpen" 
+                     style="display: none;"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 transform scale-95"
+                     x-transition:enter-end="opacity-100 transform scale-100"
+                     x-transition:leave="transition ease-in duration-150" 
+                     x-transition:leave-start="opacity-100 transform scale-100" 
+                     x-transition:leave-end="opacity-0 transform scale-95" 
+                     @click.away="isNotificationsMenuOpen = false" 
+                     @keydown.escape="isNotificationsMenuOpen = false" 
+                     class="absolute right-0 w-80 sm:w-96 mt-2 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/60 z-50">
+                    
+                    <!-- Header -->
+                    <div class="p-3.5 flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold text-sm text-gray-900 dark:text-gray-100">Notifikasi</span>
                             @if($unreadCount > 0)
-                                <form action="{{ route('notifications.mark-all-read') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                                        Tandai Semua Dibaca
-                                    </button>
-                                </form>
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
+                                    {{ $unreadCount }} Baru
+                                </span>
                             @endif
                         </div>
 
-                        <!-- Notification Items -->
-                        <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700/40">
-                            @forelse(auth()->user()->notifications()->take(6)->get() as $notif)
-                                @php
-                                    $isUnread = is_null($notif->read_at);
-                                    $nData = $notif->data;
-                                @endphp
-                                <a href="{{ route('notifications.read', $notif->id) }}" 
-                                   class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors {{ $isUnread ? 'bg-blue-50/50 dark:bg-blue-900/10' : '' }}">
-                                    <div class="flex items-start gap-3">
-                                        <span class="inline-flex p-2 rounded-lg {{ $isUnread ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-400' }} flex-shrink-0 mt-0.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                            </svg>
-                                        </span>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center justify-between gap-1 mb-0.5">
-                                                <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
-                                                    {{ $nData['judul'] ?? 'Disposisi Baru' }}
-                                                </p>
-                                                @if($isUnread)
-                                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0"></span>
-                                                @endif
-                                            </div>
-                                            <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                                                {{ $nData['pesan'] ?? 'Ada disposisi baru untuk Anda.' }}
-                                            </p>
-                                            <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">
-                                                {{ $notif->created_at->diffForHumans() }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                            @empty
-                                <div class="py-8 text-center">
-                                    <svg class="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
-                                    </svg>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Tidak ada notifikasi saat ini</p>
-                                </div>
-                            @endforelse
-                        </div>
-
-                        <!-- Footer -->
-                        <div class="p-2.5 text-center bg-gray-50/50 dark:bg-gray-800/80 rounded-b-xl">
-                            <a href="{{ route('notifications.index') }}" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center gap-1">
-                                <span>Lihat Seluruh Notifikasi</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
-                        </div>
+                        @if($unreadCount > 0)
+                            <form action="{{ route('notifications.mark-all-read') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                    Tandai Semua Dibaca
+                                </button>
+                            </form>
+                        @endif
                     </div>
-                </template>
+
+                    <!-- Notification Items -->
+                    <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700/40">
+                        @forelse(auth()->user()->notifications()->take(6)->get() as $notif)
+                            @php
+                                $isUnread = is_null($notif->read_at);
+                                $nData = $notif->data;
+                            @endphp
+                            <a href="{{ route('notifications.read', $notif->id) }}" 
+                               class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors {{ $isUnread ? 'bg-blue-50/50 dark:bg-blue-900/10' : '' }}">
+                                <div class="flex items-start gap-3">
+                                    <span class="inline-flex p-2 rounded-lg {{ $isUnread ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-400' }} flex-shrink-0 mt-0.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </span>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between gap-1 mb-0.5">
+                                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
+                                                {{ $nData['judul'] ?? 'Disposisi Baru' }}
+                                            </p>
+                                            @if($isUnread)
+                                                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0"></span>
+                                            @endif
+                                        </div>
+                                        <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                                            {{ $nData['pesan'] ?? 'Ada disposisi baru untuk Anda.' }}
+                                        </p>
+                                        <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">
+                                            {{ $notif->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="py-8 text-center">
+                                <svg class="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                                </svg>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Tidak ada notifikasi saat ini</p>
+                            </div>
+                        @endforelse
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="p-2.5 text-center bg-gray-50/50 dark:bg-gray-800/80 rounded-b-xl">
+                        <a href="{{ route('notifications.index') }}" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center gap-1">
+                            <span>Lihat Seluruh Notifikasi</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </li>
 
             <!-- Profile menu -->
