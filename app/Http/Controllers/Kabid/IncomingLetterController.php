@@ -11,18 +11,61 @@ use Illuminate\Http\Request;
 class IncomingLetterController extends Controller
 {
     /**
-     * Tampilkan daftar surat masuk untuk bidang.
+     * Tampilkan daftar surat masuk untuk bidang dengan pencarian dan filter status.
      */
     public function index(Request $request)
     {
         $user = auth()->user();
+        $deptId = $user->department_id;
         
-        $assignments = Assignment::with(['incomingLetter', 'user'])
-            ->where('department_id', $user->department_id)
-            ->latest('created_at')
-            ->paginate(15);
+        $baseQuery = Assignment::with(['incomingLetter', 'user'])
+            ->where('department_id', $deptId);
+
+        // Hitung total untuk status filter tabs
+        $counts = [
+            'all'                 => (clone $baseQuery)->count(),
+            'belum_disposisi'     => (clone $baseQuery)->whereNull('user_id')->where('status', '!=', 'selesai')->count(),
+            'sedang_proses'       => (clone $baseQuery)->whereNotNull('user_id')->whereIn('status', ['belum_dibaca', 'dibaca', 'dikerjakan', 'perlu_revisi'])->count(),
+            'menunggu_verifikasi' => (clone $baseQuery)->where('status', 'menunggu_verifikasi_kabid')->count(),
+            'selesai'             => (clone $baseQuery)->where('status', 'selesai')->count(),
+        ];
+
+        $query = clone $baseQuery;
+
+        // Filter tab status
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if ($status === 'belum_disposisi') {
+                $query->whereNull('user_id')->where('status', '!=', 'selesai');
+            } elseif ($status === 'sedang_proses') {
+                $query->whereNotNull('user_id')->whereIn('status', ['belum_dibaca', 'dibaca', 'dikerjakan', 'perlu_revisi']);
+            } elseif ($status === 'menunggu_verifikasi') {
+                $query->where('status', 'menunggu_verifikasi_kabid');
+            } elseif ($status === 'selesai') {
+                $query->where('status', 'selesai');
+            }
+        }
+
+        // Pencarian kata kunci
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('incomingLetter', function ($lq) use ($search) {
+                    $lq->where('nomor_surat', 'like', "%{$search}%")
+                       ->orWhere('asal_surat', 'like', "%{$search}%")
+                       ->orWhere('perihal', 'like', "%{$search}%")
+                       ->orWhere('nomor_agenda', 'like', "%{$search}%");
+                })->orWhereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $assignments = $query->latest('created_at')
+            ->paginate(15)
+            ->withQueryString();
             
-        return view('kabid.surat-masuk.index', compact('assignments'));
+        return view('kabid.surat-masuk.index', compact('assignments', 'counts'));
     }
 
     /**
@@ -39,6 +82,12 @@ class IncomingLetterController extends Controller
 
         $assignment->load(['incomingLetter', 'user']);
         
+        // Seluruh penugasan untuk surat ini di bidang yang sama
+        $bidangAssignments = Assignment::with('user')
+            ->where('incoming_letter_id', $assignment->incoming_letter_id)
+            ->where('department_id', $user->department_id)
+            ->get();
+
         // Karyawan dalam bidang yang sama
         $karyawan = User::where('department_id', $user->department_id)
             ->where('id', '!=', $user->id)
@@ -46,11 +95,15 @@ class IncomingLetterController extends Controller
                 $q->where('name', 'karyawan');
             })->get();
 
-        return view('kabid.surat-masuk.show', compact('assignment', 'karyawan'));
+        // Karyawan yang belum ditugaskan untuk surat ini
+        $assignedUserIds = $bidangAssignments->pluck('user_id')->filter()->toArray();
+        $unassignedKaryawan = $karyawan->whereNotIn('id', $assignedUserIds);
+
+        return view('kabid.surat-masuk.show', compact('assignment', 'karyawan', 'bidangAssignments', 'unassignedKaryawan'));
     }
 
     /**
-     * Disposisikan surat ke karyawan.
+     * Disposisikan surat ke satu, beberapa, atau semua staf/karyawan.
      */
     public function disposisi(Request $request, Assignment $assignment)
     {
@@ -60,58 +113,99 @@ class IncomingLetterController extends Controller
             abort(403);
         }
 
+        $tipeTindakan = $request->input('tipe_tindakan', 'karyawan');
+
+        // Jika Kabid memilih opsi simpan sebagai arsip tanpa penugasan
+        if ($tipeTindakan === 'arsip' || empty($request->input('user_ids'))) {
+            if (!$assignment->user_id) {
+                $assignment->update([
+                    'user_id' => null,
+                    'catatan_kabid' => $request->catatan_arsip ?? $request->catatan_kabid ?? 'Disimpan tanpa penugasan.',
+                    'status' => 'selesai',
+                    'tanggal_selesai' => now()->toDateString(),
+                ]);
+                $assignment->incomingLetter->update(['status' => 'selesai']);
+                
+                return back()->with('success', 'Surat berhasil disimpan (diarsipkan) tanpa penugasan staf.');
+            }
+        }
+
         $validated = $request->validate([
-            'user_id' => [
-                'nullable',
+            'user_ids' => 'required|array|min:1',
+            'user_ids.*' => [
+                'integer',
                 function ($attribute, $value, $fail) use ($user) {
-                    if ($value) {
-                        $karyawan = User::find($value);
-                        if (!$karyawan || $karyawan->department_id !== $user->department_id) {
-                            $fail('Karyawan yang dipilih tidak valid atau bukan dari bidang Anda.');
-                        }
+                    $karyawan = User::find($value);
+                    if (!$karyawan || $karyawan->department_id !== $user->department_id) {
+                        $fail('Staf yang dipilih tidak valid atau bukan dari bidang Anda.');
                     }
                 },
             ],
-            'catatan_kabid' => 'required_with:user_id|nullable|string',
+            'catatan_kabid' => 'required|string',
             'deadline' => 'nullable|date|after_or_equal:today',
         ], [
-            'catatan_kabid.required_with' => 'Instruksi wajib diisi jika Anda menugaskan ke karyawan.',
+            'user_ids.required' => 'Pilih minimal satu staf pelaksana.',
+            'user_ids.min' => 'Pilih minimal satu staf pelaksana.',
+            'catatan_kabid.required' => 'Instruksi / Catatan untuk staf wajib diisi.',
+            'deadline.after_or_equal' => 'Batas waktu (deadline) tidak boleh berupa tanggal yang sudah lewat.',
         ]);
 
-        if (empty($validated['user_id'])) {
-            // Cuma disimpan saja (Arsip / Selesai oleh Kabid)
+        $userIds = $validated['user_ids'];
+        $count = count($userIds);
+
+        // Jika assignment saat ini belum ditugaskan ke staf (user_id masih null)
+        if (is_null($assignment->user_id)) {
+            $firstUserId = array_shift($userIds);
             $assignment->update([
-                'user_id' => null,
-                'catatan_kabid' => $validated['catatan_kabid'] ?? 'Disimpan tanpa penugasan.',
-                'status' => 'selesai',
-                'tanggal_selesai' => now()->toDateString(),
+                'user_id' => $firstUserId,
+                'catatan_kabid' => $validated['catatan_kabid'],
+                'deadline' => $validated['deadline'],
+                'status' => 'belum_dibaca',
             ]);
-            $assignment->incomingLetter->update(['status' => 'selesai']);
-            
-            return back()->with('success', 'Surat berhasil disimpan (diarsipkan) tanpa ditugaskan.');
+
+            $firstUser = User::find($firstUserId);
+            if ($firstUser) {
+                $firstUser->notify(new \App\Notifications\DispositionNotification(
+                    $assignment,
+                    'Tugas Disposisi Baru',
+                    'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
+                ));
+            }
         }
 
-        // Ditugaskan ke Karyawan
-        $assignment->update([
-            'user_id' => $validated['user_id'],
-            'catatan_kabid' => $validated['catatan_kabid'],
-            'deadline' => $validated['deadline'],
-            'status' => 'belum_dibaca',
-        ]);
+        // Buat assignment baru untuk staf lainnya yang dipilih (bisa lebih dari 1 atau tambah staf)
+        foreach ($userIds as $uid) {
+            $existing = Assignment::where('incoming_letter_id', $assignment->incoming_letter_id)
+                ->where('department_id', $assignment->department_id)
+                ->where('user_id', $uid)
+                ->first();
+
+            if (!$existing) {
+                $newAssignment = Assignment::create([
+                    'incoming_letter_id' => $assignment->incoming_letter_id,
+                    'department_id'      => $assignment->department_id,
+                    'user_id'            => $uid,
+                    'status'             => 'belum_dibaca',
+                    'catatan'            => $assignment->catatan,
+                    'catatan_kabid'      => $validated['catatan_kabid'],
+                    'deadline'           => $validated['deadline'],
+                    'tanggal_disposisi'  => $assignment->tanggal_disposisi ?? now()->toDateString(),
+                ]);
+
+                $staf = User::find($uid);
+                if ($staf) {
+                    $staf->notify(new \App\Notifications\DispositionNotification(
+                        $newAssignment,
+                        'Tugas Disposisi Baru',
+                        'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
+                    ));
+                }
+            }
+        }
 
         $assignment->incomingLetter->update(['status' => 'didisposisikan']);
 
-        // Send notification to Karyawan
-        $karyawan = User::find($validated['user_id']);
-        if ($karyawan) {
-            $karyawan->notify(new \App\Notifications\DispositionNotification(
-                $assignment,
-                'Tugas Disposisi Baru',
-                'Anda mendapat tugas dari Kepala Bidang untuk menindaklanjuti surat: ' . $assignment->incomingLetter->nomor_surat
-            ));
-        }
-
-        return back()->with('success', 'Surat berhasil didisposisikan ke karyawan.');
+        return back()->with('success', "Surat berhasil didisposisikan ke {$count} staf.");
     }
 
     /**
@@ -135,14 +229,23 @@ class IncomingLetterController extends Controller
                 'status' => 'selesai',
                 'tanggal_selesai' => now()->toDateString(),
             ]);
-            $assignment->incomingLetter->update(['status' => 'selesai']);
-            $msg = 'Hasil tindak lanjut disetujui dan surat dinyatakan Selesai.';
+
+            // Cek apakah seluruh penugasan untuk surat masuk ini sudah selesai
+            $hasUnfinished = Assignment::where('incoming_letter_id', $assignment->incoming_letter_id)
+                ->where('status', '!=', 'selesai')
+                ->exists();
+
+            if (!$hasUnfinished) {
+                $assignment->incomingLetter->update(['status' => 'selesai']);
+            }
+
+            $msg = 'Hasil tindak lanjut disetujui dan status tugas staf dinyatakan Selesai.';
         } else {
             $assignment->update([
                 'status' => 'perlu_revisi',
                 'catatan_revisi' => $validated['catatan_revisi']
             ]);
-            $assignment->incomingLetter->update(['status' => 'perlu_revisi']);
+            $assignment->incomingLetter->update(['status' => 'didisposisikan']);
             $msg = 'Hasil tindak lanjut dikembalikan ke karyawan untuk direvisi.';
         }
 

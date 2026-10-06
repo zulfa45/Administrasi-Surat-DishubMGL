@@ -18,13 +18,6 @@
                     </div>
                 </div>
             </div>
-            <a href="{{ route('karyawan.dashboard') }}"
-               class="inline-flex items-center gap-2 px-3.5 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs font-semibold rounded-xl transition-colors shadow-xs">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Kembali ke Dashboard
-            </a>
         </div>
     </x-slot>
 
@@ -118,6 +111,13 @@
                     @endif
                 </div>
             </form>
+
+            @if(request('search'))
+                <div class="mt-2.5 pt-2.5 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-500 flex items-center justify-between">
+                    <span>Menampilkan tugas dengan kata kunci: <strong class="text-gray-800 dark:text-gray-200">"{{ request('search') }}"</strong></span>
+                    <a href="{{ route('karyawan.tasks.index', request()->except('search')) }}" class="text-blue-600 hover:underline">Hapus pencarian</a>
+                </div>
+            @endif
         </div>
 
         {{-- Tabel Daftar Tugas --}}
