@@ -264,4 +264,49 @@ class IncomingLetterController extends Controller
 
         return back()->with('success', $msg);
     }
+
+    /**
+     * Membatalkan penugasan ke staf tertentu.
+     */
+    public function batalDisposisi(Assignment $assignment)
+    {
+        $user = auth()->user();
+        
+        if ($assignment->department_id !== $user->department_id) {
+            abort(403);
+        }
+
+        // Jangan izinkan dibatalkan jika statusnya sudah dikerjakan/menunggu_verifikasi/selesai
+        if (in_array($assignment->status, ['dikerjakan', 'menunggu_verifikasi_kabid', 'selesai'])) {
+            return back()->with('error', 'Tugas ini sudah dalam proses atau selesai, tidak dapat dibatalkan.');
+        }
+
+        // Cek apakah ada assignment lain di bidang ini untuk surat yang sama
+        $otherAssignment = Assignment::where('incoming_letter_id', $assignment->incoming_letter_id)
+            ->where('department_id', $assignment->department_id)
+            ->where('id', '!=', $assignment->id)
+            ->first();
+
+        if ($otherAssignment) {
+            // Jika ada staf lain, hapus saja record assignment ini
+            $assignment->delete();
+            
+            // Redirect ke halaman detail dari staf lain yang ada di surat ini
+            return redirect()->route('kabid.surat-masuk.show', $otherAssignment->id)
+                ->with('success', 'Penugasan staf berhasil dibatalkan.');
+        } else {
+            // Jika ini SATU-SATUNYA assignment untuk bidang ini, reset user_id menjadi null
+            // agar surat kembali ke status "Menunggu Disposisi Kabid"
+            $assignment->update([
+                'user_id' => null,
+                'status' => 'belum_dibaca',
+                'catatan_kabid' => null,
+                'deadline' => null,
+                'tanggal_disposisi' => null,
+            ]);
+            
+            return redirect()->route('kabid.surat-masuk.show', $assignment->id)
+                ->with('success', 'Penugasan staf berhasil dibatalkan. Surat kembali ke antrean bidang.');
+        }
+    }
 }

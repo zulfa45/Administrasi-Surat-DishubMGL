@@ -72,6 +72,7 @@ Route::middleware(['auth', 'role:kepala_bidang'])->prefix('kabid')->name('kabid.
     Route::get('/surat-masuk', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'index'])->name('surat-masuk.index');
     Route::get('/surat-masuk/{assignment}', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'show'])->name('surat-masuk.show');
     Route::post('/surat-masuk/{assignment}/disposisi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'disposisi'])->name('surat-masuk.disposisi');
+    Route::delete('/surat-masuk/{assignment}/batal', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'batalDisposisi'])->name('surat-masuk.batal');
     Route::post('/surat-masuk/{assignment}/verifikasi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'verifikasi'])->name('surat-masuk.verifikasi');
     Route::get('/anggota', [\App\Http\Controllers\Kabid\MemberController::class, 'index'])->name('anggota.index');
 });
