@@ -209,8 +209,20 @@
             }
 
             setInterval(() => {
-                fetch('{{ route("notifications.check") }}')
-                    .then(res => res.json())
+                fetch('{{ route("notifications.check") }}', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(res => {
+                        if (res.status === 401) {
+                            // Sesi habis, reload halaman untuk diarahkan ke halaman login
+                            window.location.reload();
+                            throw new Error('Sesi habis');
+                        }
+                        return res.json();
+                    })
                     .then(data => {
                         const badgeContainer = document.getElementById('nav-badge-container');
                         
@@ -225,7 +237,9 @@
                             lastNotificationId = data.latest_id;
                         }
                     })
-                    .catch(err => console.error(err));
+                    .catch(err => {
+                        if(err.message !== 'Sesi habis') console.error(err);
+                    });
             }, 10000); // Polling setiap 10 detik
         });
     </script>
