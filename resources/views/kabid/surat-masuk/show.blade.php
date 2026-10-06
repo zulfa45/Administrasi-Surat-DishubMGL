@@ -259,10 +259,18 @@
                     </div>
 
                     @if($assignment->status === 'menunggu_verifikasi_kabid')
-                    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <form action="{{ route('kabid.surat-masuk.verifikasi', $assignment->id) }}" method="POST" class="space-y-4">
+                    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700"
+                         x-data="{ 
+                             keputusan: 'terima',
+                             showConfirmModal: false
+                         }">
+                        <form action="{{ route('kabid.surat-masuk.verifikasi', $assignment->id) }}" 
+                              method="POST" 
+                              class="space-y-4"
+                              x-ref="verifForm"
+                              @submit.prevent="showConfirmModal = true">
                             @csrf
-                            <div x-data="{ keputusan: 'terima' }">
+                            <div>
                                 <label class="block text-xs font-bold text-gray-800 dark:text-gray-200 mb-2 uppercase tracking-wider">Keputusan Verifikasi Kabid</label>
                                 <div class="grid grid-cols-2 gap-3 mb-4">
                                     <label class="flex items-center gap-2.5 p-3 rounded-xl border cursor-pointer transition-all"
@@ -282,9 +290,75 @@
                                     <textarea name="catatan_revisi" rows="3" class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-900 shadow-sm focus:border-rose-500 focus:ring-rose-500 text-xs" placeholder="Berikan instruksi apa yang perlu diperbaiki..."></textarea>
                                 </div>
                             </div>
-                            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-sm text-xs">
-                                Simpan Keputusan Verifikasi
+                            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all shadow-sm text-xs flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span>Simpan Keputusan Verifikasi</span>
                             </button>
+
+                            {{-- Popup Modal Konfirmasi Kecil Kabid --}}
+                            <div x-show="showConfirmModal" 
+                                 x-cloak 
+                                 class="fixed inset-0 z-50 overflow-y-auto"
+                                 aria-labelledby="modal-verif-title" role="dialog" aria-modal="true">
+                                <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity" 
+                                     @click="showConfirmModal = false"></div>
+
+                                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                                    <div x-show="showConfirmModal"
+                                         x-transition:enter="ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 translate-y-4 sm:scale-95"
+                                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                         x-transition:leave="ease-in duration-200"
+                                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                         x-transition:leave-end="opacity-0 translate-y-4 sm:scale-95"
+                                         class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md p-6 border border-gray-100 dark:border-gray-700">
+                                        
+                                        <div class="flex items-center gap-3.5 mb-4">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                                                 :class="keputusan === 'terima' ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400' : 'bg-rose-100 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400'">
+                                                <template x-if="keputusan === 'terima'">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                </template>
+                                                <template x-if="keputusan === 'revisi'">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                                    </svg>
+                                                </template>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100" id="modal-verif-title"
+                                                    x-text="keputusan === 'terima' ? 'Konfirmasi Selesaikan Surat' : 'Konfirmasi Minta Revisi'">
+                                                </h3>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    Verifikasi Hasil Kerja Staf
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-6"
+                                           x-text="keputusan === 'terima' ? 'Apakah Anda yakin ingin menyetujui hasil kerja dan menandai tindak lanjut surat ini telah Selesai?' : 'Apakah Anda yakin ingin mengembalikan tugas ini kepada karyawan untuk direvisi sesuai catatan?'">
+                                        </p>
+
+                                        <div class="flex items-center justify-end gap-2.5">
+                                            <button type="button" 
+                                                    @click="showConfirmModal = false"
+                                                    class="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl transition-colors">
+                                                Batal
+                                            </button>
+                                            <button type="button" 
+                                                    @click="$refs.verifForm.submit()"
+                                                    class="px-4 py-2 text-xs font-semibold text-white rounded-xl shadow-xs transition-colors flex items-center gap-1.5"
+                                                    :class="keputusan === 'terima' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'">
+                                                <span x-text="keputusan === 'terima' ? 'Ya, Setujui & Selesai' : 'Ya, Kirim Revisi'"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     @endif

@@ -232,22 +232,45 @@
                             Tugas ini telah disetujui pimpinan dan berstatus Selesai.
                         </div>
                     @else
-                        <form action="{{ route('karyawan.tasks.status', $task) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <form action="{{ route('karyawan.tasks.status', $task) }}" 
+                              method="POST" 
+                              enctype="multipart/form-data" 
+                              class="space-y-4"
+                              x-data="{ 
+                                  selectedStatus: '{{ old('status', $task->status) }}',
+                                  showConfirmModal: false,
+                                  catatan: `{{ addslashes(old('catatan_tindak_lanjut', $task->catatan_tindak_lanjut ?? '')) }}`,
+                                  validateAndSubmit() {
+                                      if (this.selectedStatus === 'menunggu_verifikasi_kabid') {
+                                          this.showConfirmModal = true;
+                                      } else {
+                                          $refs.taskForm.submit();
+                                      }
+                                  }
+                              }"
+                              x-ref="taskForm"
+                              @submit.prevent="validateAndSubmit">
                             @csrf
                             @method('PATCH')
 
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Status Pengerjaan</label>
-                                <select name="status" class="w-full text-xs py-2 px-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
-                                    <option value="dibaca" {{ $task->status === 'dibaca' ? 'selected' : '' }}>Sedang Ditelaah (Dibaca)</option>
-                                    <option value="dikerjakan" {{ $task->status === 'dikerjakan' ? 'selected' : '' }}>Sedang Dalam Tindak Lanjut</option>
-                                    <option value="menunggu_verifikasi_kabid" {{ $task->status === 'menunggu_verifikasi_kabid' ? 'selected' : '' }}>Selesai Dikerjakan (Ajukan ke Kabid)</option>
+                                <select name="status" 
+                                        x-model="selectedStatus" 
+                                        class="w-full text-xs py-2 px-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
+                                    <option value="dibaca">Sedang Ditelaah (Dibaca)</option>
+                                    <option value="dikerjakan">Sedang Dalam Tindak Lanjut</option>
+                                    <option value="menunggu_verifikasi_kabid">Selesai Dikerjakan (Ajukan ke Kabid)</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Catatan / Laporan Tindak Lanjut</label>
-                                <textarea name="catatan_tindak_lanjut" rows="4" class="w-full text-xs p-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" placeholder="Tuliskan uraian hasil pelaksanaan tugas...">{{ old('catatan_tindak_lanjut', $task->catatan_tindak_lanjut) }}</textarea>
+                                <textarea name="catatan_tindak_lanjut" 
+                                          x-model="catatan"
+                                          rows="4" 
+                                          class="w-full text-xs p-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500" 
+                                          placeholder="Tuliskan uraian hasil pelaksanaan tugas..."></textarea>
                             </div>
 
                             <div>
@@ -258,9 +281,69 @@
                                 @endif
                             </div>
 
-                            <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition-all shadow-xs">
-                                Simpan Laporan
+                            <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition-all shadow-xs flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                                </svg>
+                                <span>Simpan Laporan</span>
                             </button>
+
+                            {{-- Popup Modal Konfirmasi Kecil --}}
+                            <div x-show="showConfirmModal" 
+                                 x-cloak 
+                                 class="fixed inset-0 z-50 overflow-y-auto"
+                                 aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-xs transition-opacity" 
+                                     @click="showConfirmModal = false"></div>
+
+                                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                                    <div x-show="showConfirmModal"
+                                         x-transition:enter="ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 translate-y-4 sm:scale-95"
+                                         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                         x-transition:leave="ease-in duration-200"
+                                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                         x-transition:leave-end="opacity-0 translate-y-4 sm:scale-95"
+                                         class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md p-6 border border-gray-100 dark:border-gray-700">
+                                        
+                                        <div class="flex items-center gap-3.5 mb-4">
+                                            <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-sm font-bold text-gray-900 dark:text-gray-100" id="modal-title">
+                                                    Konfirmasi Selesaikan Tugas
+                                                </h3>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                    Ajukan hasil kerja kepada Kepala Bidang
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                                            Apakah Anda yakin ingin menyelesaikan tugas ini dan mengirimkan laporan tindak lanjut kepada Kepala Bidang untuk diverifikasi?
+                                        </p>
+
+                                        <div class="flex items-center justify-end gap-2.5">
+                                            <button type="button" 
+                                                    @click="showConfirmModal = false"
+                                                    class="px-4 py-2 text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-xl transition-colors">
+                                                Periksa Kembali
+                                            </button>
+                                            <button type="button" 
+                                                    @click="$refs.taskForm.submit()"
+                                                    class="px-4 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-colors flex items-center gap-1.5">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                                Ya, Kirim Tugas
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     @endif
                 </div>
