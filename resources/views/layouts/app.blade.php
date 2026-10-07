@@ -62,5 +62,8 @@
                 @include('layouts.footer')
             </div>
         </div>
+
+        {{-- Toast Notifikasi Popup Kecil --}}
+        <x-ui.toast />
     </body>
 </html>

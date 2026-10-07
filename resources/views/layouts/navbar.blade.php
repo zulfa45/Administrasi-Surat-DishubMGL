@@ -67,19 +67,18 @@
                     </span>
                 </button>
 
-                <!-- Notification Dropdown -->
-                <div x-show="isNotificationsMenuOpen" 
-                     style="display: none;"
-                     x-transition:enter="transition ease-out duration-150"
-                     x-transition:enter-start="opacity-0 transform scale-95"
-                     x-transition:enter-end="opacity-100 transform scale-100"
-                     x-transition:leave="transition ease-in duration-150" 
-                     x-transition:leave-start="opacity-100 transform scale-100" 
-                     x-transition:leave-end="opacity-0 transform scale-95" 
-                     @click.away="isNotificationsMenuOpen = false" 
-                     @keydown.escape="isNotificationsMenuOpen = false" 
+                <div x-show="isNotificationsMenuOpen"
+                     x-cloak
+                     @click.outside="isNotificationsMenuOpen = false" 
+                     @keydown.escape.window="isNotificationsMenuOpen = false"
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75" 
+                     x-transition:leave-start="opacity-100 scale-100" 
+                     x-transition:leave-end="opacity-0 scale-95" 
                      class="absolute right-0 w-80 sm:w-96 mt-2 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/60 z-50">
-                    
+                        
                     <!-- Header -->
                     <div class="p-3.5 flex items-center justify-between">
                         <div class="flex items-center gap-2">
@@ -158,29 +157,70 @@
 
             <!-- Profile menu -->
             <li class="relative" x-data="{ isProfileMenuOpen: false }">
-                <button class="align-middle rounded-full focus:shadow-outline-blue focus:outline-none flex items-center gap-2" @click="isProfileMenuOpen = !isProfileMenuOpen" @keydown.escape="isProfileMenuOpen = false" aria-label="Account" aria-haspopup="true">
-                    <img class="object-cover w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600" src="{{ auth()->user()->avatar ? \Illuminate\Support\Facades\Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="Profile" aria-hidden="true" />
-                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden md:block">{{ auth()->user()->name }}</span>
+                <button class="align-middle rounded-xl focus:outline-none flex items-center gap-2 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700/60 transition-colors" 
+                        @click="isProfileMenuOpen = !isProfileMenuOpen" 
+                        @keydown.escape="isProfileMenuOpen = false" 
+                        aria-label="Menu Profil" 
+                        title="Klik untuk membuka menu profil & edit profil"
+                        aria-haspopup="true">
+                    <img class="object-cover w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 shadow-xs" 
+                         src="{{ auth()->user()->avatar ? \Illuminate\Support\Facades\Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" 
+                         alt="{{ auth()->user()->name }}" />
+                    <div class="text-left hidden md:block">
+                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-200 block leading-tight">{{ auth()->user()->name }}</span>
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 capitalize block leading-tight">{{ auth()->user()->roles->first()->name ?? 'Pengguna' }}</span>
+                    </div>
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 hidden md:block" :class="{ 'rotate-180': isProfileMenuOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
                 </button>
-                <template x-if="isProfileMenuOpen">
-                    <ul x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click.away="isProfileMenuOpen = false" @keydown.escape="isProfileMenuOpen = false" class="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-white border border-gray-100 rounded-md shadow-md dark:border-gray-700 dark:text-gray-300 dark:bg-gray-700">
-                        <li class="flex">
-                            <a class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200" href="{{ route('profile.edit') }}">
-                                <svg class="w-4 h-4 mr-3" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                <span>Profile</span>
-                            </a>
-                        </li>
-                        <li class="flex">
-                            <form method="POST" action="{{ route('logout') }}" class="w-full">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800 dark:hover:bg-gray-800 dark:hover:text-gray-200">
-                                    <svg class="w-4 h-4 mr-3" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
-                                    <span>Log out</span>
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </template>
+
+                <div x-show="isProfileMenuOpen" 
+                     x-cloak
+                     @click.outside="isProfileMenuOpen = false" 
+                     @keydown.escape.window="isProfileMenuOpen = false"
+                     x-transition:enter="transition ease-out duration-100" 
+                     x-transition:enter-start="opacity-0 scale-95" 
+                     x-transition:enter-end="opacity-100 scale-100" 
+                     x-transition:leave="transition ease-in duration-75" 
+                     x-transition:leave-start="opacity-100 scale-100" 
+                     x-transition:leave-end="opacity-0 scale-95" 
+                     class="absolute right-0 w-60 mt-2 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700/60 z-50">
+                    
+                    <!-- Header Info Pengguna -->
+                    <div class="px-4 py-3">
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400">Masuk sebagai</p>
+                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate mt-0.5">{{ auth()->user()->name }}</p>
+                        <span class="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
+                            {{ auth()->user()->roles->first()->name ?? 'Pengguna' }}
+                        </span>
+                    </div>
+
+                    <!-- Menu Navigasi -->
+                    <div class="py-1">
+                        <a href="{{ route('profile.edit') }}" 
+                           class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-gray-700/60 dark:hover:text-blue-400 transition-colors">
+                            <svg class="w-4 h-4 mr-3 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            <span>Edit Profil</span>
+                        </a>
+                    </div>
+
+                    <!-- Menu Logout -->
+                    <div class="py-1">
+                        <form method="POST" action="{{ route('logout') }}" class="w-full">
+                            @csrf
+                            <button type="submit" 
+                                    class="flex items-center w-full px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                <svg class="w-4 h-4 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                <span>Keluar (Log Out)</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
