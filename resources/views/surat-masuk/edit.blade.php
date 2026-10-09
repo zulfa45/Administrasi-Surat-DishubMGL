@@ -125,6 +125,7 @@
                             Ganti File Lampiran <span class="text-xs text-gray-400 font-normal">(Biarkan kosong jika tidak diganti)</span>
                         </label>
                         <input type="file" name="file_lampiran" id="file_lampiran" accept=".pdf,.jpg,.jpeg,.png"
+                               onchange="document.getElementById('nama_file_lampiran').value = this.files[0] ? this.files[0].name.split('.').slice(0, -1).join('.') : ''"
                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-gray-700 dark:file:text-blue-300 hover:file:bg-blue-100 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
                         @if($letter->file_lampiran)
                             <div class="mt-2 text-xs flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
@@ -135,6 +136,19 @@
                             </div>
                         @endif
                         @error('file_lampiran')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Nama File Lampiran Kustom --}}
+                    <div>
+                        <label for="nama_file_lampiran" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Ubah Nama File Baru (Opsional) <span class="text-xs text-gray-400 font-normal">Hanya berlaku jika Anda mengganti file lampiran</span>
+                        </label>
+                        <input type="text" name="nama_file_lampiran" id="nama_file_lampiran" value="{{ old('nama_file_lampiran') }}"
+                               placeholder="Contoh: Surat_Undangan_Rapat_Dishub" 
+                               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        @error('nama_file_lampiran')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>

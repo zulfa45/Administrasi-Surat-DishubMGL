@@ -128,8 +128,22 @@
                             File Lampiran Dokumen <span class="text-xs text-gray-400 font-normal">(PDF, JPG, JPEG, PNG maks 5MB)</span>
                         </label>
                         <input type="file" name="file_lampiran" id="file_lampiran" accept=".pdf,.jpg,.jpeg,.png"
+                               onchange="document.getElementById('nama_file_lampiran').value = this.files[0] ? this.files[0].name.split('.').slice(0, -1).join('.') : ''"
                                class="w-full text-xs text-gray-500 dark:text-gray-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 dark:file:bg-gray-700 dark:file:text-blue-300 hover:file:bg-blue-100 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700">
                         @error('file_lampiran')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Nama File Lampiran Kustom --}}
+                    <div>
+                        <label for="nama_file_lampiran" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Ubah Nama File (Opsional) <span class="text-xs text-gray-400 font-normal">Agar mudah dicari di G-Drive</span>
+                        </label>
+                        <input type="text" name="nama_file_lampiran" id="nama_file_lampiran" value="{{ old('nama_file_lampiran') }}"
+                               placeholder="Contoh: Surat_Undangan_Rapat_Dishub" 
+                               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm">
+                        @error('nama_file_lampiran')
                             <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>

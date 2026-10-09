@@ -85,6 +85,7 @@ class IncomingLetterController extends Controller
             'sifat'            => 'required|in:biasa,penting,segera,rahasia',
             'keterangan'       => 'nullable|string',
             'file_lampiran'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'nama_file_lampiran'=> 'nullable|string|max:255',
             // Direct disposition fields
             'tujuan_tipe'      => 'nullable|in:none,department,user',
             'department_id'    => 'nullable|required_if:tujuan_tipe,department|exists:departments,id',
@@ -105,7 +106,14 @@ class IncomingLetterController extends Controller
 
         if ($request->hasFile('file_lampiran')) {
             $file = $request->file('file_lampiran');
-            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            if ($request->filled('nama_file_lampiran')) {
+                $baseName = Str::slug($request->nama_file_lampiran);
+            } else {
+                $baseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            }
+            
+            $filename = time() . '_' . $baseName . '.' . $file->getClientOriginalExtension();
             $path = 'surat-masuk/' . $filename;
             Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
             $validated['file_lampiran'] = $path;
@@ -238,6 +246,7 @@ class IncomingLetterController extends Controller
             'sifat'            => 'required|in:biasa,penting,segera,rahasia',
             'keterangan'       => 'nullable|string',
             'file_lampiran'    => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'nama_file_lampiran'=> 'nullable|string|max:255',
         ], [
             'nomor_surat.required'      => 'Nomor surat wajib diisi.',
             'nomor_surat.unique'        => 'Nomor surat sudah terdaftar di sistem.',
@@ -257,7 +266,14 @@ class IncomingLetterController extends Controller
             }
 
             $file = $request->file('file_lampiran');
-            $filename = time() . '_' . Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            if ($request->filled('nama_file_lampiran')) {
+                $baseName = Str::slug($request->nama_file_lampiran);
+            } else {
+                $baseName = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            }
+            
+            $filename = time() . '_' . $baseName . '.' . $file->getClientOriginalExtension();
             $path = 'surat-masuk/' . $filename;
             Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
             $validated['file_lampiran'] = $path;
