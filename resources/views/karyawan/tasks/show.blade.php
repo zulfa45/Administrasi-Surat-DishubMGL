@@ -60,11 +60,18 @@
 
     <div class="space-y-6" x-data="{ 
         showPreviewModal: false,
+        previewModalUrl: '',
+        previewModalTitle: '',
         copiedNumber: false,
         copyText(text) {
             navigator.clipboard.writeText(text);
             this.copiedNumber = true;
             setTimeout(() => this.copiedNumber = false, 2000);
+        },
+        openPreview(url, title) {
+            this.previewModalUrl = url;
+            this.previewModalTitle = title;
+            this.showPreviewModal = true;
         }
     }">
         @if(session('success'))
@@ -297,9 +304,10 @@
                                 @if($task->file_tindak_lanjut)
                                     <div class="mt-1.5 flex items-center gap-2">
                                         <p class="text-[11px] text-emerald-600">Berkas tersimpan:</p>
-                                        <a href="{{ route('tasks.file', $task->id) }}" target="_blank" class="text-[11px] font-bold text-blue-600 hover:underline">
+                                        <button type="button" @click="openPreview('{{ route('tasks.file', $task->id) }}', 'Bukti Laporan: {{ basename($task->file_tindak_lanjut) }}')" class="text-[11px] font-bold text-blue-600 hover:underline inline-flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                             {{ basename($task->file_tindak_lanjut) }}
-                                        </a>
+                                        </button>
                                     </div>
                                 @endif
                             </div>
@@ -442,7 +450,7 @@
                             </div>
 
                             <div class="space-y-2">
-                                <button type="button" @click="showPreviewModal = true"
+                                <button type="button" @click="openPreview('{{ route('surat-masuk.file', $letter) }}', 'Pratinjau Surat: {{ basename($letter->file_lampiran) }}')"
                                         class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-xs">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     Pratinjau Berkas (In-App)
@@ -484,17 +492,20 @@
         </div>
 
         {{-- IN-APP DOCUMENT PREVIEW MODAL --}}
-        @if($letter->file_lampiran)
         <div x-show="showPreviewModal" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
              class="fixed inset-0 z-50 overflow-y-auto bg-gray-900/70 backdrop-blur-xs flex items-center justify-center p-4" style="display: none;">
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col max-h-[92vh]" @click.away="showPreviewModal = false">
                 <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-800/80">
                     <div class="flex items-center gap-2">
                         <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate max-w-md">Pratinjau Surat: {{ basename($letter->file_lampiran) }}</h4>
+                        <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate max-w-md" x-text="previewModalTitle">Pratinjau Dokumen</h4>
                     </div>
                     <div class="flex items-center gap-2">
-                        <a href="{{ route('surat-masuk.file', $letter) }}" target="_blank" class="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 text-gray-700 dark:text-gray-200 flex items-center gap-1">
+                        <button type="button" @click="$refs.previewIframe.contentWindow.print()" class="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 text-gray-700 dark:text-gray-200 flex items-center gap-1 transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            Cetak
+                        </button>
+                        <a :href="previewModalUrl" target="_blank" class="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 text-gray-700 dark:text-gray-200 flex items-center gap-1 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                             Tab Baru
                         </a>
@@ -505,10 +516,9 @@
                 </div>
 
                 <div class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 p-2 flex items-center justify-center min-h-[500px]">
-                    <iframe src="{{ route('surat-masuk.file', $letter) }}" class="w-full h-[75vh] rounded-lg border-0 bg-white"></iframe>
+                    <iframe x-ref="previewIframe" :src="previewModalUrl" class="w-full h-[75vh] rounded-lg border-0 bg-white"></iframe>
                 </div>
             </div>
         </div>
-        @endif
     </div>
 </x-app-layout>
