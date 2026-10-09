@@ -231,6 +231,10 @@
                         <div class="p-4 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-medium border border-emerald-200">
                             Tugas ini telah disetujui pimpinan dan berstatus Selesai.
                         </div>
+                    @elseif($task->status === 'menunggu_verifikasi_kabid')
+                        <div class="p-4 bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 rounded-xl text-xs font-medium border border-amber-200">
+                            Laporan tindak lanjut Anda telah dikirim dan saat ini sedang menunggu proses verifikasi dari Kepala Bidang. Anda belum dapat melakukan perubahan lagi hingga ada keputusan lebih lanjut.
+                        </div>
                     @else
                         <form action="{{ route('karyawan.tasks.status', $task) }}" 
                               method="POST" 
