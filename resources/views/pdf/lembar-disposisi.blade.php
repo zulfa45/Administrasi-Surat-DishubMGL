@@ -119,8 +119,8 @@
                 @endif
             </td>
             <td class="header-text">
-                <h3>PEMERINTAH KOTA</h3>
-                <h2>DINAS PERHUBUNGAN</h2>
+                <h3>PEMERINTAH KOTA MAGELANG</h3>
+                <h2>DINAS PERHUBUNGAN KOTA MAGELANG</h2>
                 <p>Jl. Jend. Sudirman No. 84, Kota Magelang, Jawa Tengah 56125 Telp. (0293) 362205</p>
                 <p>Website: dishub.magelangkota.go.id | Email: dishubmagelangkota@gmail.com</p>
             </td>
@@ -218,7 +218,7 @@
         <tr>
             <td style="width: 60%;">
                 <p style="margin: 0; font-size: 9pt; color: #4b5563;">
-                    Dicetak melalui SIMAS Dishub Kota pada:<br>
+                    Dicetak melalui SIMAS Dishub Kota Magelang pada:<br>
                     {{ now()->translatedFormat('l, d F Y - H:i') }} WIB
                 </p>
             </td>
