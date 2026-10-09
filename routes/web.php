@@ -32,6 +32,7 @@ use App\Http\Controllers\ReportController;
 Route::middleware(['auth'])->group(function () {
     Route::resource('surat-masuk', IncomingLetterController::class)->except(['show'])->middleware('role:admin|staf-loket');
     Route::get('surat-masuk/{surat_masuk}/file', [IncomingLetterController::class, 'previewFile'])->name('surat-masuk.file');
+    Route::get('tasks/{assignment}/file', [IncomingLetterController::class, 'previewTaskFile'])->name('tasks.file');
     Route::get('surat-masuk/{surat_masuk}/disposisi-pdf', [ReportController::class, 'printDispositionPdf'])->name('surat-masuk.disposisi-pdf');
     Route::get('surat-masuk/{surat_masuk}', [IncomingLetterController::class, 'show'])->name('surat-masuk.show');
 

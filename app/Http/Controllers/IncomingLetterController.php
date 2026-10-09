@@ -333,4 +333,24 @@ class IncomingLetterController extends Controller
 
         abort(404, 'File lampiran tidak ditemukan di penyimpanan mana pun.');
     }
+
+    /**
+     * Buka atau unduh file bukti tugas (tindak lanjut) secara aman.
+     */
+    public function previewTaskFile(\App\Models\Assignment $assignment)
+    {
+        if (!$assignment->file_tindak_lanjut) {
+            abort(404, 'File bukti tidak ditemukan.');
+        }
+
+        if (Storage::disk('google')->exists($assignment->file_tindak_lanjut)) {
+            return Storage::disk('google')->response($assignment->file_tindak_lanjut);
+        }
+        
+        if (Storage::disk('s3')->exists($assignment->file_tindak_lanjut)) {
+            return redirect(Storage::disk('s3')->url($assignment->file_tindak_lanjut));
+        }
+
+        abort(404, 'File bukti tidak ditemukan di penyimpanan mana pun.');
+    }
 }

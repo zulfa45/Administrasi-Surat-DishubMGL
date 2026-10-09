@@ -153,6 +153,7 @@ class TaskController extends Controller
             'status'                => 'required|in:dibaca,dikerjakan,menunggu_verifikasi_kabid',
             'catatan_tindak_lanjut' => 'required_if:status,menunggu_verifikasi_kabid|nullable|string',
             'file_tindak_lanjut'    => 'nullable|file|mimes:pdf,jpg,jpeg,png,doc,docx|max:5120',
+            'nama_file_tindak_lanjut'=> 'nullable|string|max:255',
         ], [
             'catatan_tindak_lanjut.required_if' => 'Laporan atau keterangan wajib diisi saat menyelesaikan tugas.'
         ]);
@@ -165,7 +166,14 @@ class TaskController extends Controller
         
         if ($request->hasFile('file_tindak_lanjut')) {
             $file = $request->file('file_tindak_lanjut');
-            $filename = time() . '_hasil_' . \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            
+            if ($request->filled('nama_file_tindak_lanjut')) {
+                $baseName = \Illuminate\Support\Str::slug($request->nama_file_tindak_lanjut);
+            } else {
+                $baseName = \Illuminate\Support\Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            }
+            
+            $filename = time() . '_hasil_' . $baseName . '.' . $file->getClientOriginalExtension();
             $path = 'tindak-lanjut/' . $filename;
             \Illuminate\Support\Facades\Storage::disk('google')->put($path, file_get_contents($file->getRealPath()));
             $updateData['file_tindak_lanjut'] = $path;

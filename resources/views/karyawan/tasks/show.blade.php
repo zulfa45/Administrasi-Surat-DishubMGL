@@ -275,10 +275,30 @@
 
                             <div>
                                 <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Unggah Berkas Laporan / Bukti (PDF, DOCX, JPG, PNG)</label>
-                                <input type="file" name="file_tindak_lanjut" class="w-full text-xs border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 p-2">
+                                <input type="file" name="file_tindak_lanjut" id="file_tindak_lanjut" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                       onchange="document.getElementById('nama_file_tindak_lanjut').value = this.files[0] ? this.files[0].name.split('.').slice(0, -1).join('.') : ''"
+                                       class="w-full text-xs border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 p-2">
                                 @if($task->file_tindak_lanjut)
-                                    <p class="text-[11px] text-emerald-600 mt-1">Berkas saat ini telah tersimpan: {{ basename($task->file_tindak_lanjut) }}</p>
+                                    <div class="mt-1.5 flex items-center gap-2">
+                                        <p class="text-[11px] text-emerald-600">Berkas tersimpan:</p>
+                                        <a href="{{ route('tasks.file', $task->id) }}" target="_blank" class="text-[11px] font-bold text-blue-600 hover:underline">
+                                            {{ basename($task->file_tindak_lanjut) }}
+                                        </a>
+                                    </div>
                                 @endif
+                            </div>
+
+                            {{-- Nama File Kustom --}}
+                            <div>
+                                <label for="nama_file_tindak_lanjut" class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">
+                                    Ubah Nama File Berkas (Opsional) <span class="font-normal text-gray-500">Agar rapi di G-Drive</span>
+                                </label>
+                                <input type="text" name="nama_file_tindak_lanjut" id="nama_file_tindak_lanjut" value="{{ old('nama_file_tindak_lanjut') }}"
+                                       placeholder="Contoh: Bukti_Kegiatan_Tugas" 
+                                       class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500 text-xs p-2">
+                                @error('nama_file_tindak_lanjut')
+                                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <button type="submit" class="w-full sm:w-auto px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs transition-all shadow-xs flex items-center justify-center gap-2">
