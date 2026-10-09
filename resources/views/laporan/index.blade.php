@@ -10,7 +10,7 @@
                 </p>
             </div>
             <div>
-                <button type="button" @click="$dispatch('open-preview', { url: '{{ route('laporan.pdf', request()->query()) }}', title: 'Preview / Cetak Laporan PDF' })"
+                <button type="button" @click="$dispatch('open-preview', { url: '{!! route('laporan.pdf', request()->query()) !!}', title: 'Preview / Cetak Laporan PDF' })"
                    class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -84,7 +84,7 @@
                             class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-colors">
                         Terapkan Filter
                     </button>
-                    <button type="button" @click="$dispatch('open-preview', { url: '{{ route('laporan.pdf', request()->query()) }}', title: 'Preview Laporan PDF' })"
+                    <button type="button" @click="$dispatch('open-preview', { url: '{!! route('laporan.pdf', request()->query()) !!}', title: 'Preview Laporan PDF' })"
                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -191,7 +191,7 @@
                         <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate max-w-md" x-text="previewModalTitle">Pratinjau Laporan</h4>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button type="button" @click="$refs.previewIframe.contentWindow.print()" class="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 text-gray-700 dark:text-gray-200 flex items-center gap-1 transition-colors">
+                        <button type="button" @click="document.getElementById('pdf-preview-iframe').contentWindow.print()" class="px-3 py-1.5 text-xs font-semibold bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 text-gray-700 dark:text-gray-200 flex items-center gap-1 transition-colors">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
                             Cetak
                         </button>
@@ -206,7 +206,9 @@
                 </div>
 
                 <div class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 p-2 flex items-center justify-center min-h-[500px]">
-                    <iframe x-ref="previewIframe" :src="previewModalUrl" class="w-full h-[75vh] rounded-lg border-0 bg-white"></iframe>
+                    <template x-if="showPreviewModal">
+                        <iframe id="pdf-preview-iframe" :src="previewModalUrl" class="w-full h-[75vh] rounded-lg border-0 bg-white"></iframe>
+                    </template>
                 </div>
             </div>
         </div>
