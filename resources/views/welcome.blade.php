@@ -84,7 +84,7 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Surat Menyurat Digital</h3>
-                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Kelola surat masuk dan keluar secara digital dengan cepat dan efisien.</p>
+                    <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Kelola surat masuk secara digital dengan cepat dan efisien.</p>
                 </div>
                 <div class="p-4">
                     <div class="w-12 h-12 mx-auto bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center mb-4">

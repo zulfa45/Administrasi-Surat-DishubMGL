@@ -105,14 +105,12 @@ class ReportController extends Controller
         $letters = $query->latest('tanggal_diterima')->latest('id')->get();
 
         $kotaLogo   = $this->getBase64Image(public_path('images/kota.png'));
-        $dishubLogo = $this->getBase64Image(public_path('images/logo.png'));
 
         $pdf = Pdf::loadView('pdf.laporan-surat', [
             'letters'     => $letters,
             'periodeText' => $periodeText,
             'filterInfo'  => implode(' | ', $filterTexts),
             'kotaLogo'    => $kotaLogo,
-            'dishubLogo'  => $dishubLogo,
         ])->setPaper('a4', 'landscape');
 
         return $pdf->stream('Laporan-Surat-Masuk-' . date('Y-m-d') . '.pdf');
@@ -130,12 +128,10 @@ class ReportController extends Controller
         ]);
 
         $kotaLogo   = $this->getBase64Image(public_path('images/kota.png'));
-        $dishubLogo = $this->getBase64Image(public_path('images/logo.png'));
 
         $pdf = Pdf::loadView('pdf.lembar-disposisi', [
             'letter'     => $surat_masuk,
             'kotaLogo'   => $kotaLogo,
-            'dishubLogo' => $dishubLogo,
         ])->setPaper('a4', 'portrait');
 
         $filename = 'Lembar-Disposisi-' . Str::slug($surat_masuk->nomor_surat) . '.pdf';

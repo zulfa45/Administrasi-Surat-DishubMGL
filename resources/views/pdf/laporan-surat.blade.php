@@ -125,9 +125,7 @@
                 <p>Website: dishub.magelangkota.go.id | Email: dishubmagelangkota@gmail.com</p>
             </td>
             <td class="header-logo">
-                @if(!empty($dishubLogo))
-                    <img src="{{ $dishubLogo }}" alt="Logo Dishub">
-                @endif
+                {{-- Logo Kanan Dihapus --}}
             </td>
         </tr>
     </table>
