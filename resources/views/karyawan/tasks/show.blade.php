@@ -254,14 +254,26 @@
                             @method('PATCH')
 
                             <div>
-                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Status Pengerjaan</label>
-                                <select name="status" 
-                                        x-model="selectedStatus" 
-                                        class="w-full text-xs py-2 px-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500">
-                                    <option value="dibaca">Sedang Ditelaah (Dibaca)</option>
-                                    <option value="dikerjakan">Sedang Dalam Tindak Lanjut</option>
-                                    <option value="menunggu_verifikasi_kabid">Selesai Dikerjakan (Ajukan ke Kabid)</option>
-                                </select>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Status Pengerjaan</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <label :class="selectedStatus === 'dibaca' ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-600' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'"
+                                           class="relative flex cursor-pointer rounded-xl border p-3 shadow-sm transition-all hover:border-blue-500 items-center gap-3">
+                                        <input type="radio" name="status" value="dibaca" x-model="selectedStatus" class="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900 transition-colors">
+                                        <span class="text-xs font-medium text-gray-900 dark:text-gray-100">Sedang Ditelaah (Dibaca)</span>
+                                    </label>
+
+                                    <label :class="selectedStatus === 'dikerjakan' ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20 ring-1 ring-amber-500' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'"
+                                           class="relative flex cursor-pointer rounded-xl border p-3 shadow-sm transition-all hover:border-amber-500 items-center gap-3">
+                                        <input type="radio" name="status" value="dikerjakan" x-model="selectedStatus" class="h-4 w-4 border-gray-300 text-amber-500 focus:ring-amber-500 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900 transition-colors">
+                                        <span class="text-xs font-medium text-gray-900 dark:text-gray-100">Sedang Dalam Tindak Lanjut</span>
+                                    </label>
+
+                                    <label :class="selectedStatus === 'menunggu_verifikasi_kabid' ? 'border-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 ring-1 ring-emerald-600' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'"
+                                           class="relative flex cursor-pointer rounded-xl border p-3 shadow-sm transition-all hover:border-emerald-500 items-center gap-3">
+                                        <input type="radio" name="status" value="menunggu_verifikasi_kabid" x-model="selectedStatus" class="h-4 w-4 border-gray-300 text-emerald-600 focus:ring-emerald-600 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900 transition-colors">
+                                        <span class="text-xs font-medium text-gray-900 dark:text-gray-100">Selesai (Ajukan ke Kabid)</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div>
