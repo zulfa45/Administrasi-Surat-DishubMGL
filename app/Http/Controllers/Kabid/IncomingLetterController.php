@@ -302,7 +302,6 @@ class IncomingLetterController extends Controller
                 'status' => 'belum_dibaca',
                 'catatan_kabid' => null,
                 'deadline' => null,
-                'tanggal_disposisi' => null,
             ]);
             
             return redirect()->route('kabid.surat-masuk.show', $assignment->id)
