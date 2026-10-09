@@ -122,13 +122,27 @@ class DispositionController extends Controller
     public function destroy(Assignment $assignment)
     {
         $letter = $assignment->incomingLetter;
+        
+        // Hapus file tindak lanjut jika ada di storage
+        if ($assignment->file_tindak_lanjut) {
+            try {
+                if (\Illuminate\Support\Facades\Storage::disk('google')->exists($assignment->file_tindak_lanjut)) {
+                    \Illuminate\Support\Facades\Storage::disk('google')->delete($assignment->file_tindak_lanjut);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('s3')->exists($assignment->file_tindak_lanjut)) {
+                    \Illuminate\Support\Facades\Storage::disk('s3')->delete($assignment->file_tindak_lanjut);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Gagal menghapus file bukti tugas (ID: {$assignment->id}): " . $e->getMessage());
+            }
+        }
+
         $assignment->delete();
 
         if ($letter && $letter->assignments()->count() === 0 && $letter->status === 'didistribusikan') {
             $letter->update(['status' => 'baru']);
         }
 
-        return back()->with('success', 'Disposisi berhasil dibatalkan/dihapus.');
+        return back()->with('success', 'Disposisi berhasil dibatalkan/dihapus beserta file laporan yang terkait.');
     }
 
     public function updateStatus(Request $request, Assignment $assignment)

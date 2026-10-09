@@ -290,26 +290,37 @@ class IncomingLetterController extends Controller
      */
     public function destroy(IncomingLetter $surat_masuk)
     {
-        // Hapus file lampiran jika ada di storage (G-Drive atau S3)
+        // Hapus file lampiran surat utama jika ada di storage (G-Drive atau S3)
         if ($surat_masuk->file_lampiran) {
             try {
-                // Gunakan try-catch agar jika API Google Drive error (misal token expired/401), 
-                // data di database tetap bisa terhapus.
                 if (Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
                     Storage::disk('google')->delete($surat_masuk->file_lampiran);
                 } elseif (Storage::disk('s3')->exists($surat_masuk->file_lampiran)) {
                     Storage::disk('s3')->delete($surat_masuk->file_lampiran);
                 }
             } catch (\Exception $e) {
-                // Log error tapi lanjutkan penghapusan di database
                 \Illuminate\Support\Facades\Log::error("Gagal menghapus file lampiran surat (ID: {$surat_masuk->id}): " . $e->getMessage());
+            }
+        }
+
+        // Hapus juga semua file bukti tindak lanjut (dari tabel assignments) jika ada
+        $assignmentsWithFiles = $surat_masuk->assignments()->whereNotNull('file_tindak_lanjut')->get();
+        foreach ($assignmentsWithFiles as $assignment) {
+            try {
+                if (Storage::disk('google')->exists($assignment->file_tindak_lanjut)) {
+                    Storage::disk('google')->delete($assignment->file_tindak_lanjut);
+                } elseif (Storage::disk('s3')->exists($assignment->file_tindak_lanjut)) {
+                    Storage::disk('s3')->delete($assignment->file_tindak_lanjut);
+                }
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error("Gagal menghapus file bukti tugas (ID: {$assignment->id}): " . $e->getMessage());
             }
         }
 
         $surat_masuk->delete();
 
         return redirect()->route('surat-masuk.index')
-            ->with('success', 'Surat masuk berhasil dihapus.');
+            ->with('success', 'Surat masuk beserta seluruh file lampiran dan file laporan hasil berhasil dihapus.');
     }
 
     /**

@@ -280,6 +280,15 @@ class IncomingLetterController extends Controller
         if (in_array($assignment->status, ['dikerjakan', 'menunggu_verifikasi_kabid', 'selesai'])) {
             return back()->with('error', 'Tugas ini sudah dalam proses atau selesai, tidak dapat dibatalkan.');
         }
+        
+        // Hapus file tindak lanjut jika ada (meskipun seharusnya tidak ada di status dibaca/belum_dibaca)
+        if ($assignment->file_tindak_lanjut) {
+            try {
+                if (\Illuminate\Support\Facades\Storage::disk('google')->exists($assignment->file_tindak_lanjut)) {
+                    \Illuminate\Support\Facades\Storage::disk('google')->delete($assignment->file_tindak_lanjut);
+                }
+            } catch (\Exception $e) {}
+        }
 
         // Cek apakah ada assignment lain di bidang ini untuk surat yang sama
         $otherAssignment = Assignment::where('incoming_letter_id', $assignment->incoming_letter_id)
@@ -302,6 +311,8 @@ class IncomingLetterController extends Controller
                 'status' => 'belum_dibaca',
                 'catatan_kabid' => null,
                 'deadline' => null,
+                'catatan_tindak_lanjut' => null,
+                'file_tindak_lanjut' => null,
             ]);
             
             return redirect()->route('kabid.surat-masuk.show', $assignment->id)
