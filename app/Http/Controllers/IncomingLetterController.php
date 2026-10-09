@@ -276,10 +276,17 @@ class IncomingLetterController extends Controller
     {
         // Hapus file lampiran jika ada di storage (G-Drive atau S3)
         if ($surat_masuk->file_lampiran) {
-            if (Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
-                Storage::disk('google')->delete($surat_masuk->file_lampiran);
-            } elseif (Storage::disk('s3')->exists($surat_masuk->file_lampiran)) {
-                Storage::disk('s3')->delete($surat_masuk->file_lampiran);
+            try {
+                // Gunakan try-catch agar jika API Google Drive error (misal token expired/401), 
+                // data di database tetap bisa terhapus.
+                if (Storage::disk('google')->exists($surat_masuk->file_lampiran)) {
+                    Storage::disk('google')->delete($surat_masuk->file_lampiran);
+                } elseif (Storage::disk('s3')->exists($surat_masuk->file_lampiran)) {
+                    Storage::disk('s3')->delete($surat_masuk->file_lampiran);
+                }
+            } catch (\Exception $e) {
+                // Log error tapi lanjutkan penghapusan di database
+                \Illuminate\Support\Facades\Log::error("Gagal menghapus file lampiran surat (ID: {$surat_masuk->id}): " . $e->getMessage());
             }
         }
 
