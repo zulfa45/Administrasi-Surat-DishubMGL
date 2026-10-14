@@ -77,11 +77,11 @@ class ReportController extends Controller
         }
 
         if ($request->filled('tanggal_mulai') && $request->filled('tanggal_sampai')) {
-            $periodeText = \Carbon\Carbon::parse($request->tanggal_mulai)->translatedFormat('d M Y') . ' s/d ' . \Carbon\Carbon::parse($request->tanggal_sampai)->translatedFormat('d M Y');
+            $periodeText = \Carbon\Carbon::parse($request->tanggal_mulai)->locale('id')->translatedFormat('d F Y') . ' s/d ' . \Carbon\Carbon::parse($request->tanggal_sampai)->locale('id')->translatedFormat('d F Y');
         } elseif ($request->filled('tanggal_mulai')) {
-            $periodeText = 'Mulai ' . \Carbon\Carbon::parse($request->tanggal_mulai)->translatedFormat('d M Y');
+            $periodeText = 'Mulai ' . \Carbon\Carbon::parse($request->tanggal_mulai)->locale('id')->translatedFormat('d F Y');
         } elseif ($request->filled('tanggal_sampai')) {
-            $periodeText = 'Sampai ' . \Carbon\Carbon::parse($request->tanggal_sampai)->translatedFormat('d M Y');
+            $periodeText = 'Sampai ' . \Carbon\Carbon::parse($request->tanggal_sampai)->locale('id')->translatedFormat('d F Y');
         } else {
             $periodeText = 'Seluruh Periode';
         }

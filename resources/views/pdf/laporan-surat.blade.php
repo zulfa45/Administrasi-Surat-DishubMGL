@@ -161,7 +161,7 @@
                 <td>{{ $item->asal_surat }}</td>
                 <td>{{ $item->perihal }}</td>
                 <td style="text-align: center;">
-                    {{ \Carbon\Carbon::parse($item->tanggal_diterima)->translatedFormat('d M Y') }}
+                    {{ \Carbon\Carbon::parse($item->tanggal_diterima)->locale('id')->translatedFormat('d F Y') }}
                 </td>
                 <td style="text-align: center;">
                     <span class="badge">{{ strtoupper(str_replace('_', ' ', $item->status)) }}</span>
@@ -183,15 +183,15 @@
             <td style="width: 65%;">
                 <p style="margin: 0; font-size: 8.5pt; color: #4b5563;">
                     Dicetak otomatis melalui Aplikasi SIMAS Dishub Kota Magelang pada:<br>
-                    {{ now()->translatedFormat('l, d F Y - H:i') }} WIB oleh: {{ auth()->user()->name }}
+                    {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('l, d F Y - H:i') }} WIB oleh: {{ auth()->user()?->name ?? 'Administrator' }}
                 </p>
             </td>
             <td style="width: 35%; text-align: center;">
-                <p style="margin: 0;">Kota Magelang, {{ now()->translatedFormat('d F Y') }}</p>
-                <p style="margin: 2px 0 0 0;">Mengetahui,<br><strong>Kepala Dinas Perhubungan</strong></p>
-                <div style="height: 60px;"></div>
-                <p style="margin: 0; font-weight: bold; text-decoration: underline;">( .................................................... )</p>
-                <p style="margin: 2px 0 0 0; font-size: 8.5pt;">NIP. ....................................................</p>
+                <p style="margin: 0;">Kota Magelang, {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') }}</p>
+                <p style="margin: 2px 0 0 0;">Mengetahui,<br><strong>Kepala Dinas Perhubungan</strong><br><strong>Kota Magelang</strong></p>
+                <div style="height: 70px;"></div>
+                <p style="margin: 0; font-weight: bold; text-decoration: underline;">Makhmud Yunus, AP., M.H.</p>
+                <p style="margin: 2px 0 0 0; font-size: 8.5pt;">NIP. 19740619 199311 1 001</p>
             </td>
         </tr>
     </table>

@@ -146,11 +146,11 @@
         </tr>
         <tr>
             <th>Tanggal Surat</th>
-            <td>{{ \Carbon\Carbon::parse($letter->tanggal_surat)->translatedFormat('d F Y') }}</td>
+            <td>{{ \Carbon\Carbon::parse($letter->tanggal_surat)->locale('id')->translatedFormat('d F Y') }}</td>
         </tr>
         <tr>
             <th>Tanggal Diterima</th>
-            <td>{{ \Carbon\Carbon::parse($letter->tanggal_diterima)->translatedFormat('d F Y') }}</td>
+            <td>{{ \Carbon\Carbon::parse($letter->tanggal_diterima)->locale('id')->translatedFormat('d F Y') }}</td>
         </tr>
         <tr>
             <th>Sifat Surat</th>
@@ -188,7 +188,7 @@
                     <strong>{{ $assignment->user?->name ?? 'Bagian' }}</strong><br>
                     <small style="color: #4b5563;">{{ $assignment->department?->name ?? ($assignment->user?->department?->name ?? '-') }}</small>
                 </td>
-                <td>{{ \Carbon\Carbon::parse($assignment->tanggal_disposisi)->translatedFormat('d M Y') }}</td>
+                <td>{{ \Carbon\Carbon::parse($assignment->tanggal_disposisi)->locale('id')->translatedFormat('d F Y') }}</td>
                 <td>
                     {{ $assignment->catatan ?: '-' }}
                     @if($assignment->catatan_tindak_lanjut)
@@ -217,11 +217,12 @@
             <td style="width: 60%;">
                 <p style="margin: 0; font-size: 9pt; color: #4b5563;">
                     Dicetak melalui SIMAS Dishub Kota Magelang pada:<br>
-                    {{ now()->translatedFormat('l, d F Y - H:i') }} WIB
+                    {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('l, d F Y - H:i') }} WIB oleh: {{ auth()->user()?->name ?? 'Administrator' }}
                 </p>
             </td>
             <td style="width: 40%; text-align: center;">
-                <p style="margin: 0;">Pejabat Pemberi Disposisi,</p>
+                <p style="margin: 0;">Kota Magelang, {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') }}</p>
+                <p style="margin: 2px 0 0 0;">Pejabat Pemberi Disposisi,</p>
                 <div style="height: 60px;"></div>
                 <p style="margin: 0; font-weight: bold; text-decoration: underline;">( .................................................... )</p>
                 <p style="margin: 2px 0 0 0; font-size: 9pt;">NIP. ....................................................</p>
