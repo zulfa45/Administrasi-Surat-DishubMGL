@@ -33,8 +33,12 @@ class NotificationController extends Controller
             return redirect()->route('karyawan.tasks.show', $data['assignment_id']);
         }
         
-        // Arahkan ke detail surat bidang jika user adalah kepala_bidang
+        // Arahkan ke detail surat bidang atau tugas langsung jika user adalah kepala_bidang
         if (auth()->user()->hasRole('kepala_bidang') && !empty($data['assignment_id'])) {
+            $assignment = \App\Models\Assignment::find($data['assignment_id']);
+            if ($assignment && $assignment->isDirectTask()) {
+                return redirect()->route('kabid.tugas.show', $data['assignment_id']);
+            }
             return redirect()->route('kabid.surat-masuk.show', $data['assignment_id']);
         }
 

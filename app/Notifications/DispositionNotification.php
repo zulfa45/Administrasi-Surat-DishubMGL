@@ -43,23 +43,33 @@ class DispositionNotification extends Notification
     {
         $letter = $this->assignment->incomingLetter;
 
-        $link = route('surat-masuk.show', $letter->id);
-        
-        if ($notifiable->hasRole('kepala_bidang')) {
-            $link = route('kabid.surat-masuk.show', $this->assignment->id);
-        } elseif ($notifiable->hasRole('karyawan')) {
-            $link = route('karyawan.tasks.show', $this->assignment->id);
+        if ($this->assignment->isDirectTask()) {
+            if ($notifiable->hasRole('kepala_bidang')) {
+                $link = route('kabid.tugas.show', $this->assignment->id);
+            } else {
+                $link = route('karyawan.tasks.show', $this->assignment->id);
+            }
+            $perihal = $this->assignment->judul_tugas ?? 'Tugas Internal Bidang';
+            $judul = $this->customTitle ?? 'Tugas Baru dari Kepala Bidang';
+            $pesan = $this->customMessage ?? 'Anda menerima penugasan baru dari Kepala Bidang: ' . $perihal;
+        } else {
+            $link = route('surat-masuk.show', $letter->id);
+            if ($notifiable->hasRole('kepala_bidang')) {
+                $link = route('kabid.surat-masuk.show', $this->assignment->id);
+            } elseif ($notifiable->hasRole('karyawan')) {
+                $link = route('karyawan.tasks.show', $this->assignment->id);
+            }
+            $perihal = $letter ? $letter->perihal : '-';
+            $judul = $this->customTitle ?? 'Disposisi Surat Baru';
+            $pesan = $this->customMessage ?? 'Anda menerima penugasan/pemberitahuan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-');
         }
-
-        $judul = $this->customTitle ?? 'Disposisi Surat Baru';
-        $pesan = $this->customMessage ?? 'Anda menerima penugasan/pemberitahuan disposisi untuk surat: ' . ($letter ? $letter->nomor_surat : '-');
 
         return [
             'assignment_id'      => $this->assignment->id,
             'incoming_letter_id' => $letter ? $letter->id : null,
             'judul'              => $judul,
             'pesan'              => $pesan,
-            'perihal'            => $letter ? $letter->perihal : '-',
+            'perihal'            => $perihal,
             'link'               => $link,
             'waktu'              => now()->translatedFormat('d M Y H:i'),
         ];

@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('surat-masuk', IncomingLetterController::class)->except(['show'])->middleware('role:admin|staf-loket');
     Route::get('surat-masuk/{surat_masuk}/file', [IncomingLetterController::class, 'previewFile'])->name('surat-masuk.file');
     Route::get('tasks/{assignment}/file', [IncomingLetterController::class, 'previewTaskFile'])->name('tasks.file');
+    Route::get('tasks/{task}/reference-file', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'previewFile'])->name('tasks.reference-file');
     Route::get('surat-masuk/{surat_masuk}/disposisi-pdf', [ReportController::class, 'printDispositionPdf'])->name('surat-masuk.disposisi-pdf');
     Route::get('surat-masuk/{surat_masuk}', [IncomingLetterController::class, 'show'])->name('surat-masuk.show');
 
@@ -76,6 +77,15 @@ Route::middleware(['auth', 'role:kepala_bidang'])->prefix('kabid')->name('kabid.
     Route::delete('/surat-masuk/{assignment}/batal', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'batalDisposisi'])->name('surat-masuk.batal');
     Route::post('/surat-masuk/{assignment}/verifikasi', [\App\Http\Controllers\Kabid\IncomingLetterController::class, 'verifikasi'])->name('surat-masuk.verifikasi');
     Route::get('/anggota', [\App\Http\Controllers\Kabid\MemberController::class, 'index'])->name('anggota.index');
+
+    // Tugas Langsung / Internal Bidang (tanpa surat masuk)
+    Route::get('/tugas', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'index'])->name('tugas.index');
+    Route::get('/tugas/create', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'create'])->name('tugas.create');
+    Route::post('/tugas', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'store'])->name('tugas.store');
+    Route::get('/tugas/{task}', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'show'])->name('tugas.show');
+    Route::post('/tugas/{task}/verifikasi', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'verifikasi'])->name('tugas.verifikasi');
+    Route::delete('/tugas/{task}', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'destroy'])->name('tugas.destroy');
+    Route::get('/tugas/{task}/file', [\App\Http\Controllers\Kabid\DirectTaskController::class, 'previewFile'])->name('tugas.file');
 });
 
 use App\Http\Controllers\Karyawan\TaskController;

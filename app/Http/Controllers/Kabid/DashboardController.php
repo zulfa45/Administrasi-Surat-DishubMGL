@@ -23,35 +23,43 @@ class DashboardController extends Controller
             ]);
         }
 
-        // Statistik
-        $totalSurat = Assignment::where('department_id', $departmentId)->count();
+        // Statistik Surat & Tugas
+        $totalSurat = Assignment::where('department_id', $departmentId)
+            ->whereNotNull('incoming_letter_id')
+            ->count();
+
+        $totalTugasLangsung = Assignment::where('department_id', $departmentId)
+            ->whereNull('incoming_letter_id')
+            ->count();
         
         $belumDisposisi = Assignment::where('department_id', $departmentId)
-            ->whereNull('user_id') // Belum ditugaskan ke karyawan
+            ->whereNotNull('incoming_letter_id')
+            ->whereNull('user_id')
+            ->where('status', '!=', 'selesai')
             ->count();
             
         $sedangProses = Assignment::where('department_id', $departmentId)
             ->whereNotNull('user_id')
-            ->whereIn('status', ['dibaca', 'dikerjakan', 'belum_dibaca'])
+            ->whereIn('status', ['dibaca', 'dikerjakan', 'belum_dibaca', 'perlu_revisi'])
             ->count();
             
         $menungguVerifikasi = Assignment::where('department_id', $departmentId)
-            ->whereNotNull('user_id')
-            ->where('status', 'menunggu_verifikasi_kabid') // We need to add this status
+            ->where('status', 'menunggu_verifikasi_kabid')
             ->count();
 
         $selesai = Assignment::where('department_id', $departmentId)
             ->where('status', 'selesai')
             ->count();
 
-        $recentLetters = Assignment::with(['incomingLetter', 'user'])
+        $recentLetters = Assignment::with(['incomingLetter', 'user', 'creator'])
             ->where('department_id', $departmentId)
             ->latest('created_at')
-            ->take(5)
+            ->take(6)
             ->get();
 
         return view('kabid.dashboard', compact(
             'totalSurat',
+            'totalTugasLangsung',
             'belumDisposisi',
             'sedangProses',
             'menungguVerifikasi',

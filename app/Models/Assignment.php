@@ -22,6 +22,10 @@ class Assignment extends Model
         'tanggal_disposisi',
         'deadline',
         'tanggal_selesai',
+        'judul_tugas',
+        'sifat',
+        'file_tugas',
+        'created_by',
     ];
 
     /**
@@ -39,7 +43,43 @@ class Assignment extends Model
     }
 
     /**
-     * Surat masuk yang didisposisikan.
+     * Cek apakah ini tugas langsung dari Kabid (tanpa surat masuk).
+     */
+    public function isDirectTask(): bool
+    {
+        return is_null($this->incoming_letter_id);
+    }
+
+    /**
+     * Accessor untuk judul atau perihal tugas.
+     */
+    public function getJudulAttribute(): string
+    {
+        return $this->judul_tugas ?: ($this->incomingLetter?->perihal ?? 'Tanpa Perihal/Judul');
+    }
+
+    /**
+     * Accessor untuk sifat / prioritas tugas.
+     */
+    public function getSifatTugasAttribute(): string
+    {
+        return $this->sifat ?: ($this->incomingLetter?->sifat ?? 'Biasa');
+    }
+
+    /**
+     * Accessor untuk nomor identitas referensi tugas.
+     */
+    public function getNomorReferensiAttribute(): string
+    {
+        if ($this->incomingLetter) {
+            return $this->incomingLetter->nomor_agenda ? '#' . $this->incomingLetter->nomor_agenda : $this->incomingLetter->nomor_surat;
+        }
+
+        return 'TUGAS-DIR-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Surat masuk yang didisposisikan (jika ada).
      */
     public function incomingLetter()
     {
@@ -47,7 +87,7 @@ class Assignment extends Model
     }
 
     /**
-     * Pegawai penerima disposisi.
+     * Pegawai penerima disposisi / tugas.
      */
     public function user()
     {
@@ -55,7 +95,15 @@ class Assignment extends Model
     }
 
     /**
-     * Department atau bagian penerima disposisi.
+     * Pembuat tugas langsung (misal Kepala Bidang).
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Department atau bagian penerima disposisi / tugas.
      */
     public function department()
     {
