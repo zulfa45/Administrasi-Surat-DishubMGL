@@ -104,4 +104,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+use App\Http\Controllers\MonitorController;
+
+// Rute Layar Monitor TV Bidang (Realtime To-Do List Perangkat Display)
+Route::prefix('monitor')->name('monitor.')->group(function () {
+    Route::get('/', [MonitorController::class, 'index'])->name('index');
+    Route::get('/all-data', [MonitorController::class, 'allData'])->name('all.data');
+    Route::get('/bidang/{department:slug}', [MonitorController::class, 'show'])->name('bidang');
+    Route::get('/bidang/{department:slug}/data', [MonitorController::class, 'data'])->name('bidang.data');
+});
+
 require __DIR__.'/auth.php';
