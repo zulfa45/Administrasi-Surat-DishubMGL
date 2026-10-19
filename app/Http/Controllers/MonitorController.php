@@ -204,10 +204,18 @@ class MonitorController extends Controller
                 return $this->formatTaskItem($task);
             });
 
+            $kabid = User::role('kepala_bidang')->where('department_id', $dept->id)->first();
+            $avatarUrl = $kabid?->avatar 
+                ? \Illuminate\Support\Facades\Storage::url($kabid->avatar)
+                : ($kabid ? 'https://ui-avatars.com/api/?name=' . urlencode($kabid->name) . '&color=FFFFFF&background=' . str_replace('bg-', '', $theme['bg']) . '&bold=true' : null);
+
             $columns[] = [
                 'id'          => $dept->id,
                 'name'        => $dept->name,
                 'slug'        => $dept->slug,
+                'avatar'      => $avatarUrl,
+                'initials'    => strtoupper(substr($dept->name, 0, 2)),
+                'is_user'     => false,
                 'link'        => $dept->monitor_url,
                 'total_tasks' => $deptTasks->count(),
                 'theme'       => $theme,
@@ -262,6 +270,9 @@ class MonitorController extends Controller
                 'id'          => 0,
                 'name'        => 'Menunggu Disposisi Kabid',
                 'slug'        => 'unassigned',
+                'avatar'      => null,
+                'initials'    => 'KB',
+                'is_user'     => false,
                 'link'        => '#',
                 'total_tasks' => $unassigned->count(),
                 'theme'       => [
@@ -284,10 +295,17 @@ class MonitorController extends Controller
                 return $this->formatTaskItem($task);
             });
 
+            $avatarUrl = $user->avatar 
+                ? \Illuminate\Support\Facades\Storage::url($user->avatar)
+                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&color=FFFFFF&background=' . str_replace('bg-', '', $theme['bg']) . '&bold=true';
+
             $columns[] = [
                 'id'          => $user->id,
                 'name'        => $user->name,
                 'slug'        => 'user-' . $user->id,
+                'avatar'      => $avatarUrl,
+                'initials'    => strtoupper(substr($user->name, 0, 2)),
+                'is_user'     => true,
                 'link'        => '#',
                 'total_tasks' => $userTasks->count(),
                 'theme'       => $theme,
