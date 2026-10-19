@@ -102,31 +102,15 @@
     <div class="flex-1 flex flex-col justify-between">
         
         <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
-        <header class="bg-[#0b1d33] text-white relative overflow-hidden shadow-lg border-b border-slate-800">
+        <header class="bg-[#0b1d33] text-white relative overflow-hidden shadow-xl border-b border-slate-800">
             
-            <!-- WATERMARK SILHOUETTE GEDUNG DISHUB -->
-            <div class="absolute inset-0 pointer-events-none opacity-10 flex items-center justify-center">
-                <svg class="w-full h-full object-cover" viewBox="0 0 800 200" fill="currentColor">
-                    <rect x="100" y="40" width="600" height="140" rx="4"/>
-                    <rect x="140" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="200" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="260" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="320" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="380" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="440" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="500" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="560" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="620" y="60" width="40" height="30" fill="#000"/>
-                    <rect x="140" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="200" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="260" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="320" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="380" y="110" width="40" height="70" fill="#000"/>
-                    <rect x="440" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="500" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="560" y="110" width="40" height="40" fill="#000"/>
-                    <rect x="620" y="110" width="40" height="40" fill="#000"/>
-                </svg>
+            <!-- BACKGROUND GAMBAR (header.jpg) DENGAN OVERLAY KHUSUS -->
+            <div class="absolute inset-0 pointer-events-none z-0">
+                <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
+                     class="w-full h-full object-cover object-center">
+                <!-- Overlay gradien bernuansa Dishub navy agar landmark terlihat jelas namun teks & jam tetap kontras tinggi -->
+                <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/92 via-[#0b1d33]/75 to-[#071322]/92"></div>
+                <div class="absolute inset-0 bg-slate-950/20 backdrop-blur-[0.5px]"></div>
             </div>
 
             <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
