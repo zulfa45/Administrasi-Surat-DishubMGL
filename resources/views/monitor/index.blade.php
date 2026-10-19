@@ -102,17 +102,16 @@
     <div class="flex-1 flex flex-col justify-between">
         
         <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
-        <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-[0_14px_35px_rgba(0,0,0,0.7)] border-b border-black/40">
+        <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-2xl shadow-black/60 border-b border-black/30">
             
-            <!-- BACKGROUND GAMBAR (header.jpg) DENGAN OVERLAY & SHADOW GELAP -->
+            <!-- BACKGROUND GAMBAR (header.jpg) JELAS & CERAH -->
             <div class="absolute inset-0 pointer-events-none z-0">
                 <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
-                     class="w-full h-full object-cover object-center filter brightness-90">
-                <!-- Overlay gradien bernuansa Dishub navy dengan shadow gelap agar foto terlihat dramatis dan teks tetap sangat tajam -->
-                <div class="absolute inset-0 bg-gradient-to-r from-[#050e18]/95 via-[#0b1d33]/82 to-[#050e18]/95"></div>
-                <!-- Shadow gelap vertikal (top & bottom vignette) -->
-                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/75"></div>
-                <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[0.5px]"></div>
+                     class="w-full h-full object-cover object-center">
+                <!-- Overlay gradien halus & transparan agar gambar latar terlihat jelas dan cerah -->
+                <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/55 via-[#0b1d33]/20 to-[#071322]/55"></div>
+                <!-- Bayangan tipis di bagian atas dan bawah -->
+                <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"></div>
             </div>
 
             <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
@@ -120,18 +119,18 @@
                     
                     <!-- KIRI: LOGO KOTA MAGELANG & TITLE -->
                     <div class="flex items-center gap-4">
-                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota Magelang" class="w-14 sm:w-16 h-auto object-contain filter drop-shadow">
+                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota Magelang" class="w-14 sm:w-16 h-auto object-contain filter drop-shadow-lg">
                         <div>
-                            <h2 class="text-sm sm:text-base font-semibold text-slate-200 tracking-wide leading-tight">
+                            <h2 class="text-sm sm:text-base font-semibold text-slate-100 tracking-wide leading-tight drop-shadow-md">
                                 Dinas Perhubungan
                             </h2>
-                            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+                            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-lg">
                                 Kota Magelang
                             </h1>
-                            <p class="text-xs sm:text-sm text-slate-300 font-medium mt-0.5">
+                            <p class="text-xs sm:text-sm text-slate-200 font-medium mt-0.5 drop-shadow-md">
                                 Sistem Informasi Manajemen Surat
                             </p>
-                            <p class="text-[11px] text-slate-400 font-normal">
+                            <p class="text-[11px] text-slate-300 font-normal drop-shadow">
                                 Monitoring Tugas Disposisi & Tindak Lanjut
                             </p>
                         </div>
@@ -139,17 +138,17 @@
 
                     <!-- TENGAH: SLOGAN RESMI DISHUB -->
                     <div class="hidden xl:flex flex-col items-center justify-center text-center px-6">
-                        <p class="text-sm font-medium text-slate-200 italic max-w-xs leading-relaxed">
+                        <p class="text-sm font-semibold text-white italic max-w-xs leading-relaxed drop-shadow-lg">
                             Melayani dengan Integritas untuk Transportasi yang Lebih Baik
                         </p>
-                        <div class="w-20 h-0.5 bg-amber-400 mt-1.5 rounded-full"></div>
+                        <div class="w-20 h-0.5 bg-amber-400 mt-1.5 rounded-full shadow"></div>
                     </div>
 
                     <!-- KANAN: JAM ANALOG + WAKTU DIGITAL & TANGGAL -->
                     <div class="flex items-center gap-4 sm:gap-6 self-end lg:self-center">
                         
                         <!-- JAM ANALOG (DIAL SVG DENGAN JARUM BERPUTAR REAL-TIME) -->
-                        <div class="relative w-20 h-20 flex-shrink-0">
+                        <div class="relative w-20 h-20 flex-shrink-0 drop-shadow-xl">
                             <svg class="w-20 h-20 shadow-md rounded-full bg-white flex-shrink-0" viewBox="0 0 100 100">
                                 <!-- Dial Bulat & Border -->
                                 <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
@@ -188,17 +187,17 @@
 
                         <!-- JAM DIGITAL & TANGGAL -->
                         <div class="text-right">
-                            <div class="text-xs font-semibold text-slate-300" x-text="dayName">
+                            <div class="text-xs font-semibold text-slate-100 drop-shadow-md" x-text="dayName">
                                 {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('l') }}
                             </div>
-                            <div class="text-xs font-medium text-slate-400" x-text="dateFormatted">
+                            <div class="text-xs font-medium text-slate-200 drop-shadow-md" x-text="dateFormatted">
                                 {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') }}
                             </div>
                             <div class="flex items-baseline justify-end gap-1.5 mt-0.5">
-                                <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono" x-text="digitalTime">
+                                <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono drop-shadow-lg" x-text="digitalTime">
                                     {{ \Carbon\Carbon::now('Asia/Jakarta')->format('H:i') }}
                                 </span>
-                                <span class="text-xs font-bold text-slate-400">WIB</span>
+                                <span class="text-xs font-bold text-slate-300 drop-shadow">WIB</span>
                             </div>
                         </div>
 
