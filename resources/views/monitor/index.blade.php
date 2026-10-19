@@ -102,15 +102,17 @@
     <div class="flex-1 flex flex-col justify-between">
         
         <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
-        <header class="bg-[#0b1d33] text-white relative overflow-hidden shadow-xl border-b border-slate-800">
+        <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-[0_14px_35px_rgba(0,0,0,0.7)] border-b border-black/40">
             
-            <!-- BACKGROUND GAMBAR (header.jpg) DENGAN OVERLAY KHUSUS -->
+            <!-- BACKGROUND GAMBAR (header.jpg) DENGAN OVERLAY & SHADOW GELAP -->
             <div class="absolute inset-0 pointer-events-none z-0">
                 <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
-                     class="w-full h-full object-cover object-center">
-                <!-- Overlay gradien bernuansa Dishub navy agar landmark terlihat jelas namun teks & jam tetap kontras tinggi -->
-                <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/92 via-[#0b1d33]/75 to-[#071322]/92"></div>
-                <div class="absolute inset-0 bg-slate-950/20 backdrop-blur-[0.5px]"></div>
+                     class="w-full h-full object-cover object-center filter brightness-90">
+                <!-- Overlay gradien bernuansa Dishub navy dengan shadow gelap agar foto terlihat dramatis dan teks tetap sangat tajam -->
+                <div class="absolute inset-0 bg-gradient-to-r from-[#050e18]/95 via-[#0b1d33]/82 to-[#050e18]/95"></div>
+                <!-- Shadow gelap vertikal (top & bottom vignette) -->
+                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/75"></div>
+                <div class="absolute inset-0 bg-slate-950/25 backdrop-blur-[0.5px]"></div>
             </div>
 
             <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
