@@ -162,31 +162,42 @@
                     <!-- KANAN: JAM ANALOG + WAKTU DIGITAL & TANGGAL -->
                     <div class="flex items-center gap-4 sm:gap-6 self-end lg:self-center">
                         
-                        <!-- JAM ANALOG (SVG DIAL DENGAN JARUM BERGERAK) -->
-                        <div class="relative w-20 h-20 bg-white rounded-full border-2 border-slate-300 shadow-lg flex items-center justify-center flex-shrink-0">
-                            <!-- Angka Jam -->
-                            <span class="absolute top-1 text-[9px] font-bold text-slate-700">12</span>
-                            <span class="absolute right-1.5 text-[9px] font-bold text-slate-700">3</span>
-                            <span class="absolute bottom-1 text-[9px] font-bold text-slate-700">6</span>
-                            <span class="absolute left-1.5 text-[9px] font-bold text-slate-700">9</span>
-                            
-                            <!-- Titik Poros Tengah -->
-                            <div class="w-2 h-2 bg-slate-900 rounded-full z-20"></div>
-
-                            <!-- Jarum Jam -->
-                            <div class="absolute w-1 bg-slate-900 rounded-full origin-bottom z-10"
-                                 style="height: 22px; bottom: 50%;"
-                                 :style="`transform: rotate(${hourDegree}deg);`"></div>
-
-                            <!-- Jarum Menit -->
-                            <div class="absolute w-0.5 bg-slate-700 rounded-full origin-bottom z-10"
-                                 style="height: 30px; bottom: 50%;"
-                                 :style="`transform: rotate(${minuteDegree}deg);`"></div>
-
-                            <!-- Jarum Detik -->
-                            <div class="absolute w-[1.5px] bg-red-600 rounded-full origin-bottom z-15"
-                                 style="height: 32px; bottom: 50%;"
-                                 :style="`transform: rotate(${secondDegree}deg);`"></div>
+                        <!-- JAM ANALOG (DIAL SVG DENGAN JARUM BERPUTAR REAL-TIME) -->
+                        <div class="relative w-20 h-20 flex-shrink-0">
+                            <svg class="w-20 h-20 shadow-md rounded-full bg-white flex-shrink-0" viewBox="0 0 100 100">
+                                <!-- Dial Bulat & Border -->
+                                <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+                                
+                                <!-- Angka Jam 1 - 12 (Persis Gambar Mockup) -->
+                                <text x="50" y="16" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">12</text>
+                                <text x="70" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">1</text>
+                                <text x="82" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">2</text>
+                                <text x="88" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">3</text>
+                                <text x="82" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">4</text>
+                                <text x="70" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">5</text>
+                                <text x="50" y="90" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">6</text>
+                                <text x="30" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">7</text>
+                                <text x="18" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">8</text>
+                                <text x="12" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">9</text>
+                                <text x="18" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">10</text>
+                                <text x="30" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">11</text>
+                                
+                                <!-- Jarum Jam (Hour Hand) -->
+                                <line x1="50" y1="50" x2="50" y2="28" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"
+                                      :transform="`rotate(${hourDegree} 50 50)`"/>
+                                      
+                                <!-- Jarum Menit (Minute Hand) -->
+                                <line x1="50" y1="50" x2="50" y2="18" stroke="#334155" stroke-width="2.5" stroke-linecap="round"
+                                      :transform="`rotate(${minuteDegree} 50 50)`"/>
+                                      
+                                <!-- Jarum Detik (Second Hand Merah) -->
+                                <line x1="50" y1="58" x2="50" y2="14" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"
+                                      :transform="`rotate(${secondDegree} 50 50)`"/>
+                                      
+                                <!-- Titik Poros Tengah -->
+                                <circle cx="50" cy="50" r="3.5" fill="#dc2626"/>
+                                <circle cx="50" cy="50" r="1.5" fill="#ffffff"/>
+                            </svg>
                         </div>
 
                         <!-- JAM DIGITAL & TANGGAL -->
@@ -225,13 +236,9 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Surat Masuk</span>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="mt-1">
                                 <span class="text-3xl font-black text-slate-900" x-text="stats.total_surat">48</span>
-                                <span class="inline-flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded" x-text="stats.trend_surat">
-                                    ↑ 12%
-                                </span>
                             </div>
-                            <span class="text-[11px] text-slate-400 mt-0.5 block">dari minggu lalu</span>
                         </div>
                     </div>
                 </div>
@@ -244,13 +251,9 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Total Disposisi</span>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="mt-1">
                                 <span class="text-3xl font-black text-slate-900" x-text="stats.total_disposisi">46</span>
-                                <span class="inline-flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded" x-text="stats.trend_disposisi">
-                                    ↑ 8%
-                                </span>
                             </div>
-                            <span class="text-[11px] text-slate-400 mt-0.5 block">dari minggu lalu</span>
                         </div>
                     </div>
                 </div>
@@ -263,13 +266,9 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Tugas Belum Selesai</span>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="mt-1">
                                 <span class="text-3xl font-black text-slate-900" x-text="stats.belum_selesai">18</span>
-                                <span class="inline-flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded" x-text="stats.trend_belum">
-                                    ↓ 25%
-                                </span>
                             </div>
-                            <span class="text-[11px] text-slate-400 mt-0.5 block">dari minggu lalu</span>
                         </div>
                     </div>
                 </div>
@@ -282,13 +281,9 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Tugas Selesai</span>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="mt-1">
                                 <span class="text-3xl font-black text-slate-900" x-text="stats.selesai">28</span>
-                                <span class="inline-flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded" x-text="stats.trend_selesai">
-                                    ↑ 17%
-                                </span>
                             </div>
-                            <span class="text-[11px] text-slate-400 mt-0.5 block">dari minggu lalu</span>
                         </div>
                     </div>
                 </div>
