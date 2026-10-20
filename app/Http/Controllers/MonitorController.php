@@ -219,8 +219,8 @@ class MonitorController extends Controller
                 'link'        => $dept->monitor_url,
                 'total_tasks' => $deptTasks->count(),
                 'theme'       => $theme,
-                'tasks'       => $formattedTasks->take(6)->all(), // tampilkan s/d 6 tugas utama
-                'has_more'    => $deptTasks->count() > 6,
+                'tasks'       => $formattedTasks->all(),
+                'has_more'    => $deptTasks->count() > 0,
             ];
         }
 
@@ -280,8 +280,8 @@ class MonitorController extends Controller
                     'hover' => 'hover:bg-orange-700',
                     'icon'  => 'clock',
                 ],
-                'tasks'       => $formattedUnassigned->take(6)->all(),
-                'has_more'    => $unassigned->count() > 6,
+                'tasks'       => $formattedUnassigned->all(),
+                'has_more'    => $unassigned->count() > 0,
             ];
         }
 
@@ -309,8 +309,8 @@ class MonitorController extends Controller
                 'link'        => '#',
                 'total_tasks' => $userTasks->count(),
                 'theme'       => $theme,
-                'tasks'       => $formattedTasks->take(6)->all(),
-                'has_more'    => $userTasks->count() > 6,
+                'tasks'       => $formattedTasks->all(),
+                'has_more'    => $userTasks->count() > 0,
             ];
         }
 
