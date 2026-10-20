@@ -400,36 +400,106 @@
                                         </div>
                                     </template>
 
-                                    <!-- Tiap Item Tugas -->
+                                    <!-- Tiap Item Tugas (Card Informatif & Berisi) -->
                                     <template x-for="task in col.tasks" :key="task.id">
-                                        <div class="flex items-start gap-2.5 group">
+                                        <div class="p-3 bg-white hover:bg-slate-50/90 rounded-xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all duration-200 group flex flex-col justify-between">
                                             
-                                            <!-- Bullet Bulatan Kosong (Sesuai Mockup) -->
-                                            <div class="w-3.5 h-3.5 rounded-full border-2 flex-shrink-0 mt-0.5"
-                                                 :class="task.circle_color">
-                                            </div>
+                                            <div>
+                                                <!-- Baris Atas: Bullet Urgensi + Tag Sumber/Status + Badge Prioritas -->
+                                                <div class="flex items-center justify-between gap-1.5 mb-1.5">
+                                                    <div class="flex items-center gap-1.5 min-w-0 flex-wrap">
+                                                        <!-- Indikator Bulat Urgensi -->
+                                                        <span class="w-2 h-2 rounded-full flex-shrink-0" :class="task.circle_color"></span>
 
-                                            <!-- Konten Tugas -->
-                                            <div class="flex-1 min-w-0">
-                                                <h5 class="text-xs font-semibold text-slate-800 line-clamp-2 leading-snug group-hover:text-blue-600 transition-colors"
+                                                        <!-- Tag Sumber: Tugas Kabid vs Surat Masuk -->
+                                                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide truncate"
+                                                              :class="task.is_direct ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-blue-50 text-blue-700 border border-blue-200'"
+                                                              x-text="task.is_direct ? 'Tugas Kabid' : 'Surat Masuk'">
+                                                        </span>
+
+                                                        <!-- Status Pengerjaan (Belum Dibaca, Dikerjakan, dll) -->
+                                                        <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded border tracking-wide"
+                                                              :class="task.status_class"
+                                                              x-text="task.status_label">
+                                                        </span>
+                                                    </div>
+
+                                                    <!-- Badge Prioritas/Urgensi (Urgent / Penting / Biasa) -->
+                                                    <span class="text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow-xs uppercase tracking-wider flex-shrink-0"
+                                                          :class="task.urgency_color"
+                                                          x-text="task.urgency">
+                                                    </span>
+                                                </div>
+
+                                                <!-- Judul / Perihal Tugas (Bukan 'Tanpa Perihal') -->
+                                                <h5 class="text-xs font-bold text-slate-900 group-hover:text-blue-700 transition-colors line-clamp-2 leading-snug"
                                                     x-text="task.title">
                                                     Judul Perihal Surat
                                                 </h5>
-                                                
-                                                <!-- Row Badge Urgensi & Tanggal -->
-                                                <div class="flex items-center gap-2 mt-1.5">
-                                                    <!-- Badge Urgensi (Urgent / Penting / Normal) -->
-                                                    <span class="text-[9px] font-bold px-2 py-0.5 rounded-full"
-                                                          :class="task.urgency_color"
-                                                          x-text="task.urgency">
-                                                        Normal
-                                                    </span>
 
-                                                    <!-- Tanggal -->
-                                                    <span class="text-[11px] text-slate-400 font-medium" x-text="task.date">
-                                                        20 Okt 2026
-                                                    </span>
+                                                <!-- Perintah / Arahan Langsung dari Kabid -->
+                                                <template x-if="task.catatan_kabid">
+                                                    <div class="mt-2 p-2 bg-amber-50/90 rounded-lg border border-amber-200/70 text-[11px] text-amber-950 flex items-start gap-1.5 leading-snug">
+                                                        <svg class="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                                                        </svg>
+                                                        <div class="min-w-0">
+                                                            <span class="font-extrabold text-amber-900 text-[10px] uppercase tracking-wider block">Perintah Kabid:</span>
+                                                            <p class="font-medium text-slate-800 break-words" x-text="task.catatan_kabid"></p>
+                                                        </div>
+                                                    </div>
+                                                </template>
+
+                                                <!-- Detail Surat Masuk (Nomor & Asal Surat jika ada) -->
+                                                <template x-if="!task.is_direct && task.nomor_surat && task.nomor_surat !== '-'">
+                                                    <div class="mt-1.5 text-[10px] text-slate-500 flex items-center gap-1 truncate">
+                                                        <svg class="w-3 h-3 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                        </svg>
+                                                        <span class="truncate">No: <span class="font-semibold text-slate-700" x-text="task.nomor_surat"></span></span>
+                                                        <template x-if="task.asal_surat && task.asal_surat !== '-'">
+                                                            <span class="truncate">• Dari: <span class="font-medium text-slate-600" x-text="task.asal_surat"></span></span>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                            <!-- Bagian Bawah: Informasi Deadline & Tanggal Disposisi -->
+                                            <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                                                
+                                                <!-- Deadline / Batas Waktu Pengerjaan -->
+                                                <div class="flex items-center gap-1.5 min-w-0">
+                                                    <svg class="w-3.5 h-3.5 flex-shrink-0" :class="task.has_deadline ? 'text-rose-500' : 'text-slate-400'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    
+                                                    <template x-if="task.has_deadline">
+                                                        <div class="flex items-center gap-1 truncate">
+                                                            <span class="font-bold text-slate-700">Tenggat:</span>
+                                                            <span class="font-semibold text-slate-900" x-text="task.deadline_formatted"></span>
+                                                            <span class="text-[9px] px-1.5 py-0.5 rounded font-extrabold"
+                                                                  :class="task.deadline_class"
+                                                                  x-text="task.deadline_status">
+                                                            </span>
+                                                        </div>
+                                                    </template>
+                                                    
+                                                    <template x-if="!task.has_deadline">
+                                                        <div class="flex items-center gap-1 text-slate-400 text-[10px]">
+                                                            <span>Disposisi:</span>
+                                                            <span class="font-medium text-slate-600" x-text="task.disposisi_formatted || task.date"></span>
+                                                        </div>
+                                                    </template>
                                                 </div>
+
+                                                <!-- Assignee / Penerima (hanya jika di overview semua bidang) -->
+                                                <template x-if="!col.is_user && task.assignee">
+                                                    <span class="text-[10px] text-slate-500 font-semibold truncate max-w-[85px] bg-slate-100 px-1.5 py-0.5 rounded text-right"
+                                                          :title="'Ditugaskan: ' + task.assignee"
+                                                          x-text="task.assignee">
+                                                    </span>
+                                                </template>
+
                                             </div>
 
                                         </div>
