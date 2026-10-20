@@ -35,6 +35,7 @@
                             <th class="px-6 py-4 font-semibold">NIP</th>
                             <th class="px-6 py-4 font-semibold">Jabatan</th>
                             <th class="px-6 py-4 font-semibold">Email</th>
+                            <th class="px-6 py-4 text-right font-semibold">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -57,10 +58,17 @@
                                 <td class="px-6 py-4">{{ $member->nip ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $member->jabatan ?? '-' }}</td>
                                 <td class="px-6 py-4">{{ $member->email }}</td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('kabid.tugas.create', ['user_id' => $member->id]) }}"
+                                       class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-all shadow-xs">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        Beri Tugas
+                                    </a>
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                     <p class="font-medium">Belum ada Karyawan yang terdaftar di bidang ini.</p>
                                 </td>
                             </tr>

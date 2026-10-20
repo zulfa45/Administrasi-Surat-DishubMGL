@@ -11,7 +11,7 @@
                 <a href="{{ route('karyawan.tasks.index') }}" class="hover:text-blue-600 transition-colors">Daftar Tugas</a>
                 <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 <span class="text-gray-800 dark:text-gray-200 font-semibold truncate max-w-xs">
-                    {{ $letter->nomor_agenda ? '#' . $letter->nomor_agenda : $letter->nomor_surat }}
+                    {{ $task->nomor_referensi }}
                 </span>
             </nav>
 
@@ -19,7 +19,7 @@
                 <div>
                     <div class="flex flex-wrap items-center gap-2.5">
                         <h2 class="font-bold text-xl text-gray-900 dark:text-gray-100 leading-tight">
-                            Detail Tugas Disposisi
+                            Detail {{ $task->isDirectTask() ? 'Tugas Langsung' : 'Tugas Disposisi' }}
                         </h2>
                         @php
                             $assignStatusColors = match($task->status) {
@@ -93,14 +93,14 @@
             </h3>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-                {{-- Step 1: Registrasi --}}
+                {{-- Step 1: Registrasi / Penugasan --}}
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center font-bold text-xs flex-shrink-0 ring-4 ring-emerald-50 dark:ring-emerald-950/30">
                         ✓
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">1. Surat Diterima</p>
-                        <p class="text-[11px] text-gray-500 mt-0.5">Dari {{ $letter->asal_surat }}</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">1. {{ $letter ? 'Surat Diterima' : 'Penugasan Dibuat' }}</p>
+                        <p class="text-[11px] text-gray-500 mt-0.5">{{ $letter ? 'Dari ' . $letter->asal_surat : 'Oleh Kepala Bidang' }}</p>
                     </div>
                 </div>
 
@@ -110,7 +110,7 @@
                         ✓
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">2. Disposisi Pimpinan</p>
+                        <p class="text-xs font-bold text-gray-900 dark:text-gray-100">2. Arahan Pimpinan</p>
                         <p class="text-[11px] text-gray-500 mt-0.5">{{ $task->tanggal_disposisi ? $task->tanggal_disposisi->translatedFormat('d M Y') : '-' }}</p>
                     </div>
                 </div>
@@ -392,83 +392,160 @@
                     @endif
                 </div>
 
-                {{-- Informasi Dokumen Surat --}}
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-4">
-                    <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 pb-3 border-b border-gray-100 dark:border-gray-700">
-                        Informasi Dokumen Surat
-                    </h3>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                        <div>
-                            <span class="text-gray-400 block mb-0.5">Nomor Surat (Fisik)</span>
-                            <div class="flex items-center gap-2">
-                                <span class="font-bold text-gray-900 dark:text-gray-100 font-mono text-xs">{{ $letter->nomor_surat }}</span>
-                                <button @click="copyText('{{ $letter->nomor_surat }}')" type="button" class="text-gray-400 hover:text-blue-600" title="Salin">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span class="text-gray-400 block mb-0.5">Nomor Agenda</span>
-                            <span class="font-bold text-blue-600 font-mono">{{ $letter->nomor_agenda ? '#' . $letter->nomor_agenda : '-' }}</span>
-                        </div>
-
-                        <div>
-                            <span class="text-gray-400 block mb-0.5">Asal Surat</span>
-                            <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $letter->asal_surat }}</span>
-                        </div>
-
-                        <div>
-                            <span class="text-gray-400 block mb-0.5">Tanggal Diterima</span>
-                            <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $letter->tanggal_diterima ? $letter->tanggal_diterima->translatedFormat('d F Y') : '-' }}</span>
-                        </div>
-
-                        <div class="sm:col-span-2">
-                            <span class="text-gray-400 block mb-0.5">Perihal</span>
-                            <p class="font-bold text-gray-900 dark:text-gray-100 text-xs leading-relaxed">{{ $letter->perihal }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Kolom Kanan: Lampiran Dokumen Surat --}}
-            <div class="space-y-6">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-between">
-                    <div>
-                        <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 pb-3 border-b border-gray-100 dark:border-gray-700 mb-4">
-                            Lampiran Surat Masuk
+                @if($letter)
+                    {{-- Informasi Dokumen Surat --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-4">
+                        <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 pb-3 border-b border-gray-100 dark:border-gray-700">
+                            Informasi Dokumen Surat
                         </h3>
 
-                        @if($letter->file_lampiran)
-                            <div class="p-5 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl text-center mb-4">
-                                <div class="w-10 h-10 mx-auto rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Nomor Surat (Fisik)</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-gray-900 dark:text-gray-100 font-mono text-xs">{{ $letter->nomor_surat }}</span>
+                                    <button @click="copyText('{{ $letter->nomor_surat }}')" type="button" class="text-gray-400 hover:text-blue-600" title="Salin">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    </button>
                                 </div>
-                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Berkas Lampiran Digital</p>
-                                <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ basename($letter->file_lampiran) }}</p>
                             </div>
 
-                            <div class="space-y-2">
-                                <button type="button" @click="openPreview('{{ route('surat-masuk.file', $letter) }}', 'Pratinjau Surat: {{ basename($letter->file_lampiran) }}')"
-                                        class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-xs">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                    Pratinjau Berkas (In-App)
-                                </button>
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Nomor Agenda</span>
+                                <span class="font-bold text-blue-600 font-mono">{{ $letter->nomor_agenda ? '#' . $letter->nomor_agenda : '-' }}</span>
+                            </div>
 
-                                <a href="{{ route('surat-masuk.file', $letter) }}" target="_blank"
-                                   class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-xl transition-colors">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                    Buka di Tab Baru
-                                </a>
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Asal Surat</span>
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $letter->asal_surat }}</span>
                             </div>
-                        @else
-                            <div class="py-8 text-center text-gray-400 text-xs">
-                                Tidak ada berkas digital yang dilampirkan.
+
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Tanggal Diterima</span>
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $letter->tanggal_diterima ? $letter->tanggal_diterima->translatedFormat('d F Y') : '-' }}</span>
                             </div>
-                        @endif
+
+                            <div class="sm:col-span-2">
+                                <span class="text-gray-400 block mb-0.5">Perihal</span>
+                                <p class="font-bold text-gray-900 dark:text-gray-100 text-xs leading-relaxed">{{ $letter->perihal }}</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                @else
+                    {{-- Informasi Tugas Langsung Bidang --}}
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-emerald-100 dark:border-emerald-900/40 p-6 space-y-4">
+                        <div class="border-b border-gray-100 dark:border-gray-700 pb-3 flex items-center justify-between">
+                            <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+                                    Tugas Langsung
+                                </span>
+                                Informasi Tugas Internal
+                            </h3>
+                            <span class="text-xs font-mono text-gray-400 font-bold">#TUGAS-DIR-{{ str_pad($task->id, 4, '0', STR_PAD_LEFT) }}</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div class="sm:col-span-2">
+                                <span class="text-gray-400 block mb-0.5">Judul Tugas</span>
+                                <p class="font-bold text-gray-900 dark:text-gray-100 text-sm">{{ $task->judul_tugas }}</p>
+                            </div>
+
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Pemberi Tugas</span>
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $task->creator?->name ?? 'Kepala Bidang' }}</span>
+                            </div>
+
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Sifat Prioritas</span>
+                                <span class="font-semibold text-emerald-600 dark:text-emerald-400">{{ $task->sifat ?? 'Biasa' }}</span>
+                            </div>
+
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Tanggal Diberikan</span>
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $task->tanggal_disposisi ? $task->tanggal_disposisi->translatedFormat('d F Y') : '-' }}</span>
+                            </div>
+
+                            <div>
+                                <span class="text-gray-400 block mb-0.5">Batas Waktu (Deadline)</span>
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $task->deadline ? $task->deadline->translatedFormat('d F Y') : 'Tidak ditentukan' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Kolom Kanan: Lampiran Dokumen & Identitas --}}
+            <div class="space-y-6">
+                @if($letter)
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 pb-3 border-b border-gray-100 dark:border-gray-700 mb-4">
+                                Lampiran Surat Masuk
+                            </h3>
+
+                            @if($letter->file_lampiran)
+                                <div class="p-5 bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl text-center mb-4">
+                                    <div class="w-10 h-10 mx-auto rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Berkas Lampiran Digital</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ basename($letter->file_lampiran) }}</p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <button type="button" @click="openPreview('{{ route('surat-masuk.file', $letter) }}', 'Pratinjau Surat: {{ basename($letter->file_lampiran) }}')"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-all shadow-xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Pratinjau Berkas (In-App)
+                                    </button>
+
+                                    <a href="{{ route('surat-masuk.file', $letter) }}" target="_blank"
+                                       class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-xl transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        Buka di Tab Baru
+                                    </a>
+                                </div>
+                            @else
+                                <div class="py-8 text-center text-gray-400 text-xs">
+                                    Tidak ada berkas digital yang dilampirkan.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @else
+                    {{-- Lampiran Petunjuk Tugas dari Kabid (jika ada) --}}
+                    @if($task->file_tugas)
+                        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-base text-gray-900 dark:text-gray-100 pb-3 border-b border-gray-100 dark:border-gray-700 mb-4">
+                                    Berkas Panduan dari Kabid
+                                </h3>
+
+                                <div class="p-5 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 rounded-xl text-center mb-4">
+                                    <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mb-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Panduan Pelaksanaan</p>
+                                    <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ basename($task->file_tugas) }}</p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <button type="button" @click="openPreview('{{ route('tasks.reference-file', $task->id) }}', 'Panduan: {{ basename($task->file_tugas) }}')"
+                                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition-all shadow-xs">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        Pratinjau Panduan (In-App)
+                                    </button>
+
+                                    <a href="{{ route('tasks.reference-file', $task->id) }}" target="_blank"
+                                       class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-medium rounded-xl transition-colors">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        Buka di Tab Baru
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                @endif
 
                 {{-- Penerima Tugas Card --}}
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-3 text-xs">
@@ -484,8 +561,8 @@
                         <span class="font-semibold text-gray-700 dark:text-gray-300 block">{{ $task->department?->name ?? '-' }}</span>
                     </div>
                     <div>
-                        <span class="text-gray-400 block mb-0.5">Pencatat Pertama</span>
-                        <span class="font-semibold text-gray-700 dark:text-gray-300 block">{{ $letter->creator?->name ?? 'Staf Loket' }}</span>
+                        <span class="text-gray-400 block mb-0.5">Pemberi Tugas</span>
+                        <span class="font-semibold text-gray-700 dark:text-gray-300 block">{{ $letter ? ($letter->creator?->name ?? 'Staf Loket') : ($task->creator?->name ?? 'Kepala Bidang') }}</span>
                     </div>
                 </div>
             </div>

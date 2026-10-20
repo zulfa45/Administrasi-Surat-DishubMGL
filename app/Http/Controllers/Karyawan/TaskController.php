@@ -15,7 +15,7 @@ class TaskController extends Controller
     {
         $user = auth()->user();
 
-        return Assignment::with(['incomingLetter.creator', 'department'])
+        return Assignment::with(['incomingLetter.creator', 'creator', 'department'])
             ->where('user_id', $user->id);
     }
 
@@ -39,8 +39,11 @@ class TaskController extends Controller
                 $q->where(function ($sub) {
                     $sub->whereNotNull('deadline')
                         ->where('deadline', '<=', now()->addDays(2)->toDateString());
-                })->orWhereHas('incomingLetter', function ($lq) {
-                    $lq->whereIn('sifat', ['Sangat Segera', 'Segera', 'Penting']);
+                })->orWhere(function ($sub) {
+                    $sub->whereIn('sifat', ['Sangat Segera', 'Segera', 'Penting'])
+                        ->orWhereHas('incomingLetter', function ($lq) {
+                            $lq->whereIn('sifat', ['Sangat Segera', 'Segera', 'Penting']);
+                        });
                 });
             })
             ->count();
@@ -77,14 +80,18 @@ class TaskController extends Controller
 
         $query = clone $baseQuery;
 
-        // Filter kata kunci pencarian
+        // Filter kata kunci pencarian (bisa no. surat, perihal surat, atau judul tugas langsung)
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->whereHas('incomingLetter', function ($q) use ($search) {
-                $q->where('nomor_surat', 'like', "%{$search}%")
-                  ->orWhere('nomor_agenda', 'like', "%{$search}%")
-                  ->orWhere('asal_surat', 'like', "%{$search}%")
-                  ->orWhere('perihal', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('judul_tugas', 'like', "%{$search}%")
+                  ->orWhere('catatan_kabid', 'like', "%{$search}%")
+                  ->orWhereHas('incomingLetter', function ($lq) use ($search) {
+                      $lq->where('nomor_surat', 'like', "%{$search}%")
+                         ->orWhere('nomor_agenda', 'like', "%{$search}%")
+                         ->orWhere('asal_surat', 'like', "%{$search}%")
+                         ->orWhere('perihal', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -97,10 +104,14 @@ class TaskController extends Controller
             }
         }
 
-        // Filter sifat surat
+        // Filter sifat tugas / surat
         if ($request->filled('sifat')) {
-            $query->whereHas('incomingLetter', function ($q) use ($request) {
-                $q->where('sifat', $request->sifat);
+            $sifat = $request->sifat;
+            $query->where(function ($q) use ($sifat) {
+                $q->where('sifat', $sifat)
+                  ->orWhereHas('incomingLetter', function ($lq) use ($sifat) {
+                      $lq->where('sifat', $sifat);
+                  });
             });
         }
 
@@ -129,7 +140,7 @@ class TaskController extends Controller
             $task->update(['status' => 'dibaca']);
         }
 
-        $task->load(['incomingLetter.creator', 'department', 'incomingLetter.assignments.user']);
+        $task->load(['incomingLetter.creator', 'creator', 'department', 'incomingLetter.assignments.user']);
 
         return view('karyawan.tasks.show', [
             'task'   => $task,
@@ -181,7 +192,7 @@ class TaskController extends Controller
 
         $task->update($updateData);
 
-        // Update status surat induk
+        // Update status surat induk jika tugas berasal dari surat masuk
         $letter = $task->incomingLetter;
         if ($letter) {
             if ($validated['status'] === 'dikerjakan' && $letter->status !== 'selesai' && $letter->status !== 'menunggu_verifikasi_kabid') {
@@ -203,6 +214,22 @@ class TaskController extends Controller
                             'Karyawan (' . $user->name . ') telah mengirimkan hasil tugas untuk surat: ' . $letter->nomor_surat
                         ));
                     }
+                }
+            }
+        } else {
+            // Notifikasi untuk tugas langsung (tanpa surat masuk)
+            if ($validated['status'] === 'menunggu_verifikasi_kabid' && $task->department_id) {
+                $kabid = \App\Models\User::where('department_id', $task->department_id)
+                    ->whereHas('roles', function($q) {
+                        $q->where('name', 'kepala_bidang');
+                    })->first();
+                    
+                if ($kabid) {
+                    $kabid->notify(new \App\Notifications\DispositionNotification(
+                        $task,
+                        'Menunggu Verifikasi Hasil Tugas',
+                        'Karyawan (' . $user->name . ') telah mengirimkan laporan hasil untuk tugas langsung: ' . $task->judul
+                    ));
                 }
             }
         }

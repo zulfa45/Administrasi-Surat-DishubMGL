@@ -138,7 +138,10 @@
                         @forelse($tasks as $task)
                             @php
                                 $letter = $task->incomingLetter;
-                                $sifatColor = match($letter?->sifat) {
+                                $isDirect = $task->isDirectTask();
+                                $sifat = $task->sifat_tugas;
+
+                                $sifatColor = match($sifat) {
                                     'Sangat Segera', 'Segera' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200 dark:border-rose-800',
                                     'Penting' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800',
                                     'Rahasia' => 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-purple-200 dark:border-purple-800',
@@ -146,11 +149,13 @@
                                 };
 
                                 $statusBadge = match($task->status) {
-                                    'belum_dibaca' => ['class' => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600', 'label' => 'Belum Dibaca'],
-                                    'dibaca'       => ['class' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800', 'label' => 'Dibaca'],
-                                    'dikerjakan'   => ['class' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800', 'label' => 'Dikerjakan'],
-                                    'selesai'      => ['class' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800', 'label' => 'Selesai'],
-                                    default        => ['class' => 'bg-gray-100 text-gray-700 border-gray-200', 'label' => $task->status]
+                                    'belum_dibaca'              => ['class' => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600', 'label' => 'Belum Dibaca'],
+                                    'dibaca'                    => ['class' => 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800', 'label' => 'Sedang Ditelaah'],
+                                    'dikerjakan'                => ['class' => 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-amber-200 dark:border-amber-800', 'label' => 'Dikerjakan'],
+                                    'menunggu_verifikasi_kabid' => ['class' => 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800 animate-pulse', 'label' => 'Menunggu Verifikasi'],
+                                    'perlu_revisi'              => ['class' => 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200 dark:border-rose-800', 'label' => 'Perlu Revisi'],
+                                    'selesai'                   => ['class' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800', 'label' => 'Selesai'],
+                                    default                     => ['class' => 'bg-gray-100 text-gray-700 border-gray-200', 'label' => $task->status]
                                 };
 
                                 $isOverdue = $task->deadline && $task->status !== 'selesai' && $task->deadline->isPast();
@@ -158,24 +163,38 @@
                             @endphp
                             <tr class="hover:bg-gray-50/80 dark:hover:bg-gray-700/40 transition-colors">
                                 <td class="px-5 py-4 whitespace-nowrap">
-                                    <div class="font-bold text-gray-900 dark:text-gray-100">
-                                        {{ $letter?->nomor_agenda ? '#' . $letter->nomor_agenda : '-' }}
-                                    </div>
-                                    <div class="text-xs font-mono text-gray-500 dark:text-gray-400 mt-0.5">
-                                        {{ $letter?->nomor_surat ?? '-' }}
-                                    </div>
+                                    @if($isDirect)
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 mb-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                            Tugas Langsung
+                                        </span>
+                                        <div class="text-xs font-mono text-gray-500 dark:text-gray-400 mt-0.5">
+                                            #TUGAS-DIR-{{ str_pad($task->id, 4, '0', STR_PAD_LEFT) }}
+                                        </div>
+                                    @else
+                                        <div class="font-bold text-gray-900 dark:text-gray-100">
+                                            {{ $letter?->nomor_agenda ? '#' . $letter->nomor_agenda : '-' }}
+                                        </div>
+                                        <div class="text-xs font-mono text-gray-500 dark:text-gray-400 mt-0.5">
+                                            {{ $letter?->nomor_surat ?? '-' }}
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-5 py-4 max-w-xs">
-                                    <p class="font-semibold text-gray-900 dark:text-gray-100 truncate" title="{{ $letter?->perihal }}">
-                                        {{ $letter?->perihal ?? 'Tanpa Perihal' }}
+                                    <p class="font-semibold text-gray-900 dark:text-gray-100 truncate" title="{{ $task->judul }}">
+                                        {{ $task->judul }}
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5" title="{{ $letter?->asal_surat }}">
-                                        Asal: {{ $letter?->asal_surat ?? '-' }}
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                                        @if($isDirect)
+                                            <span class="text-emerald-600 dark:text-emerald-400 font-medium">Dari: Kepala Bidang</span>
+                                        @else
+                                            Asal: {{ $letter?->asal_surat ?? '-' }}
+                                        @endif
                                     </p>
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap">
                                     <span class="px-2.5 py-0.5 text-[11px] font-semibold rounded-full border {{ $sifatColor }}">
-                                        {{ $letter?->sifat ?? 'Biasa' }}
+                                        {{ $sifat }}
                                     </span>
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap text-xs">
