@@ -25,20 +25,24 @@
     <body class="font-sans antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <div class="flex min-h-screen">
             <!-- Left Side / Branding -->
-            <div class="hidden lg:flex lg:w-1/2 relative bg-blue-600 dark:bg-gray-800 items-center justify-center overflow-hidden">
-                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-700/50 to-indigo-900/80 pointer-events-none"></div>
+            <div class="hidden lg:flex lg:w-1/2 relative bg-slate-900 items-center justify-center overflow-hidden">
+                <!-- Background Image (icon.jpg) -->
+                <img src="{{ asset('images/icon.jpg') }}" alt="Background Dishub" class="absolute inset-0 w-full h-full object-cover object-center pointer-events-none" />
+                
+                <!-- Overlay gradien halus & transparan agar gambar latar terlihat jelas dan cerah, sekaligus logo & teks tetap tajam terbaca -->
+                <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-black/25 to-black/45 pointer-events-none"></div>
+                <div class="absolute inset-0 bg-[#0b1d33]/30 mix-blend-multiply pointer-events-none"></div>
                 
                 <div class="relative z-10 flex flex-col items-center text-center px-12">
                     <div class="flex items-center justify-center gap-6 mb-8">
                         <!-- Logo Kota/Kabupaten (Kiri) -->
-                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-16 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-lg" />
+                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-16 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-2xl" />
                         
                         <!-- Logo Dishub (Kanan) -->
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-20 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-xl" />
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-20 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-2xl" />
                     </div>
-                    <h1 class="text-4xl font-extrabold text-white tracking-tight mb-4">SIMAS DISHUB</h1>
-                    <p class="text-blue-100 text-lg font-medium max-w-md">
+                    <h1 class="text-4xl font-extrabold text-white tracking-tight mb-4 drop-shadow-lg">SIMAS DISHUB</h1>
+                    <p class="text-slate-100 text-lg font-medium max-w-md drop-shadow-md leading-relaxed">
                         Sistem Informasi Manajemen Administrasi Surat Menyurat Dinas Perhubungan Magelang.
                     </p>
                 </div>

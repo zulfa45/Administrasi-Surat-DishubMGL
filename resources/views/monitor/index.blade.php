@@ -20,14 +20,19 @@
 
     <style>
         [x-cloak] { display: none !important; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f1f5f9;
         }
         /* Custom Scrollbars */
         ::-webkit-scrollbar {
-            width: 5px;
-            height: 5px;
+            width: 4px;
+            height: 4px;
         }
         ::-webkit-scrollbar-track {
             background: #e2e8f0;
@@ -50,25 +55,36 @@
         }
         /* Sembunyikan scrollbar untuk auto-scroll cards */
         .no-scrollbar::-webkit-scrollbar {
-            display: none;
+            display: none !important;
         }
         .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
         }
-        @media (min-width: 1024px) {
+        .auto-rows-fr {
+            grid-auto-rows: minmax(0, 1fr);
+        }
+        .card-equal-height {
+            height: 100%;
+            max-height: 100%;
+            min-height: 0;
+        }
+        /* Kunci tinggi layar tepat 100vh pada Desktop & Fullscreen Mode */
+        @media (min-width: 768px) {
             html, body {
-                height: 100vh;
-                overflow: hidden;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                overflow: hidden !important;
             }
         }
-        :fullscreen, :-webkit-full-screen {
+        :fullscreen, :-webkit-full-screen, :-moz-full-screen, :-ms-fullscreen {
             height: 100vh !important;
+            max-height: 100vh !important;
             overflow: hidden !important;
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen lg:h-screen lg:overflow-hidden flex flex-col justify-between antialiased selection:bg-blue-600 selection:text-white"
+<body class="bg-slate-100 text-slate-800 min-h-screen md:h-screen md:max-h-screen md:overflow-hidden flex flex-col justify-between antialiased selection:bg-blue-600 selection:text-white"
       x-data="dishubMonitorDashboard({
           dataUrl: '{{ $dataUrl }}',
           initialStats: @js($globalStats),
@@ -116,117 +132,114 @@
         </button>
     </div>
 
-    <!-- MAIN WRAPPER -->
-    <div class="flex-1 flex flex-col justify-between">
+    <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
+    <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-2xl shadow-black/60 border-b border-black/30 flex-shrink-0">
         
-        <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
-        <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-2xl shadow-black/60 border-b border-black/30">
-            
-            <!-- BACKGROUND GAMBAR (header.jpg) JELAS & CERAH -->
-            <div class="absolute inset-0 pointer-events-none z-0">
-                <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
-                     class="w-full h-full object-cover object-center">
-                <!-- Overlay gradien halus & transparan agar gambar latar terlihat jelas dan cerah -->
-                <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/55 via-[#0b1d33]/20 to-[#071322]/55"></div>
-                <!-- Bayangan tipis di bagian atas dan bawah -->
-                <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"></div>
-            </div>
+        <!-- BACKGROUND GAMBAR (header.jpg) JELAS & CERAH -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
+                 class="w-full h-full object-cover object-center">
+            <!-- Overlay gradien halus & transparan agar gambar latar terlihat jelas dan cerah -->
+            <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/55 via-[#0b1d33]/20 to-[#071322]/55"></div>
+            <!-- Bayangan tipis di bagian atas dan bawah -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/45"></div>
+        </div>
 
-            <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-4 relative z-10">
-                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    
-                    <!-- KIRI: LOGO KOTA MAGELANG & TITLE -->
-                    <div class="flex items-center gap-4">
-                        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota Magelang" class="w-14 sm:w-16 h-auto object-contain filter drop-shadow-lg">
-                        <div>
-                            <h2 class="text-sm sm:text-base font-semibold text-slate-100 tracking-wide leading-tight drop-shadow-md">
-                                Dinas Perhubungan
-                            </h2>
-                            <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-lg">
-                                Kota Magelang
-                            </h1>
-                            <p class="text-xs sm:text-sm text-slate-200 font-medium mt-0.5 drop-shadow-md">
-                                Sistem Informasi Manajemen Surat
-                            </p>
-                            <p class="text-[11px] text-slate-300 font-normal drop-shadow">
-                                Monitoring Tugas Disposisi & Tindak Lanjut
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- TENGAH: SLOGAN RESMI DISHUB -->
-                    <div class="hidden xl:flex flex-col items-center justify-center text-center px-6">
-                        <p class="text-sm font-semibold text-white italic max-w-xs leading-relaxed drop-shadow-lg">
-                            Melayani dengan Integritas untuk Transportasi yang Lebih Baik
+        <div class="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 relative z-10">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
+                
+                <!-- KIRI: LOGO KOTA MAGELANG & TITLE -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <img src="{{ asset('images/kota.png') }}" alt="Logo Kota Magelang" class="w-12 sm:w-14 h-auto object-contain filter drop-shadow-lg">
+                    <div>
+                        <h2 class="text-xs sm:text-sm font-semibold text-slate-100 tracking-wide leading-tight drop-shadow-md">
+                            Dinas Perhubungan
+                        </h2>
+                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-lg">
+                            Kota Magelang
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-slate-200 font-medium mt-0.5 drop-shadow-md">
+                            Sistem Informasi Manajemen Surat
                         </p>
-                        <div class="w-20 h-0.5 bg-amber-400 mt-1.5 rounded-full shadow"></div>
+                        <p class="text-[10px] sm:text-[11px] text-slate-300 font-normal drop-shadow">
+                            Monitoring Tugas Disposisi & Tindak Lanjut
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TENGAH: SLOGAN RESMI DISHUB -->
+                <div class="hidden xl:flex flex-col items-center justify-center text-center px-4">
+                    <p class="text-xs sm:text-sm font-semibold text-white italic max-w-xs leading-relaxed drop-shadow-lg">
+                        Melayani dengan Integritas untuk Transportasi yang Lebih Baik
+                    </p>
+                    <div class="w-16 h-0.5 bg-amber-400 mt-1 rounded-full shadow"></div>
+                </div>
+
+                <!-- KANAN: JAM ANALOG + WAKTU DIGITAL & TANGGAL -->
+                <div class="flex items-center gap-3 sm:gap-5 self-end lg:self-center">
+                    
+                    <!-- JAM ANALOG (DIAL SVG DENGAN JARUM BERPUTAR REAL-TIME) -->
+                    <div class="relative w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 drop-shadow-xl">
+                        <svg class="w-14 h-14 sm:w-16 sm:h-16 shadow-md rounded-full bg-white flex-shrink-0" viewBox="0 0 100 100">
+                            <!-- Dial Bulat & Border -->
+                            <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
+                            
+                            <!-- Angka Jam 1 - 12 (Persis Gambar Mockup) -->
+                            <text x="50" y="16" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">12</text>
+                            <text x="70" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">1</text>
+                            <text x="82" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">2</text>
+                            <text x="88" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">3</text>
+                            <text x="82" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">4</text>
+                            <text x="70" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">5</text>
+                            <text x="50" y="90" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">6</text>
+                            <text x="30" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">7</text>
+                            <text x="18" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">8</text>
+                            <text x="12" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">9</text>
+                            <text x="18" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">10</text>
+                            <text x="30" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">11</text>
+                            
+                            <!-- Jarum Jam (Hour Hand) -->
+                            <line x1="50" y1="50" x2="50" y2="28" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"
+                                  :transform="`rotate(${hourDegree} 50 50)`"/>
+                                  
+                            <!-- Jarum Menit (Minute Hand) -->
+                            <line x1="50" y1="50" x2="50" y2="18" stroke="#334155" stroke-width="2.5" stroke-linecap="round"
+                                  :transform="`rotate(${minuteDegree} 50 50)`"/>
+                                  
+                            <!-- Jarum Detik (Second Hand Merah) -->
+                            <line x1="50" y1="58" x2="50" y2="14" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"
+                                  :transform="`rotate(${secondDegree} 50 50)`"/>
+                                  
+                            <!-- Titik Poros Tengah -->
+                            <circle cx="50" cy="50" r="3.5" fill="#dc2626"/>
+                            <circle cx="50" cy="50" r="1.5" fill="#ffffff"/>
+                        </svg>
                     </div>
 
-                    <!-- KANAN: JAM ANALOG + WAKTU DIGITAL & TANGGAL -->
-                    <div class="flex items-center gap-4 sm:gap-6 self-end lg:self-center">
-                        
-                        <!-- JAM ANALOG (DIAL SVG DENGAN JARUM BERPUTAR REAL-TIME) -->
-                        <div class="relative w-20 h-20 flex-shrink-0 drop-shadow-xl">
-                            <svg class="w-20 h-20 shadow-md rounded-full bg-white flex-shrink-0" viewBox="0 0 100 100">
-                                <!-- Dial Bulat & Border -->
-                                <circle cx="50" cy="50" r="47" fill="#ffffff" stroke="#cbd5e1" stroke-width="3"/>
-                                
-                                <!-- Angka Jam 1 - 12 (Persis Gambar Mockup) -->
-                                <text x="50" y="16" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">12</text>
-                                <text x="70" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">1</text>
-                                <text x="82" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">2</text>
-                                <text x="88" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">3</text>
-                                <text x="82" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">4</text>
-                                <text x="70" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">5</text>
-                                <text x="50" y="90" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">6</text>
-                                <text x="30" y="84" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">7</text>
-                                <text x="18" y="70" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">8</text>
-                                <text x="12" y="54" text-anchor="middle" font-size="9" font-weight="800" fill="#0f172a">9</text>
-                                <text x="18" y="36" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">10</text>
-                                <text x="30" y="22" text-anchor="middle" font-size="8" font-weight="700" fill="#475569">11</text>
-                                
-                                <!-- Jarum Jam (Hour Hand) -->
-                                <line x1="50" y1="50" x2="50" y2="28" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round"
-                                      :transform="`rotate(${hourDegree} 50 50)`"/>
-                                      
-                                <!-- Jarum Menit (Minute Hand) -->
-                                <line x1="50" y1="50" x2="50" y2="18" stroke="#334155" stroke-width="2.5" stroke-linecap="round"
-                                      :transform="`rotate(${minuteDegree} 50 50)`"/>
-                                      
-                                <!-- Jarum Detik (Second Hand Merah) -->
-                                <line x1="50" y1="58" x2="50" y2="14" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"
-                                      :transform="`rotate(${secondDegree} 50 50)`"/>
-                                      
-                                <!-- Titik Poros Tengah -->
-                                <circle cx="50" cy="50" r="3.5" fill="#dc2626"/>
-                                <circle cx="50" cy="50" r="1.5" fill="#ffffff"/>
-                            </svg>
+                    <!-- JAM DIGITAL & TANGGAL -->
+                    <div class="text-right">
+                        <div class="text-xs font-semibold text-slate-100 drop-shadow-md" x-text="dayName">
+                            {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('l') }}
                         </div>
-
-                        <!-- JAM DIGITAL & TANGGAL -->
-                        <div class="text-right">
-                            <div class="text-xs font-semibold text-slate-100 drop-shadow-md" x-text="dayName">
-                                {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('l') }}
-                            </div>
-                            <div class="text-xs font-medium text-slate-200 drop-shadow-md" x-text="dateFormatted">
-                                {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') }}
-                            </div>
-                            <div class="flex items-baseline justify-end gap-1.5 mt-0.5">
-                                <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono drop-shadow-lg" x-text="digitalTime">
-                                    {{ \Carbon\Carbon::now('Asia/Jakarta')->format('H:i') }}
-                                </span>
-                                <span class="text-xs font-bold text-slate-300 drop-shadow">WIB</span>
-                            </div>
+                        <div class="text-xs font-medium text-slate-200 drop-shadow-md" x-text="dateFormatted">
+                            {{ \Carbon\Carbon::now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y') }}
                         </div>
-
+                        <div class="flex items-baseline justify-end gap-1.5 mt-0.5">
+                            <span class="text-2xl sm:text-3xl font-extrabold text-white tracking-wider font-mono drop-shadow-lg" x-text="digitalTime">
+                                {{ \Carbon\Carbon::now('Asia/Jakarta')->format('H:i') }}
+                            </span>
+                            <span class="text-xs font-bold text-slate-300 drop-shadow">WIB</span>
+                        </div>
                     </div>
 
                 </div>
-            </div>
-        </header>
 
-        <!-- CONTAINER BODY KONTEN (1 HALAMAN VIEWPORT FIT) -->
-        <div class="max-w-[1920px] w-full mx-auto px-3 sm:px-5 lg:px-6 py-2.5 space-y-2 flex-1 flex flex-col min-h-0">
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTAINER BODY KONTEN (1 HALAMAN VIEWPORT FIT) -->
+    <main class="max-w-[1920px] w-full mx-auto px-3 sm:px-5 lg:px-6 py-2 space-y-2 flex-1 min-h-0 md:h-full flex flex-col overflow-hidden">
 
             <!-- 2. TOP METRIC CARDS (4 KARTU IDENTIK MOCKUP - COMPACT FIT) -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 flex-shrink-0">
@@ -365,13 +378,20 @@
             </div>
 
             <!-- 4. KOLOM KANBAN KARTU TUGAS PER BIDANG (1 HALAMAN VIEWPORT FIT DENGAN AUTO-SCROLL) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5 items-stretch flex-1 min-h-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 items-stretch flex-1 min-h-0 md:h-full auto-rows-fr overflow-hidden"
+                 :class="{
+                     'xl:grid-cols-2': columns.length === 2,
+                     'xl:grid-cols-3': columns.length === 3,
+                     'xl:grid-cols-4': columns.length === 4,
+                     'xl:grid-cols-5': columns.length === 5,
+                     'xl:grid-cols-6': columns.length >= 6 || columns.length === 0,
+                 }">
                 
                 <template x-for="col in columns" :key="col.id">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden flex flex-col h-full min-h-0 transition-all duration-300 hover:shadow-md">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 overflow-hidden flex flex-col h-full max-h-full min-h-0 card-equal-height transition-all duration-300 hover:shadow-md">
                         
                         <!-- HEADER KARTU (WARNA IDENTIK PER BIDANG DENGAN ICON) -->
-                        <div class="p-2.5 text-white flex items-center justify-between shadow-xs cursor-pointer flex-shrink-0"
+                        <div class="p-2 sm:p-2.5 text-white flex items-center justify-between shadow-xs cursor-pointer flex-shrink-0"
                              :class="col.theme.bg"
                              @click="openTaskModal(col)">
                             <div class="flex items-center gap-2.5 min-w-0">
@@ -400,7 +420,7 @@
                         </div>
 
                         <!-- BODY: DAFTAR TUGAS AUTO-SCROLL (PING-PONG ATAS BAWAH) -->
-                        <div class="p-2.5 flex-1 min-h-0 flex flex-col justify-between overflow-hidden"
+                        <div class="p-2 sm:p-2.5 flex-1 min-h-0 flex flex-col justify-between overflow-hidden"
                              x-data="columnAutoScroll()"
                              x-init="startScroll()"
                              @mouseenter="pause()"
@@ -418,6 +438,7 @@
 
                             <!-- Container List Tugas yang Auto-Scroll -->
                             <div x-ref="scrollContainer" 
+                                 @wheel.passive="handleWheel()"
                                  class="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-2 pr-0.5">
                                 
                                 <!-- Empty State jika 0 tugas -->
@@ -537,7 +558,7 @@
                             </div>
 
                             <!-- FOOTER LINK: LIHAT SEMUA (POP-UP INTERAKTIF) -->
-                            <div class="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-xs flex-shrink-0">
+                            <div class="mt-1.5 pt-1.5 border-t border-slate-100 flex items-center justify-between text-xs flex-shrink-0">
                                 <button type="button" 
                                         @click="openTaskModal(col)" 
                                         class="text-blue-600 hover:text-blue-800 font-bold flex items-center justify-between w-full group/btn transition-colors py-0.5">
@@ -558,28 +579,26 @@
 
             </div>
 
-        </div>
+        </main>
 
         <!-- 5. BOTTOM FOOTER SECTION (IDENTIK MOCKUP DISHUB) -->
-        <footer class="bg-[#0b1d33] text-white py-2 px-4 sm:px-8 border-t border-slate-800 shadow-inner flex-shrink-0">
+        <footer class="bg-[#0b1d33] text-white py-1.5 sm:py-2 px-4 sm:px-8 border-t border-slate-800 shadow-inner flex-shrink-0 z-20">
             <div class="max-w-[1920px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-xs">
                 
                 <!-- KIRI: IKON GEDUNG + MOTTO DISHUB -->
                 <div class="flex items-center gap-2 text-slate-300">
-                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                    <span class="font-medium italic">"Disiplin dalam bekerja, pelayanan semakin baik"</span>
+                    <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    <span class="font-medium italic truncate">"Disiplin dalam bekerja, pelayanan semakin baik"</span>
                 </div>
 
                 <!-- KANAN: GARIS BIRU + NAMA INSTANSI -->
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-0.5 bg-blue-500 rounded-full"></div>
+                <div class="flex items-center gap-3 flex-shrink-0">
+                    <div class="w-12 h-0.5 bg-blue-500 rounded-full hidden sm:block"></div>
                     <span class="font-semibold text-slate-200">Dinas Perhubungan Kota Magelang</span>
                 </div>
 
             </div>
         </footer>
-
-    </div>
 
     <!-- ======================================================== -->
     <!-- MODAL POP-UP: LIHAT SEMUA TUGAS KARYAWAN / BIDANG        -->
@@ -1051,47 +1070,63 @@
 
         /**
          * Komponen Auto-Scroll Lembut Ping-Pong (Atas-Bawah) untuk Setiap Kartu Kolom
+         * Mendukung akumulasi float-safe, jeda nyaman di batas atas/bawah, dan resume interaktif.
          */
         function columnAutoScroll() {
             return {
                 isHovered: false,
                 direction: 'down',
-                scrollSpeed: 0.55, // Kecepatan gulir halus (pixel/frame)
+                scrollSpeed: 0.5, // Kecepatan gulir halus (pixel/frame)
+                scrollPos: 0,
                 pauseUntil: 0,
-                pauseDuration: 3500, // Waktu jeda (ms) di atas dan di bawah agar nyaman dibaca
+                pauseDuration: 2200, // Waktu jeda (ms) di atas dan di bawah agar nyaman dibaca
                 rafId: null,
+                wheelTimer: null,
 
                 startScroll() {
-                    this.pauseUntil = Date.now() + 2500;
+                    this.scrollPos = 0;
+                    this.pauseUntil = Date.now() + 2000;
                     
                     const animate = () => {
                         const el = this.$refs.scrollContainer;
-                        if (!el) return;
+                        if (!el) {
+                            this.rafId = requestAnimationFrame(animate);
+                            return;
+                        }
 
-                        const maxScroll = el.scrollHeight - el.clientHeight;
+                        const maxScroll = Math.max(0, el.scrollHeight - el.clientHeight);
 
                         // Gulir otomatis hanya jika isi tugas meluap dari border kartu
-                        if (maxScroll > 10 && !this.isHovered) {
+                        if (maxScroll > 6 && !this.isHovered) {
                             const now = Date.now();
                             if (now >= this.pauseUntil) {
                                 if (this.direction === 'down') {
-                                    el.scrollTop += this.scrollSpeed;
-                                    if (el.scrollTop >= maxScroll - 1) {
-                                        el.scrollTop = maxScroll;
+                                    this.scrollPos += this.scrollSpeed;
+                                    if (this.scrollPos >= maxScroll) {
+                                        this.scrollPos = maxScroll;
+                                        el.scrollTop = Math.ceil(this.scrollPos);
                                         this.direction = 'up';
                                         this.pauseUntil = now + this.pauseDuration;
+                                    } else {
+                                        el.scrollTop = Math.round(this.scrollPos);
                                     }
                                 } else if (this.direction === 'up') {
-                                    el.scrollTop -= this.scrollSpeed;
-                                    if (el.scrollTop <= 1) {
+                                    this.scrollPos -= this.scrollSpeed;
+                                    if (this.scrollPos <= 0) {
+                                        this.scrollPos = 0;
                                         el.scrollTop = 0;
                                         this.direction = 'down';
                                         this.pauseUntil = now + this.pauseDuration;
+                                    } else {
+                                        el.scrollTop = Math.round(this.scrollPos);
                                     }
                                 }
                             }
-                        } else if (!this.isHovered && maxScroll <= 10) {
-                            if (el.scrollTop !== 0) el.scrollTop = 0;
+                        } else if (!this.isHovered && maxScroll <= 6) {
+                            if (el.scrollTop !== 0) {
+                                el.scrollTop = 0;
+                                this.scrollPos = 0;
+                            }
                         }
 
                         this.rafId = requestAnimationFrame(animate);
@@ -1099,18 +1134,37 @@
 
                     this.$nextTick(() => {
                         setTimeout(() => {
+                            const el = this.$refs.scrollContainer;
+                            if (el) this.scrollPos = el.scrollTop || 0;
                             this.rafId = requestAnimationFrame(animate);
-                        }, 400);
+                        }, 300);
                     });
                 },
 
                 pause() {
                     this.isHovered = true;
+                    const el = this.$refs.scrollContainer;
+                    if (el) this.scrollPos = el.scrollTop;
                 },
 
                 resume() {
                     this.isHovered = false;
+                    const el = this.$refs.scrollContainer;
+                    if (el) this.scrollPos = el.scrollTop;
                     this.pauseUntil = Date.now() + 1500; // jeda 1.5 detik sebelum bergerak lagi setelah kursor keluar
+                },
+
+                handleWheel() {
+                    this.isHovered = true;
+                    const el = this.$refs.scrollContainer;
+                    if (el) this.scrollPos = el.scrollTop;
+                    if (this.wheelTimer) clearTimeout(this.wheelTimer);
+                    this.wheelTimer = setTimeout(() => {
+                        this.isHovered = false;
+                        const cEl = this.$refs.scrollContainer;
+                        if (cEl) this.scrollPos = cEl.scrollTop;
+                        this.pauseUntil = Date.now() + 2000;
+                    }, 2000);
                 }
             };
         }
