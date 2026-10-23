@@ -12,38 +12,13 @@ use Illuminate\Http\Request;
 class MonitorController extends Controller
 {
     /**
-     * Palet warna dan ikon untuk kartu kolom per bidang (sesuai tema Dishub).
+     * Palet warna seragam Dishub untuk seluruh kartu kolom per bidang / karyawan.
      */
     protected array $colorThemes = [
         [
             'bg'    => 'bg-blue-600',
             'hover' => 'hover:bg-blue-700',
-            'icon'  => 'bus',
-        ],
-        [
-            'bg'    => 'bg-emerald-600',
-            'hover' => 'hover:bg-emerald-700',
-            'icon'  => 'truck',
-        ],
-        [
-            'bg'    => 'bg-amber-600',
-            'hover' => 'hover:bg-amber-700',
-            'icon'  => 'cog',
-        ],
-        [
-            'bg'    => 'bg-purple-600',
-            'hover' => 'hover:bg-purple-700',
-            'icon'  => 'archive',
-        ],
-        [
-            'bg'    => 'bg-teal-600',
-            'hover' => 'hover:bg-teal-700',
-            'icon'  => 'chart',
-        ],
-        [
-            'bg'    => 'bg-rose-600',
-            'hover' => 'hover:bg-rose-700',
-            'icon'  => 'shield',
+            'icon'  => 'folder',
         ],
     ];
 
@@ -207,7 +182,7 @@ class MonitorController extends Controller
             $kabid = User::role('kepala_bidang')->where('department_id', $dept->id)->first();
             $avatarUrl = $kabid?->avatar 
                 ? \Illuminate\Support\Facades\Storage::url($kabid->avatar)
-                : ($kabid ? 'https://ui-avatars.com/api/?name=' . urlencode($kabid->name) . '&color=FFFFFF&background=' . str_replace('bg-', '', $theme['bg']) . '&bold=true' : null);
+                : ($kabid ? 'https://ui-avatars.com/api/?name=' . urlencode($kabid->name) . '&color=FFFFFF&background=2563eb&bold=true' : null);
 
             $columns[] = [
                 'id'          => $dept->id,
@@ -276,8 +251,8 @@ class MonitorController extends Controller
                 'link'        => '#',
                 'total_tasks' => $unassigned->count(),
                 'theme'       => [
-                    'bg'    => 'bg-orange-600',
-                    'hover' => 'hover:bg-orange-700',
+                    'bg'    => 'bg-blue-600',
+                    'hover' => 'hover:bg-blue-700',
                     'icon'  => 'clock',
                 ],
                 'tasks'       => $formattedUnassigned->all(),
@@ -297,7 +272,7 @@ class MonitorController extends Controller
 
             $avatarUrl = $user->avatar 
                 ? \Illuminate\Support\Facades\Storage::url($user->avatar)
-                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&color=FFFFFF&background=' . str_replace('bg-', '', $theme['bg']) . '&bold=true';
+                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&color=FFFFFF&background=2563eb&bold=true';
 
             $columns[] = [
                 'id'          => $user->id,

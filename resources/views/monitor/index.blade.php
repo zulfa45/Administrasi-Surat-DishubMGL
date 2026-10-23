@@ -259,10 +259,10 @@
                     </div>
                 </div>
 
-                <!-- CARD 2: TOTAL DISPOSISI (UNGU) -->
+                <!-- CARD 2: TOTAL DISPOSISI (BIRU SERAGAM) -->
                 <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                         </div>
                         <div>
@@ -274,10 +274,10 @@
                     </div>
                 </div>
 
-                <!-- CARD 3: TUGAS BELUM SELESAI (KUNING / ORANGE) -->
+                <!-- CARD 3: TUGAS BELUM SELESAI (BIRU SERAGAM) -->
                 <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
@@ -289,10 +289,10 @@
                     </div>
                 </div>
 
-                <!-- CARD 4: TUGAS SELESAI (HIJAU) -->
+                <!-- CARD 4: TUGAS SELESAI (BIRU SERAGAM) -->
                 <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
@@ -463,7 +463,7 @@
 
                                                     <!-- Tag Sumber: Tugas Kabid vs Surat Masuk -->
                                                     <span class="text-[9px] font-bold px-1.5 py-0.2 rounded tracking-wide truncate"
-                                                          :class="task.is_direct ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-blue-50 text-blue-700 border border-blue-200'"
+                                                          :class="task.is_direct ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200'"
                                                           x-text="task.is_direct ? 'Tugas Kabid' : 'Surat Masuk'">
                                                     </span>
 
@@ -716,7 +716,7 @@
                             <div class="flex items-center gap-2">
                                 <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" :class="task.circle_color"></span>
                                 <span class="text-[10px] font-bold px-2 py-0.5 rounded tracking-wide"
-                                      :class="task.is_direct ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-blue-100 text-blue-800 border border-blue-200'"
+                                      :class="task.is_direct ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-slate-100 text-slate-700 border border-slate-200'"
                                       x-text="task.is_direct ? 'Tugas Langsung Kabid' : 'Disposisi Surat Masuk'">
                                 </span>
                                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded border"
