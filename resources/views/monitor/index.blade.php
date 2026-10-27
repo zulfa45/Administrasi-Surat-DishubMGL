@@ -241,13 +241,14 @@
     <!-- CONTAINER BODY KONTEN (1 HALAMAN VIEWPORT FIT) -->
     <main class="max-w-[1920px] w-full mx-auto px-3 sm:px-5 lg:px-6 py-2 space-y-2 flex-1 min-h-0 md:h-full flex flex-col overflow-hidden">
 
-            <!-- 2. TOP METRIC CARDS (4 KARTU IDENTIK MOCKUP - COMPACT FIT) -->
+            <!-- 2. TOP METRIC CARDS (4 KARTU BERBEDA WARNA - DINAMIS & MENARIK) -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 flex-shrink-0">
                 
                 <!-- CARD 1: TOTAL SURAT MASUK (BIRU) -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                <div class="relative overflow-hidden bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-md group">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-blue-600"></div>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center shadow-md shadow-blue-500/30 flex-shrink-0 group-hover:scale-105 transition-transform">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         </div>
                         <div>
@@ -259,10 +260,11 @@
                     </div>
                 </div>
 
-                <!-- CARD 2: TOTAL DISPOSISI (BIRU SERAGAM) -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                <!-- CARD 2: TOTAL DISPOSISI (UNGU / INDIGO) -->
+                <div class="relative overflow-hidden bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-md group">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-indigo-600"></div>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-purple-500/30 flex-shrink-0 group-hover:scale-105 transition-transform">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                         </div>
                         <div>
@@ -274,10 +276,11 @@
                     </div>
                 </div>
 
-                <!-- CARD 3: TUGAS BELUM SELESAI (BIRU SERAGAM) -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                <!-- CARD 3: TUGAS BELUM SELESAI (AMBER / ORANGE) -->
+                <div class="relative overflow-hidden bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-md group">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 to-orange-500"></div>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 flex-shrink-0 group-hover:scale-105 transition-transform">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
@@ -289,10 +292,11 @@
                     </div>
                 </div>
 
-                <!-- CARD 4: TUGAS SELESAI (BIRU SERAGAM) -->
-                <div class="bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-transform hover:-translate-y-0.5">
+                <!-- CARD 4: TUGAS SELESAI (EMERALD / HIJAU) -->
+                <div class="relative overflow-hidden bg-white rounded-xl p-3 shadow-xs border border-slate-200/90 flex items-center justify-between transition-all hover:-translate-y-0.5 hover:shadow-md group">
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-emerald-600"></div>
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 flex-shrink-0">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/30 flex-shrink-0 group-hover:scale-105 transition-transform">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
