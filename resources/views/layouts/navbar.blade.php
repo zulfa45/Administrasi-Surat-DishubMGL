@@ -167,8 +167,15 @@
                          src="{{ auth()->user()->avatar ? \Illuminate\Support\Facades\Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" 
                          alt="{{ auth()->user()->name }}" />
                     <div class="text-left hidden md:block">
-                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-200 block leading-tight">{{ auth()->user()->name }}</span>
-                        <span class="text-[10px] text-gray-500 dark:text-gray-400 capitalize block leading-tight">{{ auth()->user()->roles->first()->name ?? 'Pengguna' }}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200 block leading-tight">{{ auth()->user()->name }}</span>
+                            @if(auth()->user()->badge)
+                                <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    ⭐ {{ auth()->user()->badge }}
+                                </span>
+                            @endif
+                        </div>
+                        <span class="text-[10px] text-gray-500 dark:text-gray-400 capitalize block leading-tight">{{ auth()->user()->jabatan ?? (auth()->user()->roles->first()->name ?? 'Pengguna') }}</span>
                     </div>
                     <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 hidden md:block" :class="{ 'rotate-180': isProfileMenuOpen }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -190,7 +197,14 @@
                     <!-- Header Info Pengguna -->
                     <div class="px-4 py-3">
                         <p class="text-[11px] text-gray-500 dark:text-gray-400">Masuk sebagai</p>
-                        <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate mt-0.5">{{ auth()->user()->name }}</p>
+                        <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">{{ auth()->user()->name }}</p>
+                            @if(auth()->user()->badge)
+                                <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    ⭐ {{ auth()->user()->badge }}
+                                </span>
+                            @endif
+                        </div>
                         <span class="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
                             {{ auth()->user()->roles->first()->name ?? 'Pengguna' }}
                         </span>

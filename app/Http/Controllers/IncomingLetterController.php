@@ -60,7 +60,7 @@ class IncomingLetterController extends Controller
         $departments = \App\Models\Department::where('status', 'active')->get();
         $users = \App\Models\User::whereHas('roles', function($q) {
             $q->whereIn('name', ['karyawan', 'staf-loket', 'admin']);
-        })->get();
+        })->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")->get();
 
         // Calculate next nomor_agenda for preview
         $today = now()->format('Ymd');

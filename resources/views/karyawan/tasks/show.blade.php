@@ -554,7 +554,14 @@
                     </h3>
                     <div>
                         <span class="text-gray-400 block mb-0.5">Pegawai Ditugaskan</span>
-                        <span class="font-bold text-gray-800 dark:text-gray-200 text-sm block">{{ $task->user?->name ?? 'Anda' }}</span>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="font-bold text-gray-800 dark:text-gray-200 text-sm block">{{ $task->user?->name ?? 'Anda' }}</span>
+                            @if($task->user?->badge)
+                                <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    ⭐ {{ $task->user->badge }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                     <div>
                         <span class="text-gray-400 block mb-0.5">Bidang / Unit Kerja</span>

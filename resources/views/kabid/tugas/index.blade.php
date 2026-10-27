@@ -205,8 +205,13 @@
                                                 {{ substr($task->user->name, 0, 1) }}
                                             </div>
                                             <div>
-                                                <div class="font-semibold text-gray-900 dark:text-gray-100 text-xs">
-                                                    {{ $task->user->name }}
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="font-semibold text-gray-900 dark:text-gray-100 text-xs">{{ $task->user->name }}</span>
+                                                    @if($task->user->badge)
+                                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                            ⭐ {{ $task->user->badge }}
+                                                        </span>
+                                                    @endif
                                                 </div>
                                                 <div class="text-[11px] text-gray-400">
                                                     {{ $task->user->jabatan ?? 'Staf' }}

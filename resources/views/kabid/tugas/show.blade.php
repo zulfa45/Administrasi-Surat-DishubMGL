@@ -313,7 +313,14 @@
                                 {{ substr($task->user->name, 0, 1) }}
                             </div>
                             <div class="min-w-0">
-                                <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{{ $task->user->name }}</h4>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <h4 class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{{ $task->user->name }}</h4>
+                                    @if($task->user->badge)
+                                        <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                            ⭐ {{ $task->user->badge }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $task->user->jabatan ?? 'Staf Pelaksana' }}</p>
                                 <p class="text-[11px] text-gray-400 truncate">{{ $task->user->email }}</p>
                             </div>

@@ -81,7 +81,7 @@
                         <option value="">-- Pilih Pegawai --</option>
                         @foreach($users as $u)
                             <option value="{{ $u->id }}" {{ old('user_id') == $u->id ? 'selected' : '' }}>
-                                {{ $u->name }} ({{ $u->jabatan ?: 'Staff' }} - {{ $u->department?->name ?? 'Dishub' }})
+                                {{ $u->name }} {{ $u->badge ? '[⭐ ' . $u->badge . ']' : '' }} ({{ $u->jabatan ?: 'Staff' }} - {{ $u->department?->name ?? 'Dishub' }})
                             </option>
                         @endforeach
                     </select>

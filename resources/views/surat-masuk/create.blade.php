@@ -192,7 +192,7 @@
                             <select name="user_id" id="user_id" class="w-full px-3.5 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <option value="">-- Pilih Pegawai --</option>
                                 @foreach($users as $usr)
-                                    <option value="{{ $usr->id }}" {{ old('user_id') == $usr->id ? 'selected' : '' }}>{{ $usr->name }} - {{ $usr->department?->name ?? 'Tanpa Bidang' }}</option>
+                                    <option value="{{ $usr->id }}" {{ old('user_id') == $usr->id ? 'selected' : '' }}>{{ $usr->name }} {{ $usr->badge ? '[⭐ ' . $usr->badge . ']' : '' }} - {{ $usr->department?->name ?? 'Tanpa Bidang' }}</option>
                                 @endforeach
                             </select>
                             @error('user_id') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror

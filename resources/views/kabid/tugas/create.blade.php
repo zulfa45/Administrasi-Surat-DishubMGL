@@ -194,10 +194,17 @@
                                 <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 flex items-center justify-center font-bold text-xs flex-shrink-0">
                                     {{ substr($staff->name, 0, 1) }}
                                 </div>
-                                <div class="min-w-0">
-                                    <p class="font-bold text-xs text-gray-900 dark:text-gray-100 truncate">
-                                        {{ $staff->name }}
-                                    </p>
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <p class="font-bold text-xs text-gray-900 dark:text-gray-100 truncate">
+                                            {{ $staff->name }}
+                                        </p>
+                                        @if($staff->badge)
+                                            <span class="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                ⭐ {{ $staff->badge }}
+                                            </span>
+                                        @endif
+                                    </div>
                                     <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate">
                                         {{ $staff->jabatan ?? 'Staf Bidang' }}
                                     </p>

@@ -19,12 +19,15 @@ class DispositionController extends Controller
                 $q->where('name', 'admin');
             })
             ->with('department')
-            ->orderBy('name')
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
             ->get();
 
         // Jika tidak ada filter role (misal seeder belum jalan), fallback ambil semua user aktif
         if ($users->isEmpty()) {
-            $users = User::where('status', 'active')->with('department')->orderBy('name')->get();
+            $users = User::where('status', 'active')
+                ->with('department')
+                ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
+                ->get();
         }
 
         return view('surat-masuk.disposisi', [

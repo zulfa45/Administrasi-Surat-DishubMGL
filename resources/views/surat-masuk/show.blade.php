@@ -386,7 +386,14 @@
                                             <div class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-[10px]">
                                                 {{ substr($assignment->user->name, 0, 1) }}
                                             </div>
-                                            <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">{{ $assignment->user->name }}</span>
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">{{ $assignment->user->name }}</span>
+                                                @if($assignment->user->badge)
+                                                    <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                        ⭐ {{ $assignment->user->badge }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         @else
                                             <span class="text-xs text-amber-600 font-medium">Ditujukan ke Kabid (Belum ada staf)</span>
                                         @endif

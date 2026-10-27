@@ -12,9 +12,16 @@
                         <h2 class="font-bold text-xl text-gray-900 dark:text-gray-100 leading-tight">
                             Dashboard Pegawai
                         </h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                            Pelaksana Disposisi &bull; <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->department?->name ?? 'Dinas Perhubungan' }}</span>
-                        </p>
+                        <div class="flex items-center gap-2 flex-wrap mt-0.5">
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                Pelaksana Disposisi &bull; <span class="font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->department?->name ?? 'Dinas Perhubungan' }}</span>
+                            </p>
+                            @if(auth()->user()->badge)
+                                <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    ⭐ {{ auth()->user()->badge }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>

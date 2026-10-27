@@ -88,7 +88,7 @@ class DirectTaskController extends Controller
             ->whereHas('roles', function ($q) {
                 $q->where('name', 'karyawan');
             })
-            ->orderBy('name')
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
             ->get();
 
         $selectedUserId = $request->query('user_id');

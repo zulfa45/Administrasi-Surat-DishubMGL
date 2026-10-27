@@ -93,7 +93,9 @@ class IncomingLetterController extends Controller
             ->where('id', '!=', $user->id)
             ->whereHas('roles', function($q) {
                 $q->where('name', 'karyawan');
-            })->get();
+            })
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
+            ->get();
 
         // Karyawan yang belum ditugaskan untuk surat ini
         $assignedUserIds = $bidangAssignments->pluck('user_id')->filter()->toArray();

@@ -25,7 +25,7 @@ class MemberController extends Controller
                 $q->where('name', 'karyawan');
             })
             ->where('status', 'active')
-            ->orderBy('name')
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
             ->get();
 
         return view('kabid.anggota.index', compact('members'));

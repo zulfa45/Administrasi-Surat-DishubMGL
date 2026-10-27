@@ -185,7 +185,7 @@
             <tr>
                 <td style="text-align: center;">{{ $index + 1 }}</td>
                 <td>
-                    <strong>{{ $assignment->user?->name ?? 'Bagian' }}</strong><br>
+                    <strong>{{ $assignment->user?->name ?? 'Bagian' }} {{ $assignment->user?->badge ? '(' . $assignment->user->badge . ')' : '' }}</strong><br>
                     <small style="color: #4b5563;">{{ $assignment->department?->name ?? ($assignment->user?->department?->name ?? '-') }}</small>
                 </td>
                 <td>{{ \Carbon\Carbon::parse($assignment->tanggal_disposisi)->locale('id')->translatedFormat('d F Y') }}</td>

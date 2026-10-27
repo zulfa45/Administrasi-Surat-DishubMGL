@@ -88,7 +88,14 @@
                     <div class="min-w-0">
                         <p class="text-xs font-bold {{ $isAssigned ? 'text-gray-900 dark:text-gray-100' : 'text-indigo-600' }}">2. Disposisi Kabid</p>
                         @if($assignment->user)
-                            <p class="text-[11px] text-indigo-600 dark:text-indigo-400 mt-0.5 font-medium truncate">Ke: {{ $assignment->user->name }}</p>
+                            <div class="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                <span class="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium truncate">Ke: {{ $assignment->user->name }}</span>
+                                @if($assignment->user->badge)
+                                    <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                        ⭐ {{ $assignment->user->badge }}
+                                    </span>
+                                @endif
+                            </div>
                         @elseif($assignment->status === 'selesai')
                             <p class="text-[11px] text-emerald-600 mt-0.5 font-medium">Diarsipkan Bidang</p>
                         @else
@@ -432,14 +439,21 @@
                                             <div x-ref="staffList" class="space-y-2 max-h-52 overflow-y-auto pr-1">
                                                 @foreach($karyawan as $k)
                                                     <label class="flex items-center justify-between p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors">
-                                                        <div class="flex items-center gap-2.5">
-                                                            <input type="checkbox" name="user_ids[]" value="{{ $k->id }}" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                                            <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                                                        <div class="flex items-center gap-2.5 min-w-0">
+                                                            <input type="checkbox" name="user_ids[]" value="{{ $k->id }}" class="rounded text-indigo-600 focus:ring-indigo-500 flex-shrink-0">
+                                                            <div class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
                                                                 {{ substr($k->name, 0, 1) }}
                                                             </div>
-                                                            <div>
-                                                                <div class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ $k->name }}</div>
-                                                                <div class="text-[11px] text-gray-400">{{ $k->email }}</div>
+                                                            <div class="min-w-0">
+                                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                                    <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ $k->name }}</span>
+                                                                    @if($k->badge)
+                                                                        <span class="inline-flex items-center gap-0.5 px-2 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                                            ⭐ {{ $k->badge }}
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                                <div class="text-[11px] text-gray-400 truncate">{{ $k->jabatan ?? $k->email }}</div>
                                                             </div>
                                                         </div>
                                                     </label>
@@ -515,8 +529,15 @@
                                 {{ substr($assignment->user->name ?? '?', 0, 1) }}
                             </div>
                             <div class="min-w-0 flex-1">
-                                <div class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{{ $assignment->user->name ?? 'Staf' }}</div>
-                                <div class="text-xs text-gray-500 truncate">{{ $assignment->user->email ?? '-' }}</div>
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">{{ $assignment->user->name ?? 'Staf' }}</span>
+                                    @if($assignment->user?->badge)
+                                        <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                            ⭐ {{ $assignment->user->badge }}
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="text-xs text-gray-500 truncate">{{ $assignment->user->jabatan ?? ($assignment->user->email ?? '-') }}</div>
                             </div>
                         </div>
 
@@ -555,7 +576,14 @@
                                                 {{ substr($ba->user->name ?? '?', 0, 1) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $ba->user->name ?? 'Arsip' }}</div>
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">{{ $ba->user->name ?? 'Arsip' }}</span>
+                                                    @if($ba->user?->badge)
+                                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                            ⭐ {{ $ba->user->badge }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                                 <div class="text-[11px] text-gray-400">{{ ucfirst(str_replace('_', ' ', $ba->status)) }}</div>
                                             </div>
                                         </div>
@@ -597,9 +625,16 @@
                                     </div>
                                     <div x-ref="addList" class="space-y-1.5 max-h-44 overflow-y-auto pr-1">
                                         @foreach($unassignedKaryawan as $uk)
-                                            <label class="flex items-center gap-2.5 p-2 rounded-xl border border-gray-100 dark:border-gray-700 hover:bg-gray-50 cursor-pointer">
-                                                <input type="checkbox" name="user_ids[]" value="{{ $uk->id }}" class="rounded text-indigo-600 focus:ring-indigo-500">
-                                                <span class="text-xs font-medium text-gray-800 dark:text-gray-200">{{ $uk->name }}</span>
+                                            <label class="flex items-center justify-between gap-2.5 p-2 rounded-xl border border-gray-100 dark:border-gray-700 hover:bg-gray-50 cursor-pointer">
+                                                <div class="flex items-center gap-2.5 min-w-0">
+                                                    <input type="checkbox" name="user_ids[]" value="{{ $uk->id }}" class="rounded text-indigo-600 focus:ring-indigo-500 flex-shrink-0">
+                                                    <span class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">{{ $uk->name }}</span>
+                                                </div>
+                                                @if($uk->badge)
+                                                    <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex-shrink-0">
+                                                        ⭐ {{ $uk->badge }}
+                                                    </span>
+                                                @endif
                                             </label>
                                         @endforeach
                                     </div>

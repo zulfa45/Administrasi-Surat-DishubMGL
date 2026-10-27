@@ -182,8 +182,15 @@
                                                 {{ substr($assignment->user->name, 0, 1) }}
                                             </div>
                                             <div class="min-w-0">
-                                                <div class="font-semibold text-xs text-gray-900 dark:text-gray-100 truncate">{{ $assignment->user->name }}</div>
-                                                <div class="text-[11px] text-gray-400 truncate">{{ $assignment->user->email }}</div>
+                                                <div class="flex items-center gap-1.5 flex-wrap">
+                                                    <span class="font-semibold text-xs text-gray-900 dark:text-gray-100 truncate">{{ $assignment->user->name }}</span>
+                                                    @if($assignment->user->badge)
+                                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                            ⭐ {{ $assignment->user->badge }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                <div class="text-[11px] text-gray-400 truncate">{{ $assignment->user->jabatan ?? $assignment->user->email }}</div>
                                             </div>
                                         </div>
                                     @else
