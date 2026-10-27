@@ -78,7 +78,16 @@
                                 <img class="w-8 h-8 rounded-full object-cover bg-gray-200"
                                      src="{{ $user->avatar ? Storage::url($user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
                                      alt="{{ $user->name }}"/>
-                                <span class="font-medium">{{ $user->name }}</span>
+                                <div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-medium">{{ $user->name }}</span>
+                                        @if($user->badge)
+                                            <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 shadow-2xs">
+                                                ⭐ {{ $user->badge }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                         </td>
                         <td class="px-4 py-3 text-gray-500">{{ $user->nip ?? '-' }}</td>

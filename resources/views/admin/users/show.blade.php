@@ -42,6 +42,18 @@
                     <dd class="mt-1 text-sm text-gray-800 dark:text-gray-200">{{ $user->jabatan ?? '-' }}</dd>
                 </div>
                 <div>
+                    <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Badge Monitor</dt>
+                    <dd class="mt-1 text-sm text-gray-800 dark:text-gray-200">
+                        @if($user->badge)
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
+                                ⭐ {{ $user->badge }}
+                            </span>
+                        @else
+                            <span class="text-gray-400">-</span>
+                        @endif
+                    </dd>
+                </div>
+                <div>
                     <dt class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</dt>
                     <dd class="mt-1 text-sm text-gray-800 dark:text-gray-200">{{ $user->department?->name ?? '-' }}</dd>
                 </div>

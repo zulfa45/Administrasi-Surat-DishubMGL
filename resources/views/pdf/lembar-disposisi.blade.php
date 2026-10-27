@@ -120,7 +120,7 @@
             </td>
             <td class="header-text">
                 <h3>PEMERINTAH KOTA MAGELANG</h3>
-                <h2>DINAS PERHUBUNGAN KOTA MAGELANG</h2>
+                <h2 style="font-size: 30pt;">DINAS PERHUBUNGAN</h2>
                 <p>Jl. Jend. Sudirman No. 84, Kota Magelang, Jawa Tengah 56125 Telp. (0293) 362205</p>
                 <p>Website: dishub.magelangkota.go.id | Email: dishubmagelangkota@gmail.com</p>
             </td>

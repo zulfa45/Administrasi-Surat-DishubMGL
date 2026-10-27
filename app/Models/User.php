@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'nip',
         'jabatan',
+        'badge',
         'department_id',
         'avatar',
         'status',

@@ -403,10 +403,12 @@
                                 <div class="flex-shrink-0">
                                     <template x-if="col.avatar">
                                         <img :src="col.avatar" :alt="col.name" 
-                                             class="w-8 h-8 rounded-full object-cover border-2 border-white/80 shadow-md bg-white">
+                                             class="w-8 h-8 rounded-full object-cover border-2 shadow-md bg-white transition-all"
+                                             :class="col.badge ? 'border-amber-300 ring-2 ring-amber-300/70' : 'border-white/80'">
                                     </template>
                                     <template x-if="!col.avatar">
-                                        <div class="w-8 h-8 rounded-full bg-white/25 text-white font-extrabold flex items-center justify-center text-xs shadow-md border border-white/40 backdrop-blur-xs"
+                                        <div class="w-8 h-8 rounded-full font-extrabold flex items-center justify-center text-xs shadow-md border backdrop-blur-xs transition-all"
+                                             :class="col.badge ? 'bg-amber-500/80 text-white border-amber-300 ring-2 ring-amber-300/70' : 'bg-white/25 text-white border-white/40'"
                                              x-text="col.initials || col.name.substring(0, 2).toUpperCase()">
                                         </div>
                                     </template>
@@ -414,7 +416,15 @@
                                 
                                 <!-- Judul Bidang & Subtitle -->
                                 <div class="min-w-0">
-                                    <h4 class="text-xs font-bold text-white truncate" x-text="col.name">Nama Bidang</h4>
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <h4 class="text-xs font-bold text-white truncate" x-text="col.name">Nama Bidang</h4>
+                                        <template x-if="col.badge">
+                                            <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-300 text-amber-950 shadow-xs border border-amber-200/90 flex-shrink-0">
+                                                <span>⭐</span>
+                                                <span x-text="col.badge"></span>
+                                            </span>
+                                        </template>
+                                    </div>
                                     <p class="text-[10px] text-white/80 font-medium" x-text="col.total_tasks + ' tugas belum selesai'">0 tugas belum selesai</p>
                                 </div>
                             </div>
@@ -548,10 +558,18 @@
 
                                             <!-- Assignee / Penerima (hanya jika di overview semua bidang) -->
                                             <template x-if="!col.is_user && task.assignee">
-                                                <span class="text-[10px] text-slate-500 font-semibold truncate max-w-[80px] bg-slate-100 px-1.5 py-0.2 rounded text-right"
-                                                      :title="'Ditugaskan: ' + task.assignee"
-                                                      x-text="task.assignee">
-                                                </span>
+                                                <div class="flex items-center gap-1 max-w-[140px] truncate justify-end">
+                                                    <span class="text-[10px] text-slate-600 font-semibold truncate bg-slate-100 px-1.5 py-0.2 rounded"
+                                                          :title="'Ditugaskan: ' + task.assignee"
+                                                          x-text="task.assignee">
+                                                    </span>
+                                                    <template x-if="task.assignee_badge">
+                                                        <span class="text-[9px] font-black px-1.5 py-0.2 rounded-full bg-amber-200 text-amber-950 border border-amber-300 flex-shrink-0"
+                                                              :title="task.assignee_badge">
+                                                            ⭐ <span x-text="task.assignee_badge"></span>
+                                                        </span>
+                                                    </template>
+                                                </div>
                                             </template>
 
                                         </div>
@@ -643,11 +661,17 @@
                     </template>
                     
                     <div class="min-w-0">
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             <h3 class="text-base sm:text-lg font-black tracking-tight truncate text-white" 
                                 x-text="modalCol?.name">
                                 Nama Karyawan / Bidang
                             </h3>
+                            <template x-if="modalCol?.badge">
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-black bg-amber-300 text-amber-950 shadow-xs border border-amber-200">
+                                    <span>⭐</span>
+                                    <span x-text="modalCol.badge"></span>
+                                </span>
+                            </template>
                             <span class="text-xs font-bold bg-white/20 text-white px-2 py-0.5 rounded-full border border-white/30"
                                   x-text="modalCol?.total_tasks + ' Tugas'">
                             </span>
@@ -779,9 +803,14 @@
 
                             <!-- Assignee -->
                             <template x-if="task.assignee">
-                                <span class="bg-white border border-slate-200 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700">
-                                    Ditugaskan: <span x-text="task.assignee"></span>
-                                </span>
+                                <div class="flex items-center gap-1.5 bg-white border border-slate-200 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-700">
+                                    <span>Ditugaskan: <span x-text="task.assignee"></span></span>
+                                    <template x-if="task.assignee_badge">
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-amber-200 text-amber-950 border border-amber-300">
+                                            ⭐ <span x-text="task.assignee_badge"></span>
+                                        </span>
+                                    </template>
+                                </div>
                             </template>
                         </div>
 

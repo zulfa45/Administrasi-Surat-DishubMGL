@@ -187,6 +187,8 @@ class MonitorController extends Controller
             $columns[] = [
                 'id'          => $dept->id,
                 'name'        => $dept->name,
+                'badge'       => null,
+                'jabatan'     => null,
                 'slug'        => $dept->slug,
                 'avatar'      => $avatarUrl,
                 'initials'    => strtoupper(substr($dept->name, 0, 2)),
@@ -220,7 +222,7 @@ class MonitorController extends Controller
         $users = User::role('karyawan')
             ->where('department_id', $department->id)
             ->where('status', 'active')
-            ->orderBy('name')
+            ->orderByRaw("CASE WHEN badge IS NOT NULL AND badge != '' THEN 0 ELSE 1 END, name ASC")
             ->get();
 
         $deptAssignments = Assignment::with(['incomingLetter', 'user'])
@@ -244,6 +246,8 @@ class MonitorController extends Controller
             $columns[] = [
                 'id'          => 0,
                 'name'        => 'Menunggu Disposisi Kabid',
+                'badge'       => null,
+                'jabatan'     => null,
                 'slug'        => 'unassigned',
                 'avatar'      => null,
                 'initials'    => 'KB',
@@ -277,6 +281,8 @@ class MonitorController extends Controller
             $columns[] = [
                 'id'          => $user->id,
                 'name'        => $user->name,
+                'badge'       => $user->badge,
+                'jabatan'     => $user->jabatan,
                 'slug'        => 'user-' . $user->id,
                 'avatar'      => $avatarUrl,
                 'initials'    => strtoupper(substr($user->name, 0, 2)),
@@ -416,6 +422,7 @@ class MonitorController extends Controller
             'disposisi_formatted' => $disposisiFormatted,
             'date'                => $deadlineFormatted ?: $disposisiFormatted,
             'assignee'            => $task->user?->name ?? 'Belum Ditugaskan',
+            'assignee_badge'      => $task->user?->badge ?? null,
         ];
     }
 

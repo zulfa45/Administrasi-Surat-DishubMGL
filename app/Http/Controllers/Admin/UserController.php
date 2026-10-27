@@ -55,6 +55,7 @@ class UserController extends Controller
             'password'      => 'required|string|min:8|confirmed',
             'nip'           => 'nullable|string|max:20|unique:users,nip',
             'jabatan'       => 'nullable|string|max:100',
+            'badge'         => 'nullable|string|max:50',
             'department_id' => 'nullable|exists:departments,id',
             'role'          => 'required|exists:roles,name',
             'avatar'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -68,6 +69,7 @@ class UserController extends Controller
         $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
         $validated['nip']           = !empty($validated['nip']) ? $validated['nip'] : null;
         $validated['jabatan']       = !empty($validated['jabatan']) ? $validated['jabatan'] : null;
+        $validated['badge']         = !empty($validated['badge']) ? trim($validated['badge']) : null;
         $validated['password']      = Hash::make($validated['password']);
 
         try {
@@ -103,6 +105,7 @@ class UserController extends Controller
             'password'      => 'nullable|string|min:8|confirmed',
             'nip'           => 'nullable|string|max:20|unique:users,nip,' . $user->id,
             'jabatan'       => 'nullable|string|max:100',
+            'badge'         => 'nullable|string|max:50',
             'department_id' => 'nullable|exists:departments,id',
             'role'          => 'required|exists:roles,name',
             'avatar'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -119,6 +122,7 @@ class UserController extends Controller
         $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
         $validated['nip']           = !empty($validated['nip']) ? $validated['nip'] : null;
         $validated['jabatan']       = !empty($validated['jabatan']) ? $validated['jabatan'] : null;
+        $validated['badge']         = !empty($validated['badge']) ? trim($validated['badge']) : null;
 
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
