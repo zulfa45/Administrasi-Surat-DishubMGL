@@ -8,3 +8,4 @@ tests
 storage/*.key
 .phpunit.result.cache
 npm-debug.log
+public/hot

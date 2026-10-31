@@ -12,6 +12,9 @@ mkdir -p storage/framework/sessions storage/framework/views storage/framework/ca
 chown -R www-data:www-data storage bootstrap/cache
 chmod -R 775 storage bootstrap/cache
 
+# Remove Vite hot-reloading flag so production build is used
+rm -f public/hot
+
 # Run Laravel optimizations
 php artisan storage:link || true
 php artisan config:cache || true
