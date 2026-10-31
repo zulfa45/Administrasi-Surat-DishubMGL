@@ -104,7 +104,7 @@ class ReportController extends Controller
 
         $letters = $query->latest('tanggal_diterima')->latest('id')->get();
 
-        $kotaLogo   = $this->getBase64Image(public_path('images/kota.png'));
+        $kotaLogo   = $this->getBase64Image(public_path('images/kota.webp')) ?: $this->getBase64Image(public_path('images/kota.png'));
 
         $pdf = Pdf::loadView('pdf.laporan-surat', [
             'letters'     => $letters,
@@ -127,7 +127,7 @@ class ReportController extends Controller
             'assignments.department'
         ]);
 
-        $kotaLogo   = $this->getBase64Image(public_path('images/kota.png'));
+        $kotaLogo   = $this->getBase64Image(public_path('images/kota.webp')) ?: $this->getBase64Image(public_path('images/kota.png'));
 
         $pdf = Pdf::loadView('pdf.lembar-disposisi', [
             'letter'     => $surat_masuk,

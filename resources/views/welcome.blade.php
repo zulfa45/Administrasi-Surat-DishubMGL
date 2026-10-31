@@ -46,10 +46,10 @@
                 <!-- Logos container -->
                 <div class="flex justify-center items-center gap-6 mb-8">
                     <!-- Logo Kota/Kabupaten (Kiri) -->
-                    <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-20 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-lg" />
+                    <img src="{{ asset('images/kota.webp') }}" alt="Logo Kota" class="w-20 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-lg" />
                     
                     <!-- Logo Dishub (Kanan) -->
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-24 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-xl" />
+                    <img src="{{ asset('images/logo.webp') }}" alt="Logo Dishub" class="w-24 h-auto transform hover:scale-105 transition-transform duration-300 drop-shadow-xl" />
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white mb-4">

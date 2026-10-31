@@ -135,9 +135,9 @@
     <!-- 1. TOP HEADER SECTION (IDENTIK MOCKUP DISHUB) -->
     <header class="bg-[#0b1d33] text-white relative z-20 overflow-hidden shadow-2xl shadow-black/60 border-b border-black/30 flex-shrink-0">
         
-        <!-- BACKGROUND GAMBAR (header.jpg) JELAS & CERAH -->
+        <!-- BACKGROUND GAMBAR (header.webp) JELAS & CERAH -->
         <div class="absolute inset-0 pointer-events-none z-0">
-            <img src="{{ asset('images/header.jpg') }}" alt="Header Background" 
+            <img src="{{ asset('images/header.webp') }}" alt="Header Background" 
                  class="w-full h-full object-cover object-center">
             <!-- Overlay gradien halus & transparan agar gambar latar terlihat jelas dan cerah -->
             <div class="absolute inset-0 bg-gradient-to-r from-[#071322]/55 via-[#0b1d33]/20 to-[#071322]/55"></div>
@@ -150,7 +150,7 @@
                 
                 <!-- KIRI: LOGO KOTA MAGELANG & TITLE -->
                 <div class="flex items-center gap-3 sm:gap-4">
-                    <img src="{{ asset('images/kota.png') }}" alt="Logo Kota Magelang" class="w-12 sm:w-14 h-auto object-contain filter drop-shadow-lg">
+                    <img src="{{ asset('images/kota.webp') }}" alt="Logo Kota Magelang" class="w-12 sm:w-14 h-auto object-contain filter drop-shadow-lg">
                     <div>
                         <h2 class="text-xs sm:text-sm font-semibold text-slate-100 tracking-wide leading-tight drop-shadow-md">
                             Dinas Perhubungan

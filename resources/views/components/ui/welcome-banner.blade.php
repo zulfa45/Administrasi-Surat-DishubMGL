@@ -5,7 +5,7 @@
         <p class="text-gray-600 dark:text-gray-400">Anda login sebagai <span class="font-semibold text-blue-600 dark:text-blue-400 uppercase">{{ auth()->user()->roles->first()->name ?? 'Pengguna' }}</span> di Sistem Informasi Manajemen Administrasi Surat Menyurat Dinas Perhubungan Magelang.</p>
     </div>
     <div class="relative p-6 sm:p-8 flex items-center justify-center gap-6">
-        <img src="{{ asset('images/kota.png') }}" alt="Logo Kota" class="w-16 h-auto drop-shadow-md">
-        <img src="{{ asset('images/logo.png') }}" alt="Logo Dishub" class="w-20 h-auto drop-shadow-md">
+        <img src="{{ asset('images/kota.webp') }}" alt="Logo Kota" class="w-16 h-auto drop-shadow-md">
+        <img src="{{ asset('images/logo.webp') }}" alt="Logo Dishub" class="w-20 h-auto drop-shadow-md">
     </div>
 </div>
