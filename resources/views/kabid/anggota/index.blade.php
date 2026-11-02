@@ -44,7 +44,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         @if($member->avatar)
-                                            <img src="{{ Storage::disk('s3')->url($member->avatar) }}" alt="{{ $member->name }}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
+                                            <img src="{{ $member->avatar_url }}" alt="{{ $member->name }}" class="w-10 h-10 rounded-full object-cover border border-gray-200">
                                         @else
                                             <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm border border-indigo-200">
                                                 {{ substr($member->name, 0, 1) }}

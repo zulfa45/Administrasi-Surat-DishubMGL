@@ -180,9 +180,7 @@ class MonitorController extends Controller
             });
 
             $kabid = User::role('kepala_bidang')->where('department_id', $dept->id)->first();
-            $avatarUrl = $kabid?->avatar 
-                ? \Illuminate\Support\Facades\Storage::url($kabid->avatar)
-                : ($kabid ? 'https://ui-avatars.com/api/?name=' . urlencode($kabid->name) . '&color=FFFFFF&background=2563eb&bold=true' : null);
+            $avatarUrl = $kabid?->avatar_url;
 
             $columns[] = [
                 'id'          => $dept->id,
@@ -274,9 +272,7 @@ class MonitorController extends Controller
                 return $this->formatTaskItem($task);
             });
 
-            $avatarUrl = $user->avatar 
-                ? \Illuminate\Support\Facades\Storage::url($user->avatar)
-                : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&color=FFFFFF&background=2563eb&bold=true';
+            $avatarUrl = $user->avatar_url;
 
             $columns[] = [
                 'id'          => $user->id,

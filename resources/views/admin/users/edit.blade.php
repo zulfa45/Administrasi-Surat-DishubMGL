@@ -119,16 +119,29 @@
                             <option value="inactive" {{ old('status', $user->status) === 'inactive' ? 'selected' : '' }}>Nonaktif</option>
                         </select>
                     </div>
-                    <div>
+                    <div x-data="{ photoPreview: null }">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Avatar</label>
-                        @if($user->avatar)
-                            <div class="mb-2 flex items-center gap-2">
-                                <img src="{{ Storage::url($user->avatar) }}" class="w-10 h-10 rounded-full object-cover"/>
-                                <span class="text-xs text-gray-500">Avatar saat ini</span>
-                            </div>
-                        @endif
+                        <div class="mb-2 flex items-center gap-3">
+                            <template x-if="!photoPreview">
+                                <img src="{{ $user->avatar_url }}" class="w-12 h-12 rounded-full object-cover border border-gray-200 dark:border-gray-700"/>
+                            </template>
+                            <template x-if="photoPreview">
+                                <span class="block w-12 h-12 rounded-full bg-cover bg-no-repeat bg-center border border-gray-200 dark:border-gray-700 shadow-sm"
+                                      :style="'background-image: url(\'' + photoPreview + '\');'">
+                                </span>
+                            </template>
+                            <span class="text-xs text-gray-500">Foto profil saat ini (atau pratinjau foto baru)</span>
+                        </div>
                         <input type="file" name="avatar" accept="image/jpg,image/jpeg,image/png,image/webp"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('avatar') border-red-500 @enderror"/>
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('avatar') border-red-500 @enderror"
+                            @change="
+                                const file = $event.target.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => { photoPreview = e.target.result; };
+                                    reader.readAsDataURL(file);
+                                }
+                            "/>
                         @error('avatar') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
                     </div>
                 </div>

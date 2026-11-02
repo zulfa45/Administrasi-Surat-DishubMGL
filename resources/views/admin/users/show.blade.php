@@ -10,8 +10,8 @@
     <div class="max-w-2xl">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xs p-6">
             <div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-700">
-                <img class="w-16 h-16 rounded-full object-cover bg-gray-200"
-                     src="{{ $user->avatar ? Storage::url($user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF&size=64' }}"
+                <img class="w-16 h-16 rounded-full object-cover bg-gray-200 border border-gray-200 dark:border-gray-700"
+                     src="{{ $user->avatar_url }}"
                      alt="{{ $user->name }}"/>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $user->name }}</h3>

@@ -17,11 +17,28 @@
         @csrf
         @method('patch')
 
-        <div>
+        <div x-data="{ photoPreview: null }">
             <x-input-label for="avatar" value="Foto Profile (Opsional)" />
             <div class="mt-2 flex items-center gap-4">
-                <img src="{{ $user->avatar ? \Illuminate\Support\Facades\Storage::url($user->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&color=7F9CF5&background=EBF4FF' }}" alt="Avatar" class="w-16 h-16 rounded-full object-cover border border-gray-200 dark:border-gray-700">
-                <input id="avatar" name="avatar" type="file" class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300" accept="image/*" />
+                <template x-if="!photoPreview">
+                    <img src="{{ $user->avatar_url }}" alt="Avatar" class="w-16 h-16 rounded-full object-cover border border-gray-200 dark:border-gray-700">
+                </template>
+                <template x-if="photoPreview">
+                    <span class="block w-16 h-16 rounded-full bg-cover bg-no-repeat bg-center border border-gray-200 dark:border-gray-700 shadow-sm"
+                          :style="'background-image: url(\'' + photoPreview + '\');'">
+                    </span>
+                </template>
+                <input id="avatar" name="avatar" type="file" 
+                       class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-700 dark:file:text-gray-300" 
+                       accept="image/jpeg,image/png,image/jpg,image/webp"
+                       @change="
+                           const file = $event.target.files[0];
+                           if (file) {
+                               const reader = new FileReader();
+                               reader.onload = (e) => { photoPreview = e.target.result; };
+                               reader.readAsDataURL(file);
+                           }
+                       " />
             </div>
             <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
         </div>

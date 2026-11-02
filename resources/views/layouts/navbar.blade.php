@@ -164,7 +164,7 @@
                         title="Klik untuk membuka menu profil & edit profil"
                         aria-haspopup="true">
                     <img class="object-cover w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600 shadow-xs" 
-                         src="{{ auth()->user()->avatar ? \Illuminate\Support\Facades\Storage::url(auth()->user()->avatar) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&color=7F9CF5&background=EBF4FF' }}" 
+                         src="{{ auth()->user()->avatar_url }}" 
                          alt="{{ auth()->user()->name }}" />
                     <div class="text-left hidden md:block">
                         <div class="flex items-center gap-1.5">

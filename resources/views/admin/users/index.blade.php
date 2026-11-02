@@ -75,8 +75,8 @@
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                         <td class="px-4 py-3">
                             <div class="flex items-center gap-3">
-                                <img class="w-8 h-8 rounded-full object-cover bg-gray-200"
-                                     src="{{ $user->avatar ? Storage::url($user->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&color=7F9CF5&background=EBF4FF' }}"
+                                <img class="w-8 h-8 rounded-full object-cover bg-gray-200 border border-gray-200 dark:border-gray-700"
+                                     src="{{ $user->avatar_url }}"
                                      alt="{{ $user->name }}"/>
                                 <div>
                                     <div class="flex items-center gap-1.5">
