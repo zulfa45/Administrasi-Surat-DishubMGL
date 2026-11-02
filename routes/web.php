@@ -7,45 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/debug-s3', function () {
-    try {
-        config(['filesystems.disks.s3.throw' => true]);
-        $temp = tempnam(sys_get_temp_dir(), 's3_dbg');
-        file_put_contents($temp, 'debug-image-content');
-        $file = new \Illuminate\Http\UploadedFile($temp, 'debug.png', 'image/png', null, true);
-        $storeRes = $file->store('avatars');
-        @unlink($temp);
-
-        return response()->json([
-            'status' => 'success',
-            'storeRes' => $storeRes,
-            'url' => \Illuminate\Support\Facades\Storage::url($storeRes),
-            'config' => [
-                'endpoint' => config('filesystems.disks.s3.endpoint'),
-                'bucket' => config('filesystems.disks.s3.bucket'),
-                'region' => config('filesystems.disks.s3.region'),
-                'use_path_style' => config('filesystems.disks.s3.use_path_style_endpoint'),
-                'key_set' => !empty(config('filesystems.disks.s3.key')),
-                'secret_set' => !empty(config('filesystems.disks.s3.secret')),
-            ]
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'class' => get_class($e),
-            'config' => [
-                'endpoint' => config('filesystems.disks.s3.endpoint'),
-                'bucket' => config('filesystems.disks.s3.bucket'),
-                'region' => config('filesystems.disks.s3.region'),
-                'use_path_style' => config('filesystems.disks.s3.use_path_style_endpoint'),
-                'key_set' => !empty(config('filesystems.disks.s3.key')),
-                'secret_set' => !empty(config('filesystems.disks.s3.secret')),
-            ]
-        ], 500);
-    }
-});
-
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('admin')) {

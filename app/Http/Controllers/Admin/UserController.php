@@ -58,12 +58,15 @@ class UserController extends Controller
             'badge'         => 'nullable|string|max:50',
             'department_id' => 'nullable|exists:departments,id',
             'role'          => 'required|exists:roles,name',
-            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'status'        => 'required|in:active,inactive',
         ]);
 
         if ($request->hasFile('avatar')) {
-            $validated['avatar'] = $request->file('avatar')->store('avatars');
+            $path = $request->file('avatar')->store('avatars', 's3');
+            $validated['avatar'] = $path ?: null;
+        } else {
+            unset($validated['avatar']);
         }
 
         $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
@@ -108,15 +111,18 @@ class UserController extends Controller
             'badge'         => 'nullable|string|max:50',
             'department_id' => 'nullable|exists:departments,id',
             'role'          => 'required|exists:roles,name',
-            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'avatar'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
             'status'        => 'required|in:active,inactive',
         ]);
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar && Storage::exists($user->avatar)) {
-                Storage::delete($user->avatar);
+            if ($user->avatar && $user->avatar !== '0' && Storage::disk('s3')->exists($user->avatar)) {
+                Storage::disk('s3')->delete($user->avatar);
             }
-            $validated['avatar'] = $request->file('avatar')->store('avatars');
+            $path = $request->file('avatar')->store('avatars', 's3');
+            $validated['avatar'] = $path ?: null;
+        } else {
+            unset($validated['avatar']);
         }
 
         $validated['department_id'] = !empty($validated['department_id']) ? $validated['department_id'] : null;
@@ -144,8 +150,8 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if ($user->avatar && Storage::exists($user->avatar)) {
-            Storage::delete($user->avatar);
+        if ($user->avatar && $user->avatar !== '0' && Storage::disk('s3')->exists($user->avatar)) {
+            Storage::disk('s3')->delete($user->avatar);
         }
         $user->delete();
 
