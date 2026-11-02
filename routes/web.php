@@ -7,6 +7,35 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/test-avatar-upload', function () {
+    try {
+        $testContent = 'avatar-test-' . time();
+        $path = 'avatars/test_' . time() . '.txt';
+        $res = \Illuminate\Support\Facades\Storage::disk('s3')->put($path, $testContent);
+        $url = \Illuminate\Support\Facades\Storage::disk('s3')->url($path);
+        return response()->json([
+            'status' => 'success',
+            'res' => $res,
+            'url' => $url,
+            'key_present' => !empty(config('filesystems.disks.s3.key')),
+            'secret_present' => !empty(config('filesystems.disks.s3.secret')),
+            'upload_max_filesize' => ini_get('upload_max_filesize'),
+            'post_max_size' => ini_get('post_max_size'),
+            'memory_limit' => ini_get('memory_limit'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'class' => get_class($e),
+            'key_present' => !empty(config('filesystems.disks.s3.key')),
+            'secret_present' => !empty(config('filesystems.disks.s3.secret')),
+            'upload_max_filesize' => ini_get('upload_max_filesize'),
+            'post_max_size' => ini_get('post_max_size'),
+        ], 500);
+    }
+});
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('admin')) {

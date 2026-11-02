@@ -63,8 +63,15 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 's3');
-            $validated['avatar'] = $path ?: null;
+            try {
+                $path = $request->file('avatar')->store('avatars', 's3');
+                $validated['avatar'] = $path ?: null;
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('User avatar store failed: ' . $e->getMessage());
+                return back()->withInput()->with('error', 'Gagal mengunggah avatar: ' . $e->getMessage());
+            }
+        } elseif ($request->file('avatar') && ! $request->file('avatar')->isValid()) {
+            return back()->withInput()->with('error', 'File avatar tidak valid: ' . $request->file('avatar')->getErrorMessage());
         } else {
             unset($validated['avatar']);
         }
@@ -116,11 +123,18 @@ class UserController extends Controller
         ]);
 
         if ($request->hasFile('avatar')) {
-            if ($user->avatar && $user->avatar !== '0' && Storage::disk('s3')->exists($user->avatar)) {
-                Storage::disk('s3')->delete($user->avatar);
+            try {
+                if ($user->avatar && $user->avatar !== '0' && Storage::disk('s3')->exists($user->avatar)) {
+                    Storage::disk('s3')->delete($user->avatar);
+                }
+                $path = $request->file('avatar')->store('avatars', 's3');
+                $validated['avatar'] = $path ?: null;
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('User avatar update failed: ' . $e->getMessage());
+                return back()->withInput()->with('error', 'Gagal mengunggah avatar: ' . $e->getMessage());
             }
-            $path = $request->file('avatar')->store('avatars', 's3');
-            $validated['avatar'] = $path ?: null;
+        } elseif ($request->file('avatar') && ! $request->file('avatar')->isValid()) {
+            return back()->withInput()->with('error', 'File avatar tidak valid: ' . $request->file('avatar')->getErrorMessage());
         } else {
             unset($validated['avatar']);
         }
