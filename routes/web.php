@@ -7,45 +7,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('/test-avatar-upload', function () {
-    try {
-        $testContent = 'avatar-test-' . time();
-        $path = 'avatars/test_' . time() . '.txt';
-        $res = \Illuminate\Support\Facades\Storage::disk('s3')->put($path, $testContent);
-        $url = \Illuminate\Support\Facades\Storage::disk('s3')->url($path);
-        return response()->json([
-            'status' => 'success',
-            'res' => $res,
-            'url' => $url,
-            'key_present' => !empty(config('filesystems.disks.s3.key')),
-            'key_hex' => bin2hex(config('filesystems.disks.s3.key')),
-            'key_len' => strlen(config('filesystems.disks.s3.key')),
-            'secret_present' => !empty(config('filesystems.disks.s3.secret')),
-            'upload_max_filesize' => ini_get('upload_max_filesize'),
-            'post_max_size' => ini_get('post_max_size'),
-            'ini_loaded' => php_ini_loaded_file(),
-            'ini_scanned' => php_ini_scanned_files(),
-        ]);
-    } catch (\Throwable $e) {
-        $prev = $e->getPrevious();
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'class' => get_class($e),
-            'prev_message' => $prev ? $prev->getMessage() : null,
-            'prev_class' => $prev ? get_class($prev) : null,
-            'key_present' => !empty(config('filesystems.disks.s3.key')),
-            'key_hex' => bin2hex(config('filesystems.disks.s3.key')),
-            'key_len' => strlen(config('filesystems.disks.s3.key')),
-            'secret_present' => !empty(config('filesystems.disks.s3.secret')),
-            'upload_max_filesize' => ini_get('upload_max_filesize'),
-            'post_max_size' => ini_get('post_max_size'),
-            'ini_loaded' => php_ini_loaded_file(),
-            'ini_scanned' => php_ini_scanned_files(),
-        ], 500);
-    }
-});
-
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('admin')) {
