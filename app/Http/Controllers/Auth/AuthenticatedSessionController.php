@@ -28,17 +28,23 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Hapus url.intended yang tersimpan dari session timeout sebelumnya
+        // agar login selalu mengarahkan pengguna ke dashboard sesuai role yang aktif login.
+        $request->session()->forget('url.intended');
+
         $user = Auth::user();
 
         if ($user->hasRole('admin')) {
-            return redirect()->intended('/admin/dashboard');
+            return redirect()->route('admin.dashboard');
         } elseif ($user->hasRole('staf-loket')) {
-            return redirect()->intended('/staf/dashboard');
+            return redirect()->route('staf.dashboard');
+        } elseif ($user->hasRole('kepala_bidang')) {
+            return redirect()->route('kabid.dashboard');
         } elseif ($user->hasRole('karyawan')) {
-            return redirect()->intended('/karyawan/dashboard');
+            return redirect()->route('karyawan.dashboard');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     /**
