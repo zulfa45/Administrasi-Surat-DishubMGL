@@ -21,17 +21,23 @@ Route::get('/test-avatar-upload', function () {
             'secret_present' => !empty(config('filesystems.disks.s3.secret')),
             'upload_max_filesize' => ini_get('upload_max_filesize'),
             'post_max_size' => ini_get('post_max_size'),
-            'memory_limit' => ini_get('memory_limit'),
+            'ini_loaded' => php_ini_loaded_file(),
+            'ini_scanned' => php_ini_scanned_files(),
         ]);
     } catch (\Throwable $e) {
+        $prev = $e->getPrevious();
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage(),
             'class' => get_class($e),
+            'prev_message' => $prev ? $prev->getMessage() : null,
+            'prev_class' => $prev ? get_class($prev) : null,
             'key_present' => !empty(config('filesystems.disks.s3.key')),
             'secret_present' => !empty(config('filesystems.disks.s3.secret')),
             'upload_max_filesize' => ini_get('upload_max_filesize'),
             'post_max_size' => ini_get('post_max_size'),
+            'ini_loaded' => php_ini_loaded_file(),
+            'ini_scanned' => php_ini_scanned_files(),
         ], 500);
     }
 });
