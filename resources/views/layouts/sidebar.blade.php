@@ -65,6 +65,18 @@
                     <span class="ml-4">Master Department</span>
                 </a>
             </li>
+            <li class="relative px-6 py-3">
+                @if (request()->routeIs('admin.tugas.*'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-blue-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.tugas.*') ? 'text-gray-800 dark:text-gray-100' : '' }}" 
+                   href="{{ route('admin.tugas.index') }}">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    <span class="ml-4">Tugas Langsung Kabid</span>
+                </a>
+            </li>
         </ul>
         @endrole
 
@@ -226,6 +238,18 @@
                         <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                     </svg>
                     <span class="ml-4">Master Department</span>
+                </a>
+            </li>
+            <li class="relative px-6 py-3">
+                @if (request()->routeIs('admin.tugas.*'))
+                    <span class="absolute inset-y-0 left-0 w-1 bg-blue-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span>
+                @endif
+                <a class="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200 {{ request()->routeIs('admin.tugas.*') ? 'text-gray-800 dark:text-gray-100' : '' }}" 
+                   href="{{ route('admin.tugas.index') }}">
+                    <svg class="w-5 h-5" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                    <span class="ml-4">Tugas Langsung Kabid</span>
                 </a>
             </li>
         </ul>

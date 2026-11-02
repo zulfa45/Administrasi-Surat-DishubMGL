@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        {{-- Placeholder: Total Surat (untuk Usamah) --}}
+        {{-- Total Surat Masuk --}}
         <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
             <div class="p-3 mr-4 text-orange-500 bg-orange-100 rounded-full dark:text-orange-100 dark:bg-orange-500">
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -45,37 +45,40 @@
             </div>
             <div>
                 <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Total Surat Masuk</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">0</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{{ $totalSuratMasuk }}</p>
             </div>
         </div>
 
-        {{-- Placeholder: Surat Selesai (untuk Usamah) --}}
-        <div class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800">
-            <div class="p-3 mr-4 text-green-500 bg-green-100 rounded-full dark:text-green-100 dark:bg-green-500">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+        {{-- Tugas Langsung Kabid --}}
+        <a href="{{ route('admin.tugas.index') }}" class="flex items-center p-4 bg-white rounded-lg shadow-xs dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+            <div class="p-3 mr-4 text-purple-500 bg-purple-100 rounded-full dark:text-purple-100 dark:bg-purple-500">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                 </svg>
             </div>
             <div>
-                <p class="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Surat Selesai</p>
-                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">0</p>
+                <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Tugas Langsung Kabid</p>
+                <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
+                    {{ $totalTugasLangsung }}
+                    <span class="text-xs font-normal text-emerald-600 dark:text-emerald-400 ml-1">({{ $tugasLangsungSelesai }} selesai)</span>
+                </p>
             </div>
-        </div>
+        </a>
     </div>
 
-    {{-- Info --}}
+    {{-- Info & Quick Links --}}
     <div class="bg-white rounded-lg shadow-xs dark:bg-gray-800 p-6">
         <h4 class="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Selamat Datang, {{ auth()->user()->name }}!</h4>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Anda login sebagai <span class="font-semibold text-blue-500">Admin</span>. Gunakan menu di sebelah kiri untuk mengelola sistem.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Anda login sebagai <span class="font-semibold text-blue-500">Admin</span>. Gunakan menu di bawah atau di sidebar kiri untuk mengelola sistem.</p>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <div class="p-2 text-blue-500 bg-blue-100 rounded-lg dark:bg-blue-900">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
                 <div>
-                    <p class="font-medium text-gray-700 dark:text-gray-200">Kelola User</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Tambah, edit, hapus akun pengguna</p>
+                    <p class="font-medium text-gray-700 dark:text-gray-200 text-sm">Kelola User</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Pengguna & Hak Akses</p>
                 </div>
             </a>
             <a href="{{ route('admin.departments.index') }}" class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
@@ -83,8 +86,26 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m3-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
                 </div>
                 <div>
-                    <p class="font-medium text-gray-700 dark:text-gray-200">Kelola Department</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Tambah, edit, hapus bagian/departemen</p>
+                    <p class="font-medium text-gray-700 dark:text-gray-200 text-sm">Kelola Department</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Bagian / Bidang Dinas</p>
+                </div>
+            </a>
+            <a href="{{ route('surat-masuk.index') }}" class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="p-2 text-orange-500 bg-orange-100 rounded-lg dark:bg-orange-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div>
+                    <p class="font-medium text-gray-700 dark:text-gray-200 text-sm">Surat Masuk</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Disposisi Surat Masuk</p>
+                </div>
+            </a>
+            <a href="{{ route('admin.tugas.index') }}" class="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <div class="p-2 text-purple-500 bg-purple-100 rounded-lg dark:bg-purple-900">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                </div>
+                <div>
+                    <p class="font-medium text-gray-700 dark:text-gray-200 text-sm">Tugas Langsung Kabid</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Pantau & Kelola Tugas</p>
                 </div>
             </a>
         </div>

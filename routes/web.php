@@ -61,6 +61,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('users', UserController::class);
     Route::resource('departments', DepartmentController::class);
+
+    // Monitoring & Kelola Tugas Langsung Kabid
+    Route::get('/tugas', [\App\Http\Controllers\Admin\DirectTaskController::class, 'index'])->name('tugas.index');
+    Route::get('/tugas/{task}', [\App\Http\Controllers\Admin\DirectTaskController::class, 'show'])->name('tugas.show');
+    Route::delete('/tugas/{task}', [\App\Http\Controllers\Admin\DirectTaskController::class, 'destroy'])->name('tugas.destroy');
 });
 
 // Staf Loket Routes

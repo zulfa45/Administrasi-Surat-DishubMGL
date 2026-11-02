@@ -190,7 +190,7 @@ class DirectTaskController extends Controller
     {
         $user = auth()->user();
 
-        if ($task->department_id !== $user->department_id) {
+        if (!$user->hasRole('admin') && $task->department_id !== $user->department_id) {
             abort(403, 'Anda tidak memiliki akses ke tugas ini.');
         }
 
@@ -258,7 +258,7 @@ class DirectTaskController extends Controller
     {
         $user = auth()->user();
 
-        if ($task->department_id !== $user->department_id || !is_null($task->incoming_letter_id)) {
+        if (!$user->hasRole('admin') && ($task->department_id !== $user->department_id || !is_null($task->incoming_letter_id))) {
             abort(403, 'Aksi tidak diizinkan.');
         }
 
@@ -269,6 +269,8 @@ class DirectTaskController extends Controller
                     Storage::disk('google')->delete($task->file_tugas);
                 } elseif (Storage::disk('s3')->exists($task->file_tugas)) {
                     Storage::disk('s3')->delete($task->file_tugas);
+                } elseif (Storage::disk('public')->exists($task->file_tugas)) {
+                    Storage::disk('public')->delete($task->file_tugas);
                 }
             } catch (\Exception $e) {
                 // Ignore failure
@@ -282,6 +284,8 @@ class DirectTaskController extends Controller
                     Storage::disk('google')->delete($task->file_tindak_lanjut);
                 } elseif (Storage::disk('s3')->exists($task->file_tindak_lanjut)) {
                     Storage::disk('s3')->delete($task->file_tindak_lanjut);
+                } elseif (Storage::disk('public')->exists($task->file_tindak_lanjut)) {
+                    Storage::disk('public')->delete($task->file_tindak_lanjut);
                 }
             } catch (\Exception $e) {
                 // Ignore failure

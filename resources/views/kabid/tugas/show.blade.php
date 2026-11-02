@@ -350,21 +350,19 @@
                 </div>
 
                 {{-- Action Card: Hapus / Batalkan Tugas --}}
-                @if($task->status !== 'selesai')
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-3">
-                        <h4 class="font-bold text-xs text-gray-700 dark:text-gray-300">Batalkan Penugasan</h4>
-                        <p class="text-[11px] text-gray-400 leading-relaxed">
-                            Jika tugas ini dibatalkan, data penugasan dan seluruh berkas terkait akan dihapus secara permanen.
-                        </p>
-                        <form action="{{ route('kabid.tugas.destroy', $task) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penugasan ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold rounded-xl transition-colors">
-                                Hapus / Batalkan Tugas
-                            </button>
-                        </form>
-                    </div>
-                @endif
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 space-y-3">
+                    <h4 class="font-bold text-xs text-gray-700 dark:text-gray-300">Hapus / Batalkan Penugasan</h4>
+                    <p class="text-[11px] text-gray-400 leading-relaxed">
+                        Data penugasan dan seluruh berkas terkait akan dihapus secara permanen dari sistem.
+                    </p>
+                    <form action="{{ route('kabid.tugas.destroy', $task) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus penugasan ini? Tindakan ini tidak dapat dibatalkan.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold rounded-xl transition-colors">
+                            Hapus Penugasan
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
