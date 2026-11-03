@@ -1,0 +1,6 @@
+Contact: mailto:dishub@magelangkota.go.id
+Contact: mailto:dishubmagelangkota@gmail.com
+Expires: 2027-11-03T00:00:00.000Z
+Preferred-Languages: id, en
+Canonical: https://simas-dishub-mgl.vercel.app/.well-known/security.txt
+Policy: https://dishub.magelangkota.go.id

@@ -23,12 +23,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) pdo pdo_pgsql pgsql gd zip bcmath \
-    && a2enmod rewrite \
+    && a2enmod rewrite headers \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP upload limits and execution limits
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini \
-    && printf "upload_max_filesize = 25M\npost_max_size = 30M\nmemory_limit = 256M\nmax_execution_time = 120\n" > /usr/local/etc/php/conf.d/docker-php-ext-uploads.ini
+    && printf "upload_max_filesize = 25M\npost_max_size = 30M\nmemory_limit = 256M\nmax_execution_time = 120\nexpose_php = Off\n" > /usr/local/etc/php/conf.d/docker-php-ext-uploads.ini
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
