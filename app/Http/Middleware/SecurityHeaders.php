@@ -25,12 +25,13 @@ class SecurityHeaders
         // Security headers
         $response->headers->remove('X-Powered-By');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
-        $response->headers->set('X-Frame-Options', 'DENY');
+        // Izinkan iframe pada domain yang sama (SAMEORIGIN) untuk modal popup pratinjau dokumen / PDF
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 
         // Content Security Policy
-        // Carefully tailored for Vite, Alpine.js, Bunny Fonts, Supabase Storage avatars, and UI-Avatars
+        // Carefully tailored for Vite, Alpine.js, Bunny Fonts, Supabase Storage avatars, UI-Avatars, and internal iframe previews
         $csp = [
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net",
@@ -38,7 +39,8 @@ class SecurityHeaders
             "font-src 'self' https://fonts.bunny.net data:",
             "img-src 'self' data: blob: https://*.supabase.co https://ui-avatars.com",
             "connect-src 'self' https://*.supabase.co",
-            "frame-ancestors 'none'",
+            "frame-src 'self' blob: data: https://*.supabase.co https://drive.google.com https://docs.google.com",
+            "frame-ancestors 'self'",
             "base-uri 'self'",
             "form-action 'self'",
         ];
