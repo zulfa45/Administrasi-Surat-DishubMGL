@@ -71,16 +71,34 @@ class NotificationController extends Controller
     {
         $user = auth()->user();
         if (!$user) {
-            return response()->json(['count' => 0]);
+            return response()->json([
+                'count' => 0,
+                'latest_id' => null,
+                'latest_title' => null,
+                'notifications' => [],
+            ]);
         }
 
         $unreadCount = $user->unreadNotifications()->count();
         $latest = $user->unreadNotifications()->latest()->first();
 
+        $notifications = $user->notifications()->take(6)->get()->map(function ($notif) {
+            $data = $notif->data ?? [];
+            return [
+                'id' => $notif->id,
+                'url' => route('notifications.read', $notif->id),
+                'is_unread' => is_null($notif->read_at),
+                'title' => $data['judul'] ?? 'Disposisi Baru',
+                'message' => $data['pesan'] ?? 'Ada notifikasi baru untuk Anda.',
+                'time' => $notif->created_at ? $notif->created_at->diffForHumans() : '',
+            ];
+        });
+
         return response()->json([
             'count' => $unreadCount,
             'latest_id' => $latest ? $latest->id : null,
             'latest_title' => $latest ? ($latest->data['judul'] ?? 'Notifikasi Baru') : null,
+            'notifications' => $notifications,
         ]);
     }
 }

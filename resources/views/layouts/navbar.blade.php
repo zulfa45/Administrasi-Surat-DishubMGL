@@ -38,10 +38,31 @@
             </li>
 
             <!-- Notifications menu (Tahap U-12) -->
-            <li class="relative" x-data="{ isNotificationsMenuOpen: false }">
+            @php
+                $unreadCount = auth()->user()->unreadNotifications()->count();
+                $latestNotification = auth()->user()->unreadNotifications()->latest()->first();
+                $latestId = $latestNotification ? $latestNotification->id : '';
+                $initialNotifications = auth()->user()->notifications()->take(6)->get()->map(function ($notif) {
+                    $data = $notif->data ?? [];
+                    return [
+                        'id' => $notif->id,
+                        'url' => route('notifications.read', $notif->id),
+                        'is_unread' => is_null($notif->read_at),
+                        'title' => $data['judul'] ?? 'Disposisi Baru',
+                        'message' => $data['pesan'] ?? 'Ada notifikasi baru untuk Anda.',
+                        'time' => $notif->created_at ? $notif->created_at->diffForHumans() : '',
+                    ];
+                })->values();
+            @endphp
+            <li class="relative" x-data="navNotificationDropdown({
+                unreadCount: {{ (int) $unreadCount }},
+                notifications: @js($initialNotifications),
+                latestId: '{{ $latestId }}',
+                checkUrl: '{{ route('notifications.check') }}'
+            })">
                 <button type="button" 
                         class="relative p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 focus:outline-none transition-colors" 
-                        @click="isNotificationsMenuOpen = !isNotificationsMenuOpen" 
+                        @click="toggleMenu()" 
                         @keydown.escape="isNotificationsMenuOpen = false" 
                         aria-label="Notifikasi" 
                         title="Notifikasi"
@@ -51,20 +72,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                     </svg>
 
-                    @php
-                        $unreadCount = auth()->user()->unreadNotifications()->count();
-                        $latestNotification = auth()->user()->unreadNotifications()->latest()->first();
-                        $latestId = $latestNotification ? $latestNotification->id : null;
-                    @endphp
-
                     <!-- Notification Badge Container -->
-                    <span id="nav-badge-container">
-                        @if($unreadCount > 0)
-                            <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">
-                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
-                            </span>
-                        @endif
-                    </span>
+                    <template x-if="unreadCount > 0">
+                        <span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs"
+                              x-text="unreadCount > 9 ? '9+' : unreadCount">
+                        </span>
+                    </template>
                 </button>
 
                 <div x-show="isNotificationsMenuOpen"
@@ -83,64 +96,58 @@
                     <div class="p-3.5 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <span class="font-semibold text-sm text-gray-900 dark:text-gray-100">Notifikasi</span>
-                            @if($unreadCount > 0)
-                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300">
-                                    {{ $unreadCount }} Baru
+                            <template x-if="unreadCount > 0">
+                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/60 dark:text-blue-300"
+                                      x-text="unreadCount + ' Baru'">
                                 </span>
-                            @endif
+                            </template>
                         </div>
 
-                        @if($unreadCount > 0)
+                        <template x-if="unreadCount > 0">
                             <form action="{{ route('notifications.mark-all-read') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-medium">
                                     Tandai Semua Dibaca
                                 </button>
                             </form>
-                        @endif
+                        </template>
                     </div>
 
                     <!-- Notification Items -->
                     <div class="max-h-80 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700/40">
-                        @forelse(auth()->user()->notifications()->take(6)->get() as $notif)
-                            @php
-                                $isUnread = is_null($notif->read_at);
-                                $nData = $notif->data;
-                            @endphp
-                            <a href="{{ route('notifications.read', $notif->id) }}" 
-                               class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors {{ $isUnread ? 'bg-blue-50/50 dark:bg-blue-900/10' : '' }}">
+                        <template x-for="notif in notifications" :key="notif.id">
+                            <a :href="notif.url" 
+                               class="block p-3.5 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                               :class="notif.is_unread ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''">
                                 <div class="flex items-start gap-3">
-                                    <span class="inline-flex p-2 rounded-lg {{ $isUnread ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-400' }} flex-shrink-0 mt-0.5">
+                                    <span class="inline-flex p-2 rounded-lg flex-shrink-0 mt-0.5"
+                                          :class="notif.is_unread ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/50 dark:text-blue-300' : 'bg-gray-100 text-gray-400 dark:bg-gray-700 dark:text-gray-400'">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                                         </svg>
                                     </span>
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center justify-between gap-1 mb-0.5">
-                                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate">
-                                                {{ $nData['judul'] ?? 'Disposisi Baru' }}
-                                            </p>
-                                            @if($isUnread)
+                                            <p class="text-xs font-semibold text-gray-900 dark:text-gray-100 truncate" x-text="notif.title"></p>
+                                            <template x-if="notif.is_unread">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0"></span>
-                                            @endif
+                                            </template>
                                         </div>
-                                        <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                                            {{ $nData['pesan'] ?? 'Ada disposisi baru untuk Anda.' }}
-                                        </p>
-                                        <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block">
-                                            {{ $notif->created_at->diffForHumans() }}
-                                        </span>
+                                        <p class="text-xs text-gray-600 dark:text-gray-300 line-clamp-2 leading-relaxed" x-text="notif.message"></p>
+                                        <span class="text-[11px] text-gray-400 dark:text-gray-500 mt-1 block" x-text="notif.time"></span>
                                     </div>
                                 </div>
                             </a>
-                        @empty
+                        </template>
+
+                        <template x-if="notifications.length === 0">
                             <div class="py-8 text-center">
                                 <svg class="w-8 h-8 mx-auto text-gray-300 dark:text-gray-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                                 </svg>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">Tidak ada notifikasi saat ini</p>
                             </div>
-                        @endforelse
+                        </template>
                     </div>
 
                     <!-- Footer -->
@@ -240,61 +247,76 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let lastNotificationId = '{{ $latestId ?? "" }}';
-            
-            function playNotificationSound() {
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    if(!ctx) return;
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(880, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                    osc.start(ctx.currentTime);
-                    osc.stop(ctx.currentTime + 0.5);
-                } catch(e) {}
-            }
+        function navNotificationDropdown(config) {
+            return {
+                isNotificationsMenuOpen: false,
+                unreadCount: config.unreadCount || 0,
+                notifications: config.notifications || [],
+                lastNotificationId: config.latestId || '',
+                pollingInterval: null,
 
-            setInterval(() => {
-                fetch('{{ route("notifications.check") }}', {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+                init() {
+                    this.pollingInterval = setInterval(() => {
+                        this.fetchNotifications();
+                    }, 10000);
+                },
+
+                toggleMenu() {
+                    this.isNotificationsMenuOpen = !this.isNotificationsMenuOpen;
+                    if (this.isNotificationsMenuOpen) {
+                        this.fetchNotifications();
                     }
-                })
+                },
+
+                playNotificationSound() {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        if (!ctx) return;
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(880, ctx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0, ctx.currentTime);
+                        gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        osc.start(ctx.currentTime);
+                        osc.stop(ctx.currentTime + 0.5);
+                    } catch (e) {}
+                },
+
+                fetchNotifications() {
+                    fetch(config.checkUrl, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
                     .then(res => {
                         if (res.status === 401) {
-                            // Sesi habis, reload halaman untuk diarahkan ke halaman login
                             window.location.reload();
                             throw new Error('Sesi habis');
                         }
                         return res.json();
                     })
                     .then(data => {
-                        const badgeContainer = document.getElementById('nav-badge-container');
-                        
-                        if (data.count > 0) {
-                            badgeContainer.innerHTML = `<span class="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">${data.count > 9 ? '9+' : data.count}</span>`;
-                        } else {
-                            badgeContainer.innerHTML = '';
+                        this.unreadCount = typeof data.count === 'number' ? data.count : 0;
+                        if (Array.isArray(data.notifications)) {
+                            this.notifications = data.notifications;
                         }
 
-                        if (data.latest_id && data.latest_id !== lastNotificationId) {
-                            playNotificationSound();
-                            lastNotificationId = data.latest_id;
+                        if (data.latest_id && data.latest_id !== this.lastNotificationId) {
+                            this.playNotificationSound();
+                            this.lastNotificationId = data.latest_id;
                         }
                     })
                     .catch(err => {
-                        if(err.message !== 'Sesi habis') console.error(err);
+                        if (err.message !== 'Sesi habis') console.error(err);
                     });
-            }, 10000); // Polling setiap 10 detik
-        });
+                }
+            };
+        }
     </script>
 </header>
